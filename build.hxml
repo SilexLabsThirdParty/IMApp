@@ -1,0 +1,32 @@
+-js bin/app.js
+-cp src/
+-cp ../Silex/src/
+-cp ../SLPlayer/src/
+-cp ../Cocktail/src/
+-cp ../EuropaApps/src/
+-main silex.Silex
+--macro org.slplayer.core.Builder.create('./src/index.html')
+#-D slpdebug
+-D disableEmbedHtml
+-D stopOnError
+-D silexClientSide
+--no-traces
+-lib hscript
+
+
+--next
+
+-swf9 bin/app.swf
+-swf-version 10.2
+--remap js:cocktail
+-cp src/
+-cp ../Silex/src/
+-cp ../Cocktail/src/
+-cp ../SLPlayer/src/
+-main silex.Silex
+--macro org.slplayer.core.Builder.create('./src/index.html')
+#-D slpdebug
+-D stopOnError
+-D silexClientSide
+--no-traces
+-lib hscript

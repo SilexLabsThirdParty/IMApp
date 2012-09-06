@@ -1,0 +1,161 @@
+<HTML>
+	<HEAD>
+		<TITLE>Gallery test</TITLE>
+		<LINK href="app.css" type="text/css" rel="stylesheet"></LINK>
+		<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
+		<META name="initialPageName" content="page1"></META>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+ <SCRIPT src="app.js"></SCRIPT></HEAD>
+	
+
+</HTML><BODY>
+	<DIV class="pages-container">
+		
+		<A href="#page1" class="LinkToPage next">
+				<IMG class="accueil" src="assets/accueil.png"/>
+			</A>
+			<A href="#thumbs" class="LinkToPage" target="_top">
+				<IMG class="display" src="assets/miniatures.png"/>
+			</A>
+
+					
+		<A class="Page" name="thumbs"></A>
+		<DIV class="Layer TransitionVertical thumbs">
+			<A href="#thumbs" class="LinkClosePage" data-transition-is-reversed="true">
+				<IMG class="close" src="assets/close.png"/>
+			</A>
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/pop.mp3"/>
+			</AUDIO>
+			<DIV class="thumb-container">
+				<A href="#page2 " class="LinkToPage" data-transition-delay="0.2s">
+					
+					<IMG class="ContextualResizer" src="assets/seychelles-thumb.jpg"/>
+						
+				</A>
+				<A href="#page3" class="LinkToPage" data-transition-delay="0.2s">
+					<IMG class="ContextualResizer" src="assets/maldives-thumb.jpg"/>		
+				</A>
+				<A href="#page4" class="LinkToPage" data-transition-delay="0.2s">
+					<IMG class="ContextualResizer" src="assets/rocher.bonifacio-thumb.jpg"/>		
+				</A>
+				<A href="#page5" class="LinkToPage" data-transition-delay="0.2s">
+					
+					<IMG class="ContextualResizer" src="assets/mer.croatie-thumb.jpg"/>
+					
+						
+				</A>
+			</DIV>
+		</DIV>
+		
+		<A class="Page" name="page1"></A>
+		<DIV class="Layer TransitionHorizontal page1">
+			
+			
+			<IMG class="big-img" src="assets/ciel.jpg"/>	
+		
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+
+			
+			<SPAN>
+			<A href="#page2" class="LinkToPage next" data-transition-delay="0.2s">
+				
+				<IMG class="ResizeGallery" src="assets/button.png"/>	
+			</A>
+			</SPAN>	
+		</DIV>
+
+		
+		<A class="Page" name="page2"></A>
+		<DIV class="Layer TransitionHorizontal page2">
+			
+			
+			<IMG class="big-img" src="assets/seychelles.jpg"/>	
+		
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+
+			
+			<A href="#page3" class="LinkToPage next" data-transition-delay="0.2s">
+				<IMG class="suivant" src="assets/suivant.png"/>		
+			</A>
+		</DIV>
+		
+		
+		<A class="Page" name="page3"></A>
+		<DIV class="Layer TransitionHorizontal page3">
+			
+			
+			<IMG class="big-img" src="assets/maldives.jpg"/>	
+
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+			
+			
+			<A href="#page2" class="LinkToPage previous" data-transition-delay="0.2s" data-transition-is-reversed="true">
+				<IMG class="precedent" src="assets/precedent.png"/>
+			</A>
+			<A href="#page4" class="LinkToPage next" data-transition-delay="0.2s">
+				<IMG class="suivant" src="assets/suivant.png"/>
+						
+			</A>
+		</DIV>
+			
+		
+		<A class="Page" name="page4"></A>
+		<DIV class="Layer TransitionHorizontal page4">
+				
+				
+				<IMG class="big-img" src="assets/rocher.bonifacio.jpg"/>
+				
+				
+				<AUDIO autoplay="autoplay">
+					<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+				</AUDIO>
+				
+				
+				<A href="#page3" class="LinkToPage previous" data-transition-delay="0.2s" data-transition-is-reversed="true">
+					<IMG class="precedent" src="assets/precedent.png"/>	
+				</A>
+				<A href="#page5" class="LinkToPage next" data-transition-delay="0.2s">
+				<IMG class="suivant" src="assets/suivant.png"/>
+			</A>
+		</DIV>
+		
+			
+		<A class="Page" name="page5"></A>
+		<DIV class="Layer TransitionHorizontal page5 ">
+				
+					
+				<IMG class="big-img" src="assets/mer.croatie.jpg"/>	
+				
+				
+				<AUDIO autoplay="autoplay">
+					<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+				</AUDIO>
+				
+				
+				<A href="#page4" class="LinkToPage previous" data-transition-delay="0.2s" data-transition-is-reversed="true">
+					<IMG class="precedent" src="assets/precedent.png"/>	
+				</A>
+		</DIV>
+		
+	
+	</DIV>
+</BODY>

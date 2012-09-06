@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ 
+	<app title="My Project" main="silex.Silex" 
+		package="org.silexlabs.silex" version="1.0.0" 
+		company="NME" ></app>
+ 
+	<window width="1024" height="768" fps="30" orientation="landscape" 
+		resizable="true" ></window>
+ 
+	<compilerflag name="--macro org.slplayer.core.Builder.create( './src/index.html' )" />
+<!--
+-->
+	<compilerflag name="--remap js:cocktail" />
+
+	<compilerflag name="-D silexClientSide" />
+	<compilerflag name="-D slpdebug" />
+	<compilerflag name="-D stopOnError" />
+
+	<set name="BUILD_DIR" value="Export" ></set>
+
+	<assets path="bin/assets" rename="assets" include="*" />
+
+	<classpath name="src" ></classpath>
+	<classpath name="../Silex/src/" ></classpath>
+	<classpath name="../Cocktail/src/" ></classpath>
+	<classpath name="../SLPlayer/src/" ></classpath>
+	
+	<haxelib name="nme" ></haxelib>
+	<haxelib name='format' />
+	<haxelib name="swf" />
+
+	<ndll name="std" ></ndll>
+	<ndll name="regexp" ></ndll>
+	<ndll name="zlib" ></ndll>
+	<ndll name="nme" haxelib="nme" ></ndll>
+ 
+</project>
