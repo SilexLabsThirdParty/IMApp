@@ -214,7 +214,7 @@ body{
 
 	
 }
-.Layer span a img {
+.Layer span a img, .ResizeGallery {
 	margin-left:381px;
 	position:absolute;
 	top:35%;
@@ -224,7 +224,7 @@ body{
 	
 }
 
-.Layer span a img:hover{
+.Layer span a img:hover, .ResizeGallery:hover{
 	margin-left:381px;
 	position:absolute;
 	top:35%;
@@ -331,5 +331,21 @@ body{
 
 }
 
-
-
+.page-right, .page-left, .page-center{
+	position:absolute;
+	z-index: 0;
+	transition: left .5s ease-out;
+	-moz-transition: left .5s ease-out; /* Firefox 4 */
+	-webkit-transition: left .5s ease-out; /* Safari and Chrome */
+	-o-transition: left .5s ease-out; /* Opera */
+}
+.page-left{
+	left: -100%;
+}
+.page-right{
+	left: 100%;
+}
+.page-center{
+	z-index: 0;
+	left: 0px;
+}
