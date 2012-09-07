@@ -890,6 +890,245 @@ Type.allEnums = function(e) {
 	}
 	return all;
 }
+var Xml = function() {
+};
+$hxClasses["Xml"] = Xml;
+Xml.__name__ = ["Xml"];
+Xml.Element = null;
+Xml.PCData = null;
+Xml.CData = null;
+Xml.Comment = null;
+Xml.DocType = null;
+Xml.Prolog = null;
+Xml.Document = null;
+Xml.parse = function(str) {
+	return haxe.xml.Parser.parse(str);
+}
+Xml.createElement = function(name) {
+	var r = new Xml();
+	r.nodeType = Xml.Element;
+	r._children = new Array();
+	r._attributes = new Hash();
+	r.setNodeName(name);
+	return r;
+}
+Xml.createPCData = function(data) {
+	var r = new Xml();
+	r.nodeType = Xml.PCData;
+	r.setNodeValue(data);
+	return r;
+}
+Xml.createCData = function(data) {
+	var r = new Xml();
+	r.nodeType = Xml.CData;
+	r.setNodeValue(data);
+	return r;
+}
+Xml.createComment = function(data) {
+	var r = new Xml();
+	r.nodeType = Xml.Comment;
+	r.setNodeValue(data);
+	return r;
+}
+Xml.createDocType = function(data) {
+	var r = new Xml();
+	r.nodeType = Xml.DocType;
+	r.setNodeValue(data);
+	return r;
+}
+Xml.createProlog = function(data) {
+	var r = new Xml();
+	r.nodeType = Xml.Prolog;
+	r.setNodeValue(data);
+	return r;
+}
+Xml.createDocument = function() {
+	var r = new Xml();
+	r.nodeType = Xml.Document;
+	r._children = new Array();
+	return r;
+}
+Xml.prototype = {
+	toString: function() {
+		if(this.nodeType == Xml.PCData) return this._nodeValue;
+		if(this.nodeType == Xml.CData) return "<![CDATA[" + this._nodeValue + "]]>";
+		if(this.nodeType == Xml.Comment) return "<!--" + this._nodeValue + "-->";
+		if(this.nodeType == Xml.DocType) return "<!DOCTYPE " + this._nodeValue + ">";
+		if(this.nodeType == Xml.Prolog) return "<?" + this._nodeValue + "?>";
+		var s = new StringBuf();
+		if(this.nodeType == Xml.Element) {
+			s.b += Std.string("<");
+			s.b += Std.string(this._nodeName);
+			var $it0 = this._attributes.keys();
+			while( $it0.hasNext() ) {
+				var k = $it0.next();
+				s.b += Std.string(" ");
+				s.b += Std.string(k);
+				s.b += Std.string("=\"");
+				s.b += Std.string(this._attributes.get(k));
+				s.b += Std.string("\"");
+			}
+			if(this._children.length == 0) {
+				s.b += Std.string("/>");
+				return s.b;
+			}
+			s.b += Std.string(">");
+		}
+		var $it1 = this.iterator();
+		while( $it1.hasNext() ) {
+			var x = $it1.next();
+			s.b += Std.string(x.toString());
+		}
+		if(this.nodeType == Xml.Element) {
+			s.b += Std.string("</");
+			s.b += Std.string(this._nodeName);
+			s.b += Std.string(">");
+		}
+		return s.b;
+	}
+	,insertChild: function(x,pos) {
+		if(this._children == null) throw "bad nodetype";
+		if(x._parent != null) HxOverrides.remove(x._parent._children,x);
+		x._parent = this;
+		this._children.splice(pos,0,x);
+	}
+	,removeChild: function(x) {
+		if(this._children == null) throw "bad nodetype";
+		var b = HxOverrides.remove(this._children,x);
+		if(b) x._parent = null;
+		return b;
+	}
+	,addChild: function(x) {
+		if(this._children == null) throw "bad nodetype";
+		if(x._parent != null) HxOverrides.remove(x._parent._children,x);
+		x._parent = this;
+		this._children.push(x);
+	}
+	,firstElement: function() {
+		if(this._children == null) throw "bad nodetype";
+		var cur = 0;
+		var l = this._children.length;
+		while(cur < l) {
+			var n = this._children[cur];
+			if(n.nodeType == Xml.Element) return n;
+			cur++;
+		}
+		return null;
+	}
+	,firstChild: function() {
+		if(this._children == null) throw "bad nodetype";
+		return this._children[0];
+	}
+	,elementsNamed: function(name) {
+		if(this._children == null) throw "bad nodetype";
+		return { cur : 0, x : this._children, hasNext : function() {
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				var n = this.x[k];
+				if(n.nodeType == Xml.Element && n._nodeName == name) break;
+				k++;
+			}
+			this.cur = k;
+			return k < l;
+		}, next : function() {
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				var n = this.x[k];
+				k++;
+				if(n.nodeType == Xml.Element && n._nodeName == name) {
+					this.cur = k;
+					return n;
+				}
+			}
+			return null;
+		}};
+	}
+	,elements: function() {
+		if(this._children == null) throw "bad nodetype";
+		return { cur : 0, x : this._children, hasNext : function() {
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				if(this.x[k].nodeType == Xml.Element) break;
+				k += 1;
+			}
+			this.cur = k;
+			return k < l;
+		}, next : function() {
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				var n = this.x[k];
+				k += 1;
+				if(n.nodeType == Xml.Element) {
+					this.cur = k;
+					return n;
+				}
+			}
+			return null;
+		}};
+	}
+	,iterator: function() {
+		if(this._children == null) throw "bad nodetype";
+		return { cur : 0, x : this._children, hasNext : function() {
+			return this.cur < this.x.length;
+		}, next : function() {
+			return this.x[this.cur++];
+		}};
+	}
+	,attributes: function() {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		return this._attributes.keys();
+	}
+	,exists: function(att) {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		return this._attributes.exists(att);
+	}
+	,remove: function(att) {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		this._attributes.remove(att);
+	}
+	,set: function(att,value) {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		this._attributes.set(att,value);
+	}
+	,get: function(att) {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		return this._attributes.get(att);
+	}
+	,getParent: function() {
+		return this._parent;
+	}
+	,setNodeValue: function(v) {
+		if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
+		return this._nodeValue = v;
+	}
+	,getNodeValue: function() {
+		if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
+		return this._nodeValue;
+	}
+	,setNodeName: function(n) {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		return this._nodeName = n;
+	}
+	,getNodeName: function() {
+		if(this.nodeType != Xml.Element) throw "bad nodeType";
+		return this._nodeName;
+	}
+	,_parent: null
+	,_children: null
+	,_attributes: null
+	,_nodeValue: null
+	,_nodeName: null
+	,parent: null
+	,nodeValue: null
+	,nodeName: null
+	,nodeType: null
+	,__class__: Xml
+	,__properties__: {set_nodeName:"setNodeName",get_nodeName:"getNodeName",set_nodeValue:"setNodeValue",get_nodeValue:"getNodeValue",get_parent:"getParent"}
+}
 var org = {}
 org.slplayer = {}
 org.slplayer.component = {}
@@ -2926,6 +3165,374 @@ haxe.rtti.Meta.getFields = function(t) {
 	var meta = t.__meta__;
 	return meta == null || meta.fields == null?{ }:meta.fields;
 }
+haxe.xml = {}
+haxe.xml._Fast = {}
+haxe.xml._Fast.NodeAccess = function(x) {
+	this.__x = x;
+};
+$hxClasses["haxe.xml._Fast.NodeAccess"] = haxe.xml._Fast.NodeAccess;
+haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
+haxe.xml._Fast.NodeAccess.prototype = {
+	resolve: function(name) {
+		var x = this.__x.elementsNamed(name).next();
+		if(x == null) {
+			var xname = this.__x.nodeType == Xml.Document?"Document":this.__x.getNodeName();
+			throw xname + " is missing element " + name;
+		}
+		return new haxe.xml.Fast(x);
+	}
+	,__x: null
+	,__class__: haxe.xml._Fast.NodeAccess
+}
+haxe.xml._Fast.AttribAccess = function(x) {
+	this.__x = x;
+};
+$hxClasses["haxe.xml._Fast.AttribAccess"] = haxe.xml._Fast.AttribAccess;
+haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
+haxe.xml._Fast.AttribAccess.prototype = {
+	resolve: function(name) {
+		if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+		var v = this.__x.get(name);
+		if(v == null) throw this.__x.getNodeName() + " is missing attribute " + name;
+		return v;
+	}
+	,__x: null
+	,__class__: haxe.xml._Fast.AttribAccess
+}
+haxe.xml._Fast.HasAttribAccess = function(x) {
+	this.__x = x;
+};
+$hxClasses["haxe.xml._Fast.HasAttribAccess"] = haxe.xml._Fast.HasAttribAccess;
+haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
+haxe.xml._Fast.HasAttribAccess.prototype = {
+	resolve: function(name) {
+		if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+		return this.__x.exists(name);
+	}
+	,__x: null
+	,__class__: haxe.xml._Fast.HasAttribAccess
+}
+haxe.xml._Fast.HasNodeAccess = function(x) {
+	this.__x = x;
+};
+$hxClasses["haxe.xml._Fast.HasNodeAccess"] = haxe.xml._Fast.HasNodeAccess;
+haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
+haxe.xml._Fast.HasNodeAccess.prototype = {
+	resolve: function(name) {
+		return this.__x.elementsNamed(name).hasNext();
+	}
+	,__x: null
+	,__class__: haxe.xml._Fast.HasNodeAccess
+}
+haxe.xml._Fast.NodeListAccess = function(x) {
+	this.__x = x;
+};
+$hxClasses["haxe.xml._Fast.NodeListAccess"] = haxe.xml._Fast.NodeListAccess;
+haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
+haxe.xml._Fast.NodeListAccess.prototype = {
+	resolve: function(name) {
+		var l = new List();
+		var $it0 = this.__x.elementsNamed(name);
+		while( $it0.hasNext() ) {
+			var x = $it0.next();
+			l.add(new haxe.xml.Fast(x));
+		}
+		return l;
+	}
+	,__x: null
+	,__class__: haxe.xml._Fast.NodeListAccess
+}
+haxe.xml.Fast = function(x) {
+	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + Std.string(x.nodeType);
+	this.x = x;
+	this.node = new haxe.xml._Fast.NodeAccess(x);
+	this.nodes = new haxe.xml._Fast.NodeListAccess(x);
+	this.att = new haxe.xml._Fast.AttribAccess(x);
+	this.has = new haxe.xml._Fast.HasAttribAccess(x);
+	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
+};
+$hxClasses["haxe.xml.Fast"] = haxe.xml.Fast;
+haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
+haxe.xml.Fast.prototype = {
+	getElements: function() {
+		var it = this.x.elements();
+		return { hasNext : $bind(it,it.hasNext), next : function() {
+			var x = it.next();
+			if(x == null) return null;
+			return new haxe.xml.Fast(x);
+		}};
+	}
+	,getInnerHTML: function() {
+		var s = new StringBuf();
+		var $it0 = this.x.iterator();
+		while( $it0.hasNext() ) {
+			var x = $it0.next();
+			s.b += Std.string(x.toString());
+		}
+		return s.b;
+	}
+	,getInnerData: function() {
+		var it = this.x.iterator();
+		if(!it.hasNext()) throw this.getName() + " does not have data";
+		var v = it.next();
+		var n = it.next();
+		if(n != null) {
+			if(v.nodeType == Xml.PCData && n.nodeType == Xml.CData && StringTools.trim(v.getNodeValue()) == "") {
+				var n2 = it.next();
+				if(n2 == null || n2.nodeType == Xml.PCData && StringTools.trim(n2.getNodeValue()) == "" && it.next() == null) return n.getNodeValue();
+			}
+			throw this.getName() + " does not only have data";
+		}
+		if(v.nodeType != Xml.PCData && v.nodeType != Xml.CData) throw this.getName() + " does not have data";
+		return v.getNodeValue();
+	}
+	,getName: function() {
+		return this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
+	}
+	,elements: null
+	,hasNode: null
+	,has: null
+	,att: null
+	,nodes: null
+	,node: null
+	,innerHTML: null
+	,innerData: null
+	,name: null
+	,x: null
+	,__class__: haxe.xml.Fast
+	,__properties__: {get_name:"getName",get_innerData:"getInnerData",get_innerHTML:"getInnerHTML",get_elements:"getElements"}
+}
+haxe.xml.Parser = function() { }
+$hxClasses["haxe.xml.Parser"] = haxe.xml.Parser;
+haxe.xml.Parser.__name__ = ["haxe","xml","Parser"];
+haxe.xml.Parser.parse = function(str) {
+	var doc = Xml.createDocument();
+	haxe.xml.Parser.doParse(str,0,doc);
+	return doc;
+}
+haxe.xml.Parser.doParse = function(str,p,parent) {
+	if(p == null) p = 0;
+	var xml = null;
+	var state = 1;
+	var next = 1;
+	var aname = null;
+	var start = 0;
+	var nsubs = 0;
+	var nbrackets = 0;
+	var c = str.charCodeAt(p);
+	while(!(c != c)) {
+		switch(state) {
+		case 0:
+			switch(c) {
+			case 10:case 13:case 9:case 32:
+				break;
+			default:
+				state = next;
+				continue;
+			}
+			break;
+		case 1:
+			switch(c) {
+			case 60:
+				state = 0;
+				next = 2;
+				break;
+			default:
+				start = p;
+				state = 13;
+				continue;
+			}
+			break;
+		case 13:
+			if(c == 60) {
+				var child = Xml.createPCData(HxOverrides.substr(str,start,p - start));
+				parent.addChild(child);
+				nsubs++;
+				state = 0;
+				next = 2;
+			}
+			break;
+		case 17:
+			if(c == 93 && str.charCodeAt(p + 1) == 93 && str.charCodeAt(p + 2) == 62) {
+				var child = Xml.createCData(HxOverrides.substr(str,start,p - start));
+				parent.addChild(child);
+				nsubs++;
+				p += 2;
+				state = 1;
+			}
+			break;
+		case 2:
+			switch(c) {
+			case 33:
+				if(str.charCodeAt(p + 1) == 91) {
+					p += 2;
+					if(HxOverrides.substr(str,p,6).toUpperCase() != "CDATA[") throw "Expected <![CDATA[";
+					p += 5;
+					state = 17;
+					start = p + 1;
+				} else if(str.charCodeAt(p + 1) == 68 || str.charCodeAt(p + 1) == 100) {
+					if(HxOverrides.substr(str,p + 2,6).toUpperCase() != "OCTYPE") throw "Expected <!DOCTYPE";
+					p += 8;
+					state = 16;
+					start = p + 1;
+				} else if(str.charCodeAt(p + 1) != 45 || str.charCodeAt(p + 2) != 45) throw "Expected <!--"; else {
+					p += 2;
+					state = 15;
+					start = p + 1;
+				}
+				break;
+			case 63:
+				state = 14;
+				start = p;
+				break;
+			case 47:
+				if(parent == null) throw "Expected node name";
+				start = p + 1;
+				state = 0;
+				next = 10;
+				break;
+			default:
+				state = 3;
+				start = p;
+				continue;
+			}
+			break;
+		case 3:
+			if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45)) {
+				if(p == start) throw "Expected node name";
+				xml = Xml.createElement(HxOverrides.substr(str,start,p - start));
+				parent.addChild(xml);
+				state = 0;
+				next = 4;
+				continue;
+			}
+			break;
+		case 4:
+			switch(c) {
+			case 47:
+				state = 11;
+				nsubs++;
+				break;
+			case 62:
+				state = 9;
+				nsubs++;
+				break;
+			default:
+				state = 5;
+				start = p;
+				continue;
+			}
+			break;
+		case 5:
+			if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45)) {
+				var tmp;
+				if(start == p) throw "Expected attribute name";
+				tmp = HxOverrides.substr(str,start,p - start);
+				aname = tmp;
+				if(xml.exists(aname)) throw "Duplicate attribute";
+				state = 0;
+				next = 6;
+				continue;
+			}
+			break;
+		case 6:
+			switch(c) {
+			case 61:
+				state = 0;
+				next = 7;
+				break;
+			default:
+				throw "Expected =";
+			}
+			break;
+		case 7:
+			switch(c) {
+			case 34:case 39:
+				state = 8;
+				start = p;
+				break;
+			default:
+				throw "Expected \"";
+			}
+			break;
+		case 8:
+			if(c == str.charCodeAt(start)) {
+				var val = HxOverrides.substr(str,start + 1,p - start - 1);
+				xml.set(aname,val);
+				state = 0;
+				next = 4;
+			}
+			break;
+		case 9:
+			p = haxe.xml.Parser.doParse(str,p,xml);
+			start = p;
+			state = 1;
+			break;
+		case 11:
+			switch(c) {
+			case 62:
+				state = 1;
+				break;
+			default:
+				throw "Expected >";
+			}
+			break;
+		case 12:
+			switch(c) {
+			case 62:
+				if(nsubs == 0) parent.addChild(Xml.createPCData(""));
+				return p;
+			default:
+				throw "Expected >";
+			}
+			break;
+		case 10:
+			if(!(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45)) {
+				if(start == p) throw "Expected node name";
+				var v = HxOverrides.substr(str,start,p - start);
+				if(v != parent.getNodeName()) throw "Expected </" + parent.getNodeName() + ">";
+				state = 0;
+				next = 12;
+				continue;
+			}
+			break;
+		case 15:
+			if(c == 45 && str.charCodeAt(p + 1) == 45 && str.charCodeAt(p + 2) == 62) {
+				parent.addChild(Xml.createComment(HxOverrides.substr(str,start,p - start)));
+				p += 2;
+				state = 1;
+			}
+			break;
+		case 16:
+			if(c == 91) nbrackets++; else if(c == 93) nbrackets--; else if(c == 62 && nbrackets == 0) {
+				parent.addChild(Xml.createDocType(HxOverrides.substr(str,start,p - start)));
+				state = 1;
+			}
+			break;
+		case 14:
+			if(c == 63 && str.charCodeAt(p + 1) == 62) {
+				p++;
+				var str1 = HxOverrides.substr(str,start + 1,p - start - 2);
+				parent.addChild(Xml.createProlog(str1));
+				state = 1;
+			}
+			break;
+		}
+		c = str.charCodeAt(++p);
+	}
+	if(state == 1) {
+		start = p;
+		state = 13;
+	}
+	if(state == 13) {
+		if(p != start || nsubs == 0) parent.addChild(Xml.createPCData(HxOverrides.substr(str,start,p - start)));
+		return p;
+	}
+	throw "Unexpected end";
+}
+haxe.xml.Parser.isValidChar = function(c) {
+	return c >= 97 && c <= 122 || c >= 65 && c <= 90 || c >= 48 && c <= 57 || c == 58 || c == 46 || c == 95 || c == 45;
+}
 var hscript = {}
 hscript.Const = $hxClasses["hscript.Const"] = { __ename__ : ["hscript","Const"], __constructs__ : ["CInt","CFloat","CString","CInt32"] }
 hscript.Const.CInt = function(v) { var $x = ["CInt",0,v]; $x.__enum__ = hscript.Const; $x.toString = $estr; return $x; }
@@ -4907,10 +5514,23 @@ $hxClasses["org.slplayer.component.navigation.Layer"] = org.slplayer.component.n
 org.slplayer.component.navigation.Layer.__name__ = ["org","slplayer","component","navigation","Layer"];
 org.slplayer.component.navigation.Layer.__super__ = org.slplayer.component.ui.DisplayObject;
 org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	doHide: function(transitionData) {
+	doHide: function(transitionData,e) {
+		haxe.Log.trace("doHide",{ fileName : "Layer.hx", lineNumber : 283, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
+		if(this.doHideCallback == null) {
+			haxe.Log.trace("Warning: end transition callback already called",{ fileName : "Layer.hx", lineNumber : 285, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
+			return;
+		}
+		if(e != null && e.target != this.rootElement) {
+			haxe.Log.trace("End transition event from another html element",{ fileName : "Layer.hx", lineNumber : 289, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
+			return;
+		}
 		this.removeTransitionEvent(this.doHideCallback);
+		this.doHideCallback = null;
 		if(transitionData != null) org.slplayer.util.DomTools.removeClass(this.rootElement,transitionData.endStyleName);
 		this.status = org.slplayer.component.navigation.LayerStatus.hidden;
+		var event = js.Lib.document.createEvent("CustomEvent");
+		event.initCustomEvent("onLayerHide",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
+		this.rootElement.dispatchEvent(event);
 		while(this.rootElement.childNodes.length > 0) {
 			var element = this.rootElement.childNodes[0];
 			this.rootElement.removeChild(element);
@@ -4918,37 +5538,60 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 			if(element.tagName != null && (element.tagName.toLowerCase() == "audio" || element.tagName.toLowerCase() == "video")) try {
 				element.pause();
 				element.currentTime = 0;
-			} catch( e ) {
-				haxe.Log.trace("Layer error: could not access audio or video element",{ fileName : "Layer.hx", lineNumber : 273, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
+			} catch( e1 ) {
+				haxe.Log.trace("Layer error: could not access audio or video element",{ fileName : "Layer.hx", lineNumber : 327, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
 			}
 		}
 		this.rootElement.style.display = "none";
 	}
 	,hide: function(transitionData) {
-		var _g = this;
-		if(this.status != org.slplayer.component.navigation.LayerStatus.visible && this.status != org.slplayer.component.navigation.LayerStatus.notInit) {
-			haxe.Log.trace("Warning, can not hide the layer, since it is " + Std.string(this.status),{ fileName : "Layer.hx", lineNumber : 224, className : "org.slplayer.component.navigation.Layer", methodName : "hide"});
-			return;
+		if(this.status != org.slplayer.component.navigation.LayerStatus.visible && this.status != org.slplayer.component.navigation.LayerStatus.notInit) return;
+		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) {
+			haxe.Log.trace("Warning: hide break previous transition hide",{ fileName : "Layer.hx", lineNumber : 261, className : "org.slplayer.component.navigation.Layer", methodName : "hide"});
+			this.doHideCallback(null);
+			this.removeTransitionEvent(this.doHideCallback);
+		} else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) {
+			haxe.Log.trace("Warning: hide break previous transition show",{ fileName : "Layer.hx", lineNumber : 267, className : "org.slplayer.component.navigation.Layer", methodName : "hide"});
+			this.doShowCallback(null);
+			this.removeTransitionEvent(this.doShowCallback);
 		}
-		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) this.removeTransitionEvent(this.doHideCallback); else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) this.removeTransitionEvent(this.doShowCallback);
 		this.status = org.slplayer.component.navigation.LayerStatus.hideTransition;
-		this.doHideCallback = function(e) {
-			_g.doHide(transitionData);
-		};
+		this.doHideCallback = (function(f,a1) {
+			return function(e) {
+				return f(a1,e);
+			};
+		})($bind(this,this.doHide),transitionData);
 		this.startTransition(org.slplayer.component.navigation.transition.TransitionType.hide,transitionData,this.doHideCallback);
 	}
-	,doShow: function(transitionData) {
+	,doShow: function(transitionData,e) {
+		haxe.Log.trace("doShow",{ fileName : "Layer.hx", lineNumber : 230, className : "org.slplayer.component.navigation.Layer", methodName : "doShow"});
+		if(this.doShowCallback == null) {
+			haxe.Log.trace("Warning: end transition callback already called",{ fileName : "Layer.hx", lineNumber : 232, className : "org.slplayer.component.navigation.Layer", methodName : "doShow"});
+			return;
+		}
+		if(e != null && e.target != this.rootElement) {
+			haxe.Log.trace("End transition event from another html element",{ fileName : "Layer.hx", lineNumber : 236, className : "org.slplayer.component.navigation.Layer", methodName : "doShow"});
+			return;
+		}
 		if(transitionData != null) org.slplayer.util.DomTools.removeClass(this.rootElement,transitionData.endStyleName);
 		this.removeTransitionEvent(this.doShowCallback);
+		this.doShowCallback = null;
 		this.status = org.slplayer.component.navigation.LayerStatus.visible;
 	}
 	,show: function(transitionData) {
-		var _g = this;
 		if(this.status != org.slplayer.component.navigation.LayerStatus.hidden && this.status != org.slplayer.component.navigation.LayerStatus.notInit) {
-			haxe.Log.trace("Warning: can not show the layer, since it is " + Std.string(this.status),{ fileName : "Layer.hx", lineNumber : 157, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
+			haxe.Log.trace("Warning: can not show the layer, since it is " + Std.string(this.status),{ fileName : "Layer.hx", lineNumber : 167, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
 			return;
 		}
-		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) this.removeTransitionEvent(this.doHideCallback); else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) this.removeTransitionEvent(this.doShowCallback);
+		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) {
+			haxe.Log.trace("Warning: hide break previous transition hide",{ fileName : "Layer.hx", lineNumber : 172, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
+			this.doHideCallback(null);
+			this.removeTransitionEvent(this.doHideCallback);
+		} else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) {
+			haxe.Log.trace("Warning: hide break previous transition show",{ fileName : "Layer.hx", lineNumber : 178, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
+			this.doShowCallback(null);
+			this.removeTransitionEvent(this.doShowCallback);
+		}
 		this.status = org.slplayer.component.navigation.LayerStatus.showTransition;
 		this.rootElement.style.display = this.styleAttrDisplay;
 		while(this.childrenArray.length > 0) {
@@ -4961,15 +5604,21 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 				}
 				element.muted = org.slplayer.component.sound.SoundOn.isMuted;
 			} catch( e ) {
-				haxe.Log.trace("Layer error: could not access audio or video element",{ fileName : "Layer.hx", lineNumber : 195, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
+				haxe.Log.trace("Layer error: could not access audio or video element",{ fileName : "Layer.hx", lineNumber : 209, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
 			}
 		}
-		this.doShowCallback = function(e) {
-			_g.doShow(transitionData);
-		};
+		var event = js.Lib.document.createEvent("CustomEvent");
+		event.initCustomEvent("onLayerShow",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
+		this.rootElement.dispatchEvent(event);
+		this.doShowCallback = (function(f,a1) {
+			return function(e) {
+				return f(a1,e);
+			};
+		})($bind(this,this.doShow),transitionData);
 		this.startTransition(org.slplayer.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
 	}
 	,removeTransitionEvent: function(onEndCallback) {
+		haxe.Log.trace("EVENTS RESET",{ fileName : "Layer.hx", lineNumber : 146, className : "org.slplayer.component.navigation.Layer", methodName : "removeTransitionEvent"});
 		this.rootElement.removeEventListener("transitionend",onEndCallback,false);
 		this.rootElement.removeEventListener("transitionEnd",onEndCallback,false);
 		this.rootElement.removeEventListener("webkitTransitionEnd",onEndCallback,false);
@@ -4977,14 +5626,16 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 		this.rootElement.removeEventListener("MSTransitionEnd",onEndCallback,false);
 	}
 	,addTransitionEvent: function(onEndCallback) {
+		haxe.Log.trace("EVENTS SET",{ fileName : "Layer.hx", lineNumber : 132, className : "org.slplayer.component.navigation.Layer", methodName : "addTransitionEvent"});
 		this.rootElement.addEventListener("transitionend",onEndCallback,false);
 		this.rootElement.addEventListener("transitionEnd",onEndCallback,false);
 		this.rootElement.addEventListener("webkitTransitionEnd",onEndCallback,false);
 		this.rootElement.addEventListener("oTransitionEnd",onEndCallback,false);
 		this.rootElement.addEventListener("MSTransitionEnd",onEndCallback,false);
 	}
-	,doStartTransition2: function(transitionData) {
+	,doStartTransition: function(transitionData,onComplete) {
 		org.slplayer.util.DomTools.removeClass(this.rootElement,transitionData.startStyleName);
+		if(onComplete != null) this.addTransitionEvent(onComplete);
 		org.slplayer.util.DomTools.addClass(this.rootElement,transitionData.endStyleName);
 	}
 	,startTransition: function(type,transitionData,onComplete) {
@@ -4993,13 +5644,12 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 			if(onComplete != null) onComplete(null);
 		} else {
 			this.hasTransitionStarted = true;
-			if(onComplete != null) this.addTransitionEvent(onComplete);
 			org.slplayer.util.DomTools.addClass(this.rootElement,transitionData.startStyleName);
-			org.slplayer.util.DomTools.doLater((function(f,a1) {
+			org.slplayer.util.DomTools.doLater((function(f,a1,a2) {
 				return function() {
-					return f(a1);
+					return f(a1,a2);
 				};
-			})($bind(this,this.doStartTransition2),transitionData));
+			})($bind(this,this.doStartTransition),transitionData,onComplete));
 		}
 	}
 	,doHideCallback: null
@@ -5587,6 +6237,68 @@ org.slplayer.util.DomTools.setBaseTag = function(href) {
 	}
 }
 var silex = {}
+silex.ModelBase = function(hoverChangeEventName,selectionChangeEventName,debugInfo) {
+	this.listeners = new List();
+	this.hoverChangeEventName = hoverChangeEventName;
+	this.selectionChangeEventName = selectionChangeEventName;
+	this.debugInfo = debugInfo;
+};
+$hxClasses["silex.ModelBase"] = silex.ModelBase;
+silex.ModelBase.__name__ = ["silex","ModelBase"];
+silex.ModelBase.prototype = {
+	createEvent: function(eventName,detail) {
+		var event = js.Lib.document.createEvent("CustomEvent");
+		event.initCustomEvent(eventName,true,true,detail);
+		return event;
+	}
+	,dispatchEvent: function(event,debugInfo) {
+		var $it0 = this.listeners.iterator();
+		while( $it0.hasNext() ) {
+			var el = $it0.next();
+			if(el.eventName == event.type) try {
+				el.callbackFunction(event);
+			} catch( e ) {
+				throw "Error when dispatching \"" + el.eventName + "\" event, from " + debugInfo + ", to " + el.debugInfo + ". The error: " + Std.string(e);
+			}
+		}
+	}
+	,removeEventListener: function(eventName,callbackFunction) {
+		var el = this.getEventListener(callbackFunction,eventName);
+		if(el != null) this.listeners.remove(el);
+	}
+	,addEventListener: function(eventName,callbackFunction,debugInfo) {
+		if(this.getEventListener(callbackFunction,eventName) == null) this.listeners.add({ callbackFunction : callbackFunction, eventName : eventName, debugInfo : debugInfo});
+	}
+	,isSameEventListeners: function(el1,el2) {
+		return el1.callbackFunction == el2.callbackFunction && el1.eventName == el2.eventName;
+	}
+	,getEventListener: function(callbackFunction,eventName) {
+		var $it0 = this.listeners.iterator();
+		while( $it0.hasNext() ) {
+			var el = $it0.next();
+			if(el.eventName == eventName && el.callbackFunction == callbackFunction) return el;
+		}
+		return null;
+	}
+	,listeners: null
+	,setSelectedItem: function(item) {
+		this.selectedItem = item;
+		this.dispatchEvent(this.createEvent(this.selectionChangeEventName,item),this.debugInfo);
+		return item;
+	}
+	,setHoveredItem: function(item) {
+		this.hoveredItem = item;
+		this.dispatchEvent(this.createEvent(this.hoverChangeEventName,item),this.debugInfo);
+		return item;
+	}
+	,selectionChangeEventName: null
+	,hoverChangeEventName: null
+	,hoveredItem: null
+	,selectedItem: null
+	,debugInfo: null
+	,__class__: silex.ModelBase
+	,__properties__: {set_selectedItem:"setSelectedItem",set_hoveredItem:"setHoveredItem"}
+}
 silex.ServiceBase = function(serviceName,gatewayUrl) {
 	if(gatewayUrl == null) gatewayUrl = "../../";
 	this.serviceName = serviceName;
@@ -5621,10 +6333,28 @@ silex.Silex.init = function(unused) {
 		js.Lib.document.body.innerHTML = StringTools.htmlUnescape(org.slplayer.util.DomTools.getMeta("publicationBody"));
 		org.slplayer.util.DomTools.setBaseTag("./publications/" + silex.Silex.publicationName + "/");
 	}
-	haxe.Log.trace(" application.init " + Std.string(js.Lib.document.body),{ fileName : "Silex.hx", lineNumber : 120, className : "silex.Silex", methodName : "init"});
+	haxe.Log.trace(" application.init " + Std.string(js.Lib.document.body),{ fileName : "Silex.hx", lineNumber : 125, className : "silex.Silex", methodName : "init"});
 	var application = org.slplayer.core.Application.createApplication();
 	application.init();
 }
+silex.component = {}
+silex.component.ComponentModel = function() {
+	silex.ModelBase.call(this,"onComponentHoverChange","onComponentSelectionChange","ComponentModel class");
+};
+$hxClasses["silex.component.ComponentModel"] = silex.component.ComponentModel;
+silex.component.ComponentModel.__name__ = ["silex","component","ComponentModel"];
+silex.component.ComponentModel.instance = null;
+silex.component.ComponentModel.getInstance = function() {
+	if(silex.component.ComponentModel.instance == null) silex.component.ComponentModel.instance = new silex.component.ComponentModel();
+	return silex.component.ComponentModel.instance;
+}
+silex.component.ComponentModel.__super__ = silex.ModelBase;
+silex.component.ComponentModel.prototype = $extend(silex.ModelBase.prototype,{
+	setSelectedItem: function(item) {
+		return silex.ModelBase.prototype.setSelectedItem.call(this,item);
+	}
+	,__class__: silex.component.ComponentModel
+});
 silex.interpreter = {}
 silex.interpreter.Interpreter = function() { }
 $hxClasses["silex.interpreter.Interpreter"] = silex.interpreter.Interpreter;
@@ -5649,6 +6379,125 @@ silex.interpreter.Interpreter.exec = function(script,context) {
 	var res = interp.execute(program);
 	return res;
 }
+silex.layer = {}
+silex.layer.LayerModel = function() {
+	silex.ModelBase.call(this,"onLayerHoverChange","onLayerSelectionChange","LayerModel class");
+};
+$hxClasses["silex.layer.LayerModel"] = silex.layer.LayerModel;
+silex.layer.LayerModel.__name__ = ["silex","layer","LayerModel"];
+silex.layer.LayerModel.instance = null;
+silex.layer.LayerModel.getInstance = function() {
+	if(silex.layer.LayerModel.instance == null) silex.layer.LayerModel.instance = new silex.layer.LayerModel();
+	return silex.layer.LayerModel.instance;
+}
+silex.layer.LayerModel.__super__ = silex.ModelBase;
+silex.layer.LayerModel.prototype = $extend(silex.ModelBase.prototype,{
+	setSelectedItem: function(item) {
+		var model = silex.component.ComponentModel.getInstance();
+		model.setSelectedItem(null);
+		model.setHoveredItem(null);
+		return silex.ModelBase.prototype.setSelectedItem.call(this,item);
+	}
+	,__class__: silex.layer.LayerModel
+});
+silex.page = {}
+silex.page.PageModel = function() {
+	silex.ModelBase.call(this,"onPageHoverChange","onPageSelectionChange","PageModel class");
+};
+$hxClasses["silex.page.PageModel"] = silex.page.PageModel;
+silex.page.PageModel.__name__ = ["silex","page","PageModel"];
+silex.page.PageModel.instance = null;
+silex.page.PageModel.getInstance = function() {
+	if(silex.page.PageModel.instance == null) silex.page.PageModel.instance = new silex.page.PageModel();
+	return silex.page.PageModel.instance;
+}
+silex.page.PageModel.__super__ = silex.ModelBase;
+silex.page.PageModel.prototype = $extend(silex.ModelBase.prototype,{
+	setSelectedItem: function(item) {
+		var model = silex.layer.LayerModel.getInstance();
+		model.setSelectedItem(null);
+		model.setHoveredItem(null);
+		return silex.ModelBase.prototype.setSelectedItem.call(this,item);
+	}
+	,__class__: silex.page.PageModel
+});
+silex.property = {}
+silex.property.PropertyModel = function() {
+	silex.ModelBase.call(this,null,null,"PropertyModel class");
+};
+$hxClasses["silex.property.PropertyModel"] = silex.property.PropertyModel;
+silex.property.PropertyModel.__name__ = ["silex","property","PropertyModel"];
+silex.property.PropertyModel.instance = null;
+silex.property.PropertyModel.getInstance = function() {
+	if(silex.property.PropertyModel.instance == null) silex.property.PropertyModel.instance = new silex.property.PropertyModel();
+	return silex.property.PropertyModel.instance;
+}
+silex.property.PropertyModel.__super__ = silex.ModelBase;
+silex.property.PropertyModel.prototype = $extend(silex.ModelBase.prototype,{
+	getModel: function(viewHtmlDom) {
+		if(silex.component.ComponentModel.getInstance().selectedItem == null && silex.layer.LayerModel.getInstance().selectedItem == null) throw "Error: no component nor layer is selected.";
+		var results = null;
+		var id = null;
+		if(silex.component.ComponentModel.getInstance().selectedItem != null) id = silex.component.ComponentModel.getInstance().selectedItem.getAttribute("data-silex-component-id");
+		if(id == null) {
+			if(silex.layer.LayerModel.getInstance().selectedItem != null) {
+				haxe.Log.trace("case of a layer",{ fileName : "PropertyModel.hx", lineNumber : 198, className : "silex.property.PropertyModel", methodName : "getModel"});
+				id = silex.layer.LayerModel.getInstance().selectedItem.rootElement.getAttribute("data-silex-layer-id");
+				if(id != null) results = org.slplayer.util.DomTools.getElementsByAttribute(silex.publication.PublicationModel.getInstance().modelHtmlDom,"data-silex-layer-id",id); else throw "Error: the selected layer has not a Silex ID. It should have the ID in the " + "data-silex-layer-id" + " or " + "data-silex-component-id" + " attributes";
+			} else throw "Error: the selected component has not a Silex ID. It should have the ID in the " + "data-silex-component-id" + " attribute";
+		} else {
+			haxe.Log.trace("case of a component",{ fileName : "PropertyModel.hx", lineNumber : 214, className : "silex.property.PropertyModel", methodName : "getModel"});
+			results = org.slplayer.util.DomTools.getElementsByAttribute(silex.publication.PublicationModel.getInstance().modelHtmlDom,"data-silex-component-id",id);
+		}
+		if(results == null || results.length != 1) throw "Error: 1 and only 1 component or layer is expected to have ID \"" + id + "\".";
+		return results[0];
+	}
+	,getStyle: function(viewHtmlDom,name) {
+		var value;
+		var modelHtmlDom = this.getModel(viewHtmlDom);
+		try {
+			value = Reflect.field(modelHtmlDom.style,name);
+		} catch( e ) {
+			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
+		}
+		return value;
+	}
+	,setStyle: function(viewHtmlDom,name,value) {
+		haxe.Log.trace("setStyle(" + Std.string(viewHtmlDom) + ", " + name + ", " + value + ")",{ fileName : "PropertyModel.hx", lineNumber : 145, className : "silex.property.PropertyModel", methodName : "setStyle"});
+		var modelHtmlDom = this.getModel(viewHtmlDom);
+		try {
+			viewHtmlDom.style[name] = value;
+			modelHtmlDom.style[name] = value;
+		} catch( e ) {
+			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
+		}
+		var propertyData = { name : name, value : value, viewHtmlDom : viewHtmlDom, modelHtmlDom : modelHtmlDom};
+		this.dispatchEvent(this.createEvent("onStyleChange",propertyData),this.debugInfo);
+	}
+	,getProperty: function(viewHtmlDom,name) {
+		var value;
+		var modelHtmlDom = this.getModel(viewHtmlDom);
+		try {
+			value = Reflect.field(modelHtmlDom,name);
+		} catch( e ) {
+			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
+		}
+		return value;
+	}
+	,setProperty: function(viewHtmlDom,name,value) {
+		haxe.Log.trace("setProperty(" + Std.string(viewHtmlDom) + ", " + name + ", " + Std.string(value) + ")",{ fileName : "PropertyModel.hx", lineNumber : 101, className : "silex.property.PropertyModel", methodName : "setProperty"});
+		var modelHtmlDom = this.getModel(viewHtmlDom);
+		try {
+			viewHtmlDom[name] = value;
+			modelHtmlDom[name] = value;
+		} catch( e ) {
+			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
+		}
+		var propertyData = { name : name, value : value, viewHtmlDom : viewHtmlDom, modelHtmlDom : modelHtmlDom};
+		this.dispatchEvent(this.createEvent("onPropertyChange",propertyData),this.debugInfo);
+	}
+	,__class__: silex.property.PropertyModel
+});
 silex.publication = {}
 silex.publication.PublicationCategory = $hxClasses["silex.publication.PublicationCategory"] = { __ename__ : ["silex","publication","PublicationCategory"], __constructs__ : ["Publication","Utility","Theme"] }
 silex.publication.PublicationCategory.Publication = ["Publication",0];
@@ -5666,6 +6515,124 @@ silex.publication.PublicationState.Published = function(data) { var $x = ["Publi
 silex.publication.PublicationState.Private = ["Private",2];
 silex.publication.PublicationState.Private.toString = $estr;
 silex.publication.PublicationState.Private.__enum__ = silex.publication.PublicationState;
+silex.publication.PublicationModel = function() {
+	silex.ModelBase.call(this,null,null,"PublicationModel class");
+	this.publicationService = new silex.publication.PublicationService();
+};
+$hxClasses["silex.publication.PublicationModel"] = silex.publication.PublicationModel;
+silex.publication.PublicationModel.__name__ = ["silex","publication","PublicationModel"];
+silex.publication.PublicationModel.instance = null;
+silex.publication.PublicationModel.getInstance = function() {
+	if(silex.publication.PublicationModel.instance == null) silex.publication.PublicationModel.instance = new silex.publication.PublicationModel();
+	return silex.publication.PublicationModel.instance;
+}
+silex.publication.PublicationModel.currentName = null;
+silex.publication.PublicationModel.__super__ = silex.ModelBase;
+silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype,{
+	onListResult: function(publications) {
+		var data = new Array();
+		if(publications != null) {
+			var $it0 = publications.keys();
+			while( $it0.hasNext() ) {
+				var publicationName = $it0.next();
+				haxe.Log.trace("Publication " + publicationName,{ fileName : "PublicationModel.hx", lineNumber : 381, className : "silex.publication.PublicationModel", methodName : "onListResult"});
+				var item = { name : publicationName, configData : publications.get(publicationName)};
+				data.push(item);
+			}
+		}
+		this.dispatchEvent(this.createEvent("onPublicationList",data),this.debugInfo);
+	}
+	,onError: function(msg) {
+		this.dispatchEvent(this.createEvent("onPublicationError"),this.debugInfo);
+		haxe.Log.trace("An error occured while loading publications list (" + msg + ")",{ fileName : "PublicationModel.hx", lineNumber : 369, className : "silex.publication.PublicationModel", methodName : "onError"});
+		throw "An error occured while loading publications list (" + msg + ")";
+	}
+	,initSLPlayerApplication: function(rootElement) {
+		this.application = org.slplayer.core.Application.createApplication();
+		this.application.init(rootElement);
+		var initialPageName = org.slplayer.util.DomTools.getMeta("initialPageName",null,this.headHtmlDom);
+		if(initialPageName != null) {
+			var page = org.slplayer.component.navigation.Page.getPageByName(initialPageName,this.application.id,this.viewHtmlDom);
+			if(page != null) silex.page.PageModel.getInstance().setSelectedItem(page); else haxe.Log.trace("Warning: could not resolve default page name (" + initialPageName + ")",{ fileName : "PublicationModel.hx", lineNumber : 336, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
+		} else haxe.Log.trace("Warning: no initial page found",{ fileName : "PublicationModel.hx", lineNumber : 340, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
+	}
+	,generateNewId: function() {
+		return silex.publication.PublicationModel.nextId++ + "";
+	}
+	,prepareForEdit: function(modelDom) {
+		if(modelDom.className == null) return;
+		if(modelDom.parentNode == null) this.fixDomRoot(modelDom); else if(org.slplayer.util.DomTools.hasClass(modelDom.parentNode,"Layer")) {
+			modelDom.setAttribute("data-silex-component-id",this.generateNewId());
+			this.fixDom(modelDom);
+		} else if(org.slplayer.util.DomTools.hasClass(modelDom,"Layer")) {
+			modelDom.setAttribute("data-silex-layer-id",this.generateNewId());
+			this.fixDom(modelDom);
+		} else if(org.slplayer.util.DomTools.hasClass(modelDom,"Page")) this.fixDom(modelDom);
+		var _g1 = 0, _g = modelDom.childNodes.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			var modelChild = modelDom.childNodes[idx];
+			this.prepareForEdit(modelChild);
+		}
+	}
+	,fixDom: function(modelDom) {
+		if(modelDom.getAttribute("data-group-id") == null) modelDom.setAttribute("data-group-id","PublicationGroup");
+	}
+	,fixDomRoot: function(modelDom) {
+		org.slplayer.util.DomTools.addClass(modelDom,"PublicationGroup");
+	}
+	,initViewHtmlDom: function() {
+		haxe.Log.trace("initViewHtmlDom",{ fileName : "PublicationModel.hx", lineNumber : 245, className : "silex.publication.PublicationModel", methodName : "initViewHtmlDom"});
+		this.viewHtmlDom = this.modelHtmlDom.cloneNode(true);
+		org.slplayer.util.DomTools.addCssRules(this.currentData.css,this.viewHtmlDom);
+	}
+	,onData: function(publicationData) {
+		this.currentData = publicationData;
+		this.modelHtmlDom = js.Lib.document.createElement("div");
+		this.headHtmlDom = js.Lib.document.createElement("div");
+		var xml;
+		try {
+			xml = new haxe.xml.Fast(Xml.parse(this.currentData.html).firstChild());
+		} catch( e ) {
+			throw "Error in the HTML data of the publication " + silex.publication.PublicationModel.currentName + ". Note that valid XHTML is expected. Error message: " + Std.string(e);
+		}
+		if(xml.hasNode.resolve("body")) this.modelHtmlDom.innerHTML = xml.node.resolve("body").getInnerHTML(); else if(xml.hasNode.resolve("BODY")) this.modelHtmlDom.innerHTML = xml.node.resolve("BODY").getInnerHTML();
+		if(xml.hasNode.resolve("head")) this.headHtmlDom.innerHTML = xml.node.resolve("head").getInnerHTML(); else if(xml.hasNode.resolve("HEAD")) this.headHtmlDom.innerHTML = xml.node.resolve("HEAD").getInnerHTML();
+		this.prepareForEdit(this.modelHtmlDom);
+		this.initViewHtmlDom();
+		this.dispatchEvent(this.createEvent("onPublicationData"),this.debugInfo);
+		this.initSLPlayerApplication(this.viewHtmlDom);
+	}
+	,onConfig: function(publicationConfig) {
+		this.currentConfig = publicationConfig;
+		this.publicationService.getPublicationData(silex.publication.PublicationModel.currentName,$bind(this,this.onData),$bind(this,this.onError));
+		this.dispatchEvent(this.createEvent("onPublicationConfigChange"),this.debugInfo);
+	}
+	,load: function(name,configData) {
+		var currentBasTag = org.slplayer.util.DomTools.getBaseTag();
+		if(currentBasTag == "./publications/" + silex.publication.PublicationModel.currentName + "/" || currentBasTag == "./publications/" + "admin" + "/") org.slplayer.util.DomTools.setBaseTag("./publications/" + name + "/"); else org.slplayer.util.DomTools.setBaseTag("../" + name + "/");
+		silex.publication.PublicationModel.currentName = name;
+		var pageModel = silex.page.PageModel.getInstance();
+		pageModel.setHoveredItem(null);
+		pageModel.setSelectedItem(null);
+		this.dispatchEvent(this.createEvent("onPublicationChange"),this.debugInfo);
+		if(name == "") haxe.Log.trace("unload",{ fileName : "PublicationModel.hx", lineNumber : 174, className : "silex.publication.PublicationModel", methodName : "load"}); else if(configData != null) this.onConfig(configData); else this.publicationService.getPublicationConfig(name,$bind(this,this.onConfig),$bind(this,this.onError));
+	}
+	,unload: function() {
+		this.load("");
+	}
+	,loadList: function() {
+		this.publicationService.getPublications(null,[silex.publication.PublicationCategory.Publication],$bind(this,this.onListResult),$bind(this,this.onError));
+	}
+	,application: null
+	,viewHtmlDom: null
+	,headHtmlDom: null
+	,modelHtmlDom: null
+	,currentConfig: null
+	,currentData: null
+	,publicationService: null
+	,__class__: silex.publication.PublicationModel
+});
 silex.publication.PublicationService = function(publicationFolder,gatewayUrl) {
 	if(gatewayUrl == null) gatewayUrl = "../../";
 	silex.ServiceBase.call(this,"publicationService",gatewayUrl);
@@ -5740,6 +6707,13 @@ Bool.__ename__ = ["Bool"];
 var Class = $hxClasses.Class = { __name__ : ["Class"]};
 var Enum = { };
 var Void = $hxClasses.Void = { __ename__ : ["Void"]};
+Xml.Element = "element";
+Xml.PCData = "pcdata";
+Xml.CData = "cdata";
+Xml.Comment = "comment";
+Xml.DocType = "doctype";
+Xml.Prolog = "prolog";
+Xml.Document = "document";
 if(typeof document != "undefined") js.Lib.document = document;
 if(typeof window != "undefined") {
 	js.Lib.window = window;
@@ -5782,6 +6756,8 @@ hscript.Parser.readPos = 0;
 hscript.Parser.tokenMin = 0;
 hscript.Parser.tokenMax = 0;
 js.Lib.onerror = null;
+org.slplayer.component.navigation.Layer.EVENT_TYPE_SHOW = "onLayerShow";
+org.slplayer.component.navigation.Layer.EVENT_TYPE_HIDE = "onLayerHide";
 org.slplayer.component.navigation.Page.CLASS_NAME = "Page";
 org.slplayer.component.navigation.Page.CONFIG_NAME_ATTR = "name";
 org.slplayer.component.navigation.Page.CONFIG_INITIAL_PAGE_NAME = "initialPageName";
@@ -5811,8 +6787,30 @@ silex.Silex.CONFIG_PUBLICATION_NAME = "publicationName";
 silex.Silex.CONFIG_PUBLICATION_BODY = "publicationBody";
 silex.Silex.CONFIG_USE_DEEPLINK = "useDeeplink";
 silex.Silex.LOADER_SCRIPT_PATH = "../../loader.js";
+silex.component.ComponentModel.COMPONENT_ID_ATTRIBUTE_NAME = "data-silex-component-id";
+silex.component.ComponentModel.DEBUG_INFO = "ComponentModel class";
+silex.component.ComponentModel.ON_SELECTION_CHANGE = "onComponentSelectionChange";
+silex.component.ComponentModel.ON_HOVER_CHANGE = "onComponentHoverChange";
 silex.interpreter.Interpreter.CONFIG_TAG_DEBUG_MODE_ACTION = "debugModeAction";
 silex.interpreter.Interpreter.BASIC_CONTEXT = { Lib : js.Lib, Math : Math, Timer : haxe.Timer, StringTools : StringTools, DomTools : org.slplayer.util.DomTools, Application : org.slplayer.core.Application, Page : org.slplayer.component.navigation.Page};
+silex.layer.LayerModel.LAYER_ID_ATTRIBUTE_NAME = "data-silex-layer-id";
+silex.layer.LayerModel.DEBUG_INFO = "LayerModel class";
+silex.layer.LayerModel.ON_SELECTION_CHANGE = "onLayerSelectionChange";
+silex.layer.LayerModel.ON_HOVER_CHANGE = "onLayerHoverChange";
+silex.page.PageModel.DEBUG_INFO = "PageModel class";
+silex.page.PageModel.ON_SELECTION_CHANGE = "onPageSelectionChange";
+silex.page.PageModel.ON_HOVER_CHANGE = "onPageHoverChange";
+silex.property.PropertyModel.DEBUG_INFO = "PropertyModel class";
+silex.property.PropertyModel.ON_STYLE_CHANGE = "onStyleChange";
+silex.property.PropertyModel.ON_PROPERTY_CHANGE = "onPropertyChange";
+silex.publication.PublicationModel.DEBUG_INFO = "PublicationModel class";
+silex.publication.PublicationModel.ON_CHANGE = "onPublicationChange";
+silex.publication.PublicationModel.ON_LIST = "onPublicationList";
+silex.publication.PublicationModel.ON_DATA = "onPublicationData";
+silex.publication.PublicationModel.ON_CONFIG = "onPublicationConfigChange";
+silex.publication.PublicationModel.ON_CONFIG_CHANGE = "onPublicationConfigChange";
+silex.publication.PublicationModel.ON_ERROR = "onPublicationError";
+silex.publication.PublicationModel.nextId = 0;
 silex.publication.PublicationService.SERVICE_NAME = "publicationService";
 silex.publication.PublicationService.PUBLICATION_FOLDER = "./publications/";
 silex.publication.PublicationService.BUILDER_PUBLICATION_NAME = "admin";

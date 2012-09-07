@@ -519,102 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "build.hxml",
-			"settings":
-			{
-				"buffer_size": 280,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/index.html",
-			"settings":
-			{
-				"buffer_size": 5360,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/index-ok.html",
-			"settings":
-			{
-				"buffer_size": 2357,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/app.css",
-			"settings":
-			{
-				"buffer_size": 4805,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Layer.hx",
-			"settings":
-			{
-				"buffer_size": 8726,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Page.hx",
-			"settings":
-			{
-				"buffer_size": 9021,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkClosePage.hx",
-			"settings":
-			{
-				"buffer_size": 1462,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/util/DomTools.hx",
-			"settings":
-			{
-				"buffer_size": 10479,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionData.hx",
-			"settings":
-			{
-				"buffer_size": 1157,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkBase.hx",
-			"settings":
-			{
-				"buffer_size": 3876,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionTools.hx",
-			"settings":
-			{
-				"buffer_size": 2481,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkToPage.hx",
-			"settings":
-			{
-				"buffer_size": 1428,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Packages/HaXe/Hxml.sublime-build",
 	"command_palette":
@@ -648,15 +552,25 @@
 	},
 	"file_history":
 	[
+		"/Users/lexa/Dropbox/fdt-workspace/IMApp/src/index.html",
+		"/Users/lexa/Dropbox/fdt-workspace/IMApp/bin/app.css",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Page.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkClosePage.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/util/DomTools.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkBase.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionTools.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Layer.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkToPage.hx",
+		"/Users/lexa/Dropbox/fdt-workspace/IMApp/src/index-ok.html",
+		"/Users/lexa/Dropbox/fdt-workspace/IMApp/build.hxml",
+		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionData.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionHorizontal.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/Transition.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkToPage.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/Silex/src/silex/interpreter/Interpreter.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/bin/app.css",
 		"/Users/lexa/Dropbox/fdt-workspace/Silex/src/silex/publication/PublicationModel.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/com/europaapps/components/EmailForm.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionBase.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Page.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/IMApp/buildJS.hxml",
 		"/Users/lexa/Dropbox/fdt-workspace/IMApp/buildFlash.hxml",
 		"/Users/lexa/Dropbox/fdt-workspace/IMApp/build.nmml",
@@ -696,7 +610,6 @@
 		"/Users/lexa/Dropbox/fdt-workspace/Silex/src/index.html",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/layer/LinkToContext.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/transition/TransitionVertical.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/util/DomTools.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/Silex/src/org/silex/core/DomTools.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/layer/LinkClosePage.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/layer/LinkToPage.hx",
@@ -766,16 +679,7 @@
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/europaapps/components/SWFImporter.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/content-design/Seq.as",
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/lib/org/slplayer/ui/DisplayObject.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/test-nme/test-lex/Export/ios/MyApplication/MyApplication-Entitlements.plist",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/nme.nmml",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/index1.html",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/europaapps/core/DomTools.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/europaapps/components/ClosePopup.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/lib/slplayer/ui/DisplayObject.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/lib/haxe/xml/Parser.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/demo/tool_box_demo/src/lists.html",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/lib/cocktail/core/dom/NodeBase.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/europa-apps/components/LinkToPage.hx"
+		"/Users/lexa/Dropbox/fdt-workspace/test-nme/test-lex/Export/ios/MyApplication/MyApplication-Entitlements.plist"
 	],
 	"find":
 	{
@@ -783,7 +687,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"/Users/lexa/Dropbox/fdt-workspace/Silex/src",
@@ -944,339 +848,8 @@
 	"groups":
 	[
 		{
-			"selected": 8,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "build.hxml",
-					"settings":
-					{
-						"buffer_size": 280,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								254,
-								254
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HaXe/Hxml.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/index.html",
-					"settings":
-					{
-						"buffer_size": 5360,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1346,
-								1346
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/index-ok.html",
-					"settings":
-					{
-						"buffer_size": 2357,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2357,
-								2357
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 421.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "bin/app.css",
-					"settings":
-					{
-						"buffer_size": 4805,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4540,
-								4540
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5300.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Layer.hx",
-					"settings":
-					{
-						"buffer_size": 8726,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7507,
-								7507
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4093.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Page.hx",
-					"settings":
-					{
-						"buffer_size": 9021,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7255,
-								7255
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3287.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkClosePage.hx",
-					"settings":
-					{
-						"buffer_size": 1462,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1435,
-								1435
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 13.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/util/DomTools.hx",
-					"settings":
-					{
-						"buffer_size": 10479,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1253,
-								1253
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 16.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionData.hx",
-					"settings":
-					{
-						"buffer_size": 1157,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								880,
-								894
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkBase.hx",
-					"settings":
-					{
-						"buffer_size": 3876,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2437,
-								2437
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 766.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/transition/TransitionTools.hx",
-					"settings":
-					{
-						"buffer_size": 2481,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1947,
-								1947
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 489.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/link/LinkToPage.hx",
-					"settings":
-					{
-						"buffer_size": 1428,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1243,
-								1243
-							]
-						],
-						"settings":
-						{
-							"haxe-build-id": 0,
-							"syntax": "Packages/HaXe/HaXe.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 13.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
