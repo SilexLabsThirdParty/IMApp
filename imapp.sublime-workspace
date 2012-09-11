@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"targ",
+				"target"
+			],
+			[
+				"doS",
+				"doShow"
+			],
+			[
+				"trans",
+				"transitionData"
+			],
+			[
 				"en",
 				"endStyleName	String"
 			],
@@ -502,23 +514,43 @@
 			[
 				"pr",
 				"private"
-			],
-			[
-				"Arr",
-				"Array"
-			],
-			[
-				"Array",
-				"ArrayStore"
-			],
-			[
-				"cre",
-				"createElement"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "bin/app.css",
+			"settings":
+			{
+				"buffer_size": 4787,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/index.html",
+			"settings":
+			{
+				"buffer_size": 5584,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Layer.hx",
+			"settings":
+			{
+				"buffer_size": 10855,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/util/DomTools.hx",
+			"settings":
+			{
+				"buffer_size": 10479,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "Packages/HaXe/Hxml.sublime-build",
 	"command_palette":
@@ -552,6 +584,7 @@
 	},
 	"file_history":
 	[
+		"/Users/lexa/Dropbox/fdt-workspace/Cocktail/src/cocktail/core/html/HTMLElement.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/IMApp/src/index.html",
 		"/Users/lexa/Dropbox/fdt-workspace/IMApp/bin/app.css",
 		"/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Page.hx",
@@ -678,8 +711,7 @@
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/europaapps/index3.html",
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/europaapps/components/SWFImporter.hx",
 		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/src/content-design/Seq.as",
-		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/lib/org/slplayer/ui/DisplayObject.hx",
-		"/Users/lexa/Dropbox/fdt-workspace/test-nme/test-lex/Export/ios/MyApplication/MyApplication-Entitlements.plist"
+		"/Users/lexa/Dropbox/fdt-workspace/EuropaApps/lib/org/slplayer/ui/DisplayObject.hx"
 	],
 	"find":
 	{
@@ -699,6 +731,66 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"transitionData:Null<TransitionData",
+			"= callback",
+			"callback(",
+			"callback",
+			"function(e)",
+			"transition-opac",
+			"			<AUDIO autoplay=\"autoplay\">\n				<SOURCE type=\"audio/mp3\" src=\"assets/foto.mp3\"></SOURCE>\n			</AUDIO>\n",
+			"addTransitionEvent",
+			"			//",
+			"doSowCallback",
+			"doShowCallback",
+			"hide break",
+			"		// reset transition if it is pending\n",
+			"startTransition",
+			"doShowCallback",
+			"removeTransitionEvent",
+			"doHideCallback",
+			"startTransition",
+			"callback",
+			"startTransition",
+			"doHideCallback",
+			"doShowCallback",
+			"20s",
+			"0.1",
+			"1",
+			"opacity 2s",
+			"2s",
+			"				data-show-start-style=\"page-left\" data-show-end-style=\"page-center\"\n				data-hide-start-style=\"page-center\" data-hide-end-style=\"page-right\"\n			>\n				<IMG class=\"precedent transition-opac\" src=\"assets/precedent.png\"></IMG>	\n",
+			"precedent",
+			"page-left",
+			"page-center",
+			"close",
+			"LinkToPage",
+			"LinkToPage transition-opac",
+			"page-",
+			"page-right",
+			"opacity 2s, ",
+			"opacity",
+			"display",
+			"opacity",
+			"suivant",
+			"ResizeGallery",
+			"span",
+			"precedent",
+			"opacity",
+			"accuei",
+			"opacity",
+			"sidebar",
+			"opacity",
+			"IMG class",
+			"transition-opac",
+			"LinkClosePage",
+			"2",
+			"ease-in-out ",
+			"transition",
+			"	width: 50%;\n	height: 50%;\n",
+			"width 2s, height 2s, ",
+			"width",
+			"transform",
+			"width 2s, ",
 			"trace",
 			"doLater",
 			"-in",
@@ -766,67 +858,7 @@
 			"doShowCallback",
 			"Show",
 			"doTransition",
-			"startTransition",
-			":TransitionData",
-			"TransitionData",
-			"//////////////////////////////////////////////////////\n",
-			"doTransition",
-			"isListeningHide",
-			"hasTransition",
-			"trans",
-			"show",
-			"SHOW",
-			"		",
-			"showStartStyleName",
-			"	public var ",
-			", ",
-			"show",
-			":String",
-			"transition",
-			"data-transition-delay=\"0.2s\"",
-			"LinkToPage",
-			"transition",
-			"TransitionHorizontal",
-			"transition",
-			"navigation",
-			"Link",
-			"LinkToPage",
-			"TransitionHorizontal",
-			"TransitionVertical",
-			"TransitionVertical ",
-			"transition",
-			"\"0\"",
-			"status",
-			"4s",
-			"page2",
-			"page",
-			"styleAttrPosition",
-			"position",
-			"styleAttrDisplay",
-			"LinkToPage previous",
-			"LinkToPage next",
-			"LinkToPage",
-			" data-transition-is-reversed=\"true\"",
-			"Layer",
-			"data-",
-			"ata",
-			"transitionData == null",
-			"open(",
-			"openPage",
-			"XMLHTTPRequest",
-			"XMLHttpRequest",
-			"PublicationModel",
-			"silex.publication.PublicationModel",
-			"Layer",
-			"TransitionHorizontal",
-			"LinkToPage\"data-transition-delay",
-			"TransitionHorizontal",
-			" data-transition-is-reversed=\"true\"",
-			"#",
-			"#if silexClientSide\n",
-			"org.silex",
-			"silex",
-			"org.silex"
+			"startTransition"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -848,8 +880,119 @@
 	"groups":
 	[
 		{
+			"selected": 2,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "bin/app.css",
+					"settings":
+					{
+						"buffer_size": 4787,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								104,
+								119
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/index.html",
+					"settings":
+					{
+						"buffer_size": 5584,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3790,
+								3790
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1592.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/component/navigation/Layer.hx",
+					"settings":
+					{
+						"buffer_size": 10855,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7799,
+								7799
+							]
+						],
+						"settings":
+						{
+							"haxe-build-id": 0,
+							"syntax": "Packages/HaXe/HaXe.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3574.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/lexa/Dropbox/fdt-workspace/SLPlayer/src/org/slplayer/util/DomTools.hx",
+					"settings":
+					{
+						"buffer_size": 10479,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1254,
+								1254
+							]
+						],
+						"settings":
+						{
+							"haxe-build-id": 0,
+							"syntax": "Packages/HaXe/HaXe.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
