@@ -10,8 +10,6 @@
 		<script data-slp-use="org.slplayer.component.navigation.link.LinkClosePage"></script>
 		<script data-slp-use="org.slplayer.component.sound.SoundOn"></script>
 		<script data-slp-use="org.slplayer.component.sound.SoundOff"></script>
-		<script data-slp-use="org.slplayer.component.navigation.transition.TransitionHorizontal"></script>
-		<script data-slp-use="org.slplayer.component.navigation.transition.TransitionVertical"></script>
 		<script data-slp-use="com.intermedia.components.ContextualResizer"></script>
 		<script data-slp-use="com.intermedia.components.ResizeGallery"></script>
  </HEAD>
@@ -19,37 +17,37 @@
 <BODY>
 	<DIV class="pages-container">
 		<!-- NAV -->
-		<A href="#page1" class="LinkToPage next">
-				<IMG class="accueil" src="assets/accueil.png"></IMG>
-			</A>
-			<A href="#thumbs" class="LinkToPage" target="_top">
-				<img class="display" src="assets/miniatures.png"></img>
-			</A>
+		<A href="#page1" class="LinkToPage">
+			<IMG class="accueil transition-opac" src="assets/accueil.png"></IMG>
+		</A>
+		<A href="#thumbs" class="LinkToPage" target="_top">
+			<img class="display transition-opac" src="assets/miniatures.png"></img>
+		</A>
 
-					<!-- THUMBS SLIDER -->
+		<!-- THUMBS SLIDER -->
 		<A class="Page" name="thumbs"></A>
-		<DIV class="Layer TransitionVertical thumbs">
-			<A href="#thumbs" class="LinkClosePage"data-transition-is-reversed="true" >
-				<IMG class="close" src="assets/close.png"></IMG>
+		<DIV class="Layer thumbs">
+			<A href="#thumbs" class="LinkClosePage" >
+				<IMG class="close transition-opac" src="assets/close.png"></IMG>
 			</A>
 			<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/pop.mp3"></SOURCE>
 			</AUDIO>
 			<DIV class="thumb-container" >
-				<A href="#page2 " class="LinkToPage" data-transition-delay="0.2s" >
+				<A href="#page2 " class="LinkToPage" >
 					
-					<IMG src="assets/seychelles-thumb.jpg" class="ContextualResizer"></IMG>
+					<IMG src="assets/seychelles-thumb.jpg" class="ContextualResizer transition-opac"></IMG>
 						
 				</A>
-				<A href="#page3" class="LinkToPage" data-transition-delay="0.2s">
-					<IMG src="assets/maldives-thumb.jpg" class="ContextualResizer"></IMG>		
+				<A href="#page3" class="LinkToPage">
+					<IMG src="assets/maldives-thumb.jpg" class="ContextualResizer transition-opac"></IMG>		
 				</A>
-				<A href="#page4" class="LinkToPage" data-transition-delay="0.2s">
-					<IMG src="assets/rocher.bonifacio-thumb.jpg" class="ContextualResizer"></IMG>		
+				<A href="#page4" class="LinkToPage">
+					<IMG src="assets/rocher.bonifacio-thumb.jpg" class="ContextualResizer transition-opac"></IMG>		
 				</A>
-				<A href="#page5" class="LinkToPage" data-transition-delay="0.2s">
+				<A href="#page5" class="LinkToPage">
 					
-					<IMG src="assets/mer.croatie-thumb.jpg" class="ContextualResizer"></IMG>
+					<IMG src="assets/mer.croatie-thumb.jpg" class="ContextualResizer transition-opac"></IMG>
 					<!-- FIN THUMBS SLIDER -->
 						
 				</A>
@@ -57,7 +55,7 @@
 		</DIV>
 		<!-- PAGE 1(accueil) -->
 		<A class="Page" name="page1"></A>
-		<DIV class="Layer TransitionHorizontal page1">
+		<DIV class="Layer page1">
 			
 			<!-- IMAGE -->
 			<IMG class="big-img" src="assets/ciel.jpg"></IMG>	
@@ -68,17 +66,14 @@
 			</AUDIO>
 
 			<!-- NAV -->
-			<span>
-			<A href="#page2" class="LinkToPage next"data-transition-delay="0.2s">
-				
-				<IMG src="assets/button.png" class="ResizeGallery"></IMG>	
+			<A href="#page2" class="LinkToPage">
+				<IMG src="assets/button.png" class="ResizeGallery transition-opac"></IMG>
 			</A>
-			</span>	
 		</DIV>
 
 		<!-- PAGE 2 -->
 		<A class="Page" name="page2"></A>
-		<DIV class="Layer TransitionHorizontal page2">
+		<DIV class="Layer page2">
 			
 			<!-- IMAGE -->
 			<IMG class="big-img" src="assets/seychelles.jpg"></IMG>	
@@ -89,14 +84,17 @@
 			</AUDIO>
 
 			<!-- NAV -->
-			<A href="#page3" class="LinkToPage next"data-transition-delay="0.2s">
-				<IMG class="suivant" src="assets/suivant.png"></IMG>		
+			<A href="#page3" class="LinkToPage" 
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left"
+				>
+				<IMG class="suivant transition-opac" src="assets/suivant.png"></IMG>		
 			</A>
 		</DIV>
 		
 		<!-- PAGE 3 -->
 		<A class="Page" name="page3"></A>
-		<DIV class="Layer TransitionHorizontal page3">
+		<DIV class="Layer page3">
 			
 			<!-- IMAGE -->
 			<IMG class="big-img" src="assets/maldives.jpg"></IMG>	
@@ -107,55 +105,66 @@
 			</AUDIO>
 			
 			<!-- NAV -->
-			<A href="#page2" class="LinkToPage previous"data-transition-delay="0.2s"data-transition-is-reversed="true">
-				<IMG class="precedent" src="assets/precedent.png"></IMG>
+			<A href="#page2" class="LinkToPage"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right"
+			>
+				<IMG class="precedent transition-opac" src="assets/precedent.png"></IMG>
 			</A>
-			<A href="#page4" class="LinkToPage next"data-transition-delay="0.2s" >
-				<IMG class="suivant" src="assets/suivant.png"></IMG>
+			<A href="#page4" class="LinkToPage"
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left"
+			>
+				<IMG class="suivant transition-opac" src="assets/suivant.png"></IMG>
 						
 			</A>
 		</DIV>
 			
 		<!-- PAGE 4 -->
 		<A class="Page" name="page4"></A>
-		<DIV class="Layer TransitionHorizontal page4">
-				
-				<!-- IMAGE -->
-				<IMG class="big-img" src="assets/rocher.bonifacio.jpg"></IMG>
-				
-				<!-- AUDIO -->
-				<AUDIO autoplay="autoplay">
-					<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
-				</AUDIO>
-				
-				<!-- NAV -->
-				<A href="#page3" class="LinkToPage previous"data-transition-delay="0.2s" data-transition-is-reversed="true">
-					<IMG class="precedent" src="assets/precedent.png"></IMG>	
-				</A>
-				<A href="#page5" class="LinkToPage next"data-transition-delay="0.2s">
-				<IMG class="suivant" src="assets/suivant.png"></IMG>
+		<DIV class="Layer page4">
+			<!-- IMAGE -->
+			<IMG class="big-img" src="assets/rocher.bonifacio.jpg"></IMG>
+			
+			<!-- AUDIO -->
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
+			</AUDIO>
+			
+			<!-- NAV -->
+			<A href="#page3" class="LinkToPage"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right"
+			>
+				<IMG class="precedent transition-opac" src="assets/precedent.png"></IMG>	
+			</A>
+			<A href="#page5" class="LinkToPage" 
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left"
+			>
+				<IMG class="suivant transition-opac" src="assets/suivant.png"></IMG>
 			</A>
 		</DIV>
 		
 		<!-- PAGE 5 -->	
 		<A class="Page" name="page5"></A>
-		<DIV class="Layer TransitionHorizontal page5 ">
-				
-				<!-- IMAGE -->	
-				<IMG class="big-img" src="assets/mer.croatie.jpg"></IMG>	
-				
-				<!-- AUDIO -->
-				<AUDIO autoplay="autoplay">
-					<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
-				</AUDIO>
-				
-				<!-- NAV -->
-				<A href="#page4" class="LinkToPage previous"data-transition-delay="0.2s"  data-transition-is-reversed="true">
-					<IMG class="precedent" src="assets/precedent.png"></IMG>	
-				</A>
+		<DIV class="Layer page5 ">
+			<!-- IMAGE -->	
+			<IMG class="big-img" src="assets/mer.croatie.jpg"></IMG>	
+			
+			<!-- AUDIO -->
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
+			</AUDIO>
+			
+			<!-- NAV -->
+			<A href="#page4" class="LinkToPage"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right"
+			>
+				<IMG class="precedent transition-opac" src="assets/precedent.png"></IMG>	
+			</A>
 		</DIV>
-		
-	
 	</DIV>
 </BODY>
 </HTML>
