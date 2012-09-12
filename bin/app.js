@@ -5718,7 +5718,7 @@ org.slplayer.component.navigation.Page.__name__ = ["org","slplayer","component",
 org.slplayer.component.navigation.Page.__interfaces__ = [org.slplayer.component.group.IGroupable];
 org.slplayer.component.navigation.Page.openPage = function(pageName,isPopup,transitionDataShow,transitionDataHide,slPlayerId,root) {
 	var document = root;
-	if(root == null) document = js.Lib.document;
+	if(root == null) document = js.Lib.document.documentElement;
 	var page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId,document);
 	if(page == null) {
 		page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId);
@@ -5728,7 +5728,7 @@ org.slplayer.component.navigation.Page.openPage = function(pageName,isPopup,tran
 }
 org.slplayer.component.navigation.Page.closePage = function(pageName,transitionData,slPlayerId,root) {
 	var document = root;
-	if(root == null) document = js.Lib.document;
+	if(root == null) document = js.Lib.document.documentElement;
 	var page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId,document);
 	if(page == null) {
 		page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId);
@@ -5738,17 +5738,17 @@ org.slplayer.component.navigation.Page.closePage = function(pageName,transitionD
 }
 org.slplayer.component.navigation.Page.getPageNodes = function(slPlayerId,root) {
 	var document = root;
-	if(root == null) document = js.Lib.document;
+	if(root == null) document = js.Lib.document.documentElement;
 	return document.getElementsByClassName("Page");
 }
 org.slplayer.component.navigation.Page.getLayerNodes = function(pageName,slPlayerId,root) {
 	var document = root;
-	if(root == null) document = js.Lib.document;
+	if(root == null) document = js.Lib.document.documentElement;
 	return document.getElementsByClassName(pageName);
 }
 org.slplayer.component.navigation.Page.getPageByName = function(pageName,slPlayerId,root) {
 	var document = root;
-	if(root == null) document = js.Lib.document;
+	if(root == null) document = js.Lib.document.documentElement;
 	var pages = org.slplayer.component.navigation.Page.getPageNodes(slPlayerId,document);
 	var _g1 = 0, _g = pages.length;
 	while(_g1 < _g) {
@@ -6021,7 +6021,7 @@ org.slplayer.component.navigation.transition.TransitionTools.getTransitionData =
 	return res;
 }
 org.slplayer.component.navigation.transition.TransitionTools.setTransitionProperty = function(rootElement,name,value) {
-	rootElement.style[name] = value;
+	Reflect.setProperty(rootElement.style,name,value);
 	var prefixed = "MozT" + HxOverrides.substr(name,1,null);
 	rootElement.style[prefixed] = value;
 	var prefixed1 = "webkitT" + HxOverrides.substr(name,1,null);
@@ -6099,7 +6099,8 @@ org.slplayer.core.Application.get = function(SLPId) {
 org.slplayer.core.Application.main = function() {
 	var newApp = org.slplayer.core.Application.createApplication();
 	js.Lib.window.onload = function(e) {
-		newApp.init();
+		newApp.initDom();
+		newApp.initComponents();
 	};
 }
 org.slplayer.core.Application.createApplication = function(args) {
@@ -6202,6 +6203,8 @@ org.slplayer.core.Application.prototype = {
 		}
 	}
 	,initComponents: function() {
+		this.initMetaParameters();
+		this.registerComponentsforInit();
 		var _g = 0, _g1 = this.registeredComponents;
 		while(_g < _g1.length) {
 			var rc = _g1[_g];
@@ -6238,16 +6241,13 @@ org.slplayer.core.Application.prototype = {
 	,initMetaParameters: function() {
 		this.metaParameters.set("initialPageName","page1");
 	}
-	,init: function(appendTo) {
+	,initDom: function(appendTo) {
 		this.htmlRootElement = appendTo;
-		if(this.htmlRootElement == null || this.htmlRootElement.nodeType != js.Lib.document.body.nodeType) this.htmlRootElement = js.Lib.document.body;
+		if(this.htmlRootElement == null || this.htmlRootElement.nodeType != js.Lib.document.documentElement.nodeType) this.htmlRootElement = js.Lib.document.documentElement;
 		if(this.htmlRootElement == null) {
-			haxe.Log.trace("ERROR Lib.document.body is null => You are trying to start your application while the document loading is probably not complete yet." + " To fix that, add the noAutoStart option to your slplayer application and control the application startup with: window.onload = function() { myApplication.init() };",{ fileName : "Application.hx", lineNumber : 184, className : "org.slplayer.core.Application", methodName : "init"});
+			haxe.Log.trace("ERROR Lib.document.documentElement is null => You are trying to start your application while the document loading is probably not complete yet." + " To fix that, add the noAutoStart option to your slplayer application and control the application startup with: window.onload = function() { myApplication.init() };",{ fileName : "Application.hx", lineNumber : 188, className : "org.slplayer.core.Application", methodName : "initDom"});
 			return;
 		}
-		this.initMetaParameters();
-		this.registerComponentsforInit();
-		this.initComponents();
 	}
 	,getMetaParameter: function(metaParamKey) {
 		return this.metaParameters.get(metaParamKey);
@@ -6488,6 +6488,8 @@ silex.Silex.main = function() {
 	js.Lib.window.onload = silex.Silex.init;
 }
 silex.Silex.init = function(unused) {
+	var application = org.slplayer.core.Application.createApplication();
+	application.initDom();
 	if(js.Lib.window.location.hash != "" && org.slplayer.util.DomTools.getMeta("useDeeplink") != "false") {
 		var initialPageName = HxOverrides.substr(js.Lib.window.location.hash,1,null);
 		org.slplayer.util.DomTools.setMeta("initialPageName",initialPageName);
@@ -6498,9 +6500,8 @@ silex.Silex.init = function(unused) {
 		js.Lib.document.body.innerHTML = StringTools.htmlUnescape(org.slplayer.util.DomTools.getMeta("publicationBody"));
 		org.slplayer.util.DomTools.setBaseTag("./publications/" + silex.Silex.publicationName + "/");
 	}
-	haxe.Log.trace(" application.init " + Std.string(js.Lib.document.body),{ fileName : "Silex.hx", lineNumber : 125, className : "silex.Silex", methodName : "init"});
-	var application = org.slplayer.core.Application.createApplication();
-	application.init();
+	haxe.Log.trace(" application.init " + Std.string(js.Lib.document.body),{ fileName : "Silex.hx", lineNumber : 128, className : "silex.Silex", methodName : "init"});
+	application.initComponents();
 }
 silex.component = {}
 silex.component.ComponentModel = function() {
@@ -6694,7 +6695,7 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 			var $it0 = publications.keys();
 			while( $it0.hasNext() ) {
 				var publicationName = $it0.next();
-				haxe.Log.trace("Publication " + publicationName,{ fileName : "PublicationModel.hx", lineNumber : 381, className : "silex.publication.PublicationModel", methodName : "onListResult"});
+				haxe.Log.trace("Publication " + publicationName,{ fileName : "PublicationModel.hx", lineNumber : 382, className : "silex.publication.PublicationModel", methodName : "onListResult"});
 				var item = { name : publicationName, configData : publications.get(publicationName)};
 				data.push(item);
 			}
@@ -6703,17 +6704,18 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 	}
 	,onError: function(msg) {
 		this.dispatchEvent(this.createEvent("onPublicationError"),this.debugInfo);
-		haxe.Log.trace("An error occured while loading publications list (" + msg + ")",{ fileName : "PublicationModel.hx", lineNumber : 369, className : "silex.publication.PublicationModel", methodName : "onError"});
+		haxe.Log.trace("An error occured while loading publications list (" + msg + ")",{ fileName : "PublicationModel.hx", lineNumber : 370, className : "silex.publication.PublicationModel", methodName : "onError"});
 		throw "An error occured while loading publications list (" + msg + ")";
 	}
 	,initSLPlayerApplication: function(rootElement) {
 		this.application = org.slplayer.core.Application.createApplication();
-		this.application.init(rootElement);
+		this.application.initDom(rootElement);
+		this.application.initComponents();
 		var initialPageName = org.slplayer.util.DomTools.getMeta("initialPageName",null,this.headHtmlDom);
 		if(initialPageName != null) {
 			var page = org.slplayer.component.navigation.Page.getPageByName(initialPageName,this.application.id,this.viewHtmlDom);
-			if(page != null) silex.page.PageModel.getInstance().setSelectedItem(page); else haxe.Log.trace("Warning: could not resolve default page name (" + initialPageName + ")",{ fileName : "PublicationModel.hx", lineNumber : 336, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
-		} else haxe.Log.trace("Warning: no initial page found",{ fileName : "PublicationModel.hx", lineNumber : 340, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
+			if(page != null) silex.page.PageModel.getInstance().setSelectedItem(page); else haxe.Log.trace("Warning: could not resolve default page name (" + initialPageName + ")",{ fileName : "PublicationModel.hx", lineNumber : 337, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
+		} else haxe.Log.trace("Warning: no initial page found",{ fileName : "PublicationModel.hx", lineNumber : 341, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
 	}
 	,generateNewId: function() {
 		return silex.publication.PublicationModel.nextId++ + "";
