@@ -26,8 +26,9 @@
 	<classpath name="../Cocktail/src/" ></classpath>
 	<classpath name="../SLPlayer/src/" ></classpath>
 	
-	<haxelib name="nme" ></haxelib>
-	<haxelib name='format' />
+	<haxelib name="nme" />
+	<haxelib name="format" />
+	<haxelib name="hscript" />
 	<haxelib name="swf" />
 
 	<ndll name="std" ></ndll>
