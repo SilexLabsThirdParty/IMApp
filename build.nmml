@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
  
-	<app title="My Project" main="silex.Silex" 
-		package="org.silexlabs.silex" version="1.0.0" 
-		company="NME" ></app>
+	<app main="silex.Silex" path="bin" file="App"/>
+	<meta title="IM Booklet" package="fr.intermedia-paris.Slideshow" version="0.0.1" company="Intermedia Paris" />
+	<window width="350" height="750" fps="30" orientation="landscape" resizable="true" unless="target_flash" />
  
-	<window width="1024" height="768" fps="30" orientation="landscape" 
-		resizable="true" ></window>
+	<set name="SWF_VERSION" value="10.2" />
  
 	<compilerflag name="--macro org.slplayer.core.Builder.create( './src/index.html' )" />
 	<compilerflag name="--remap js:cocktail" />
@@ -14,8 +13,6 @@
 	<compilerflag name="-D silexClientSide" />
 	<compilerflag name="-D slpdebug" />
 	<compilerflag name="-D stopOnError" />
-
-	<set name="BUILD_DIR" value="Export" ></set>
 
 	<assets path="bin/assets" rename="assets" include="*" />
 
