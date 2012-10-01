@@ -1152,7 +1152,7 @@ org.slplayer.component.ui.IDisplayObject.prototype = {
 org.slplayer.component.ui.DisplayObject = function(rootElement,SLPId) {
 	this.rootElement = rootElement;
 	org.slplayer.component.SLPlayerComponent.initSLPlayerComponent(this,SLPId);
-	org.slplayer.core.Application.get(this.SLPlayerInstanceId).addAssociatedComponent(rootElement,this);
+	this.getSLPlayer().addAssociatedComponent(rootElement,this);
 };
 $hxClasses["org.slplayer.component.ui.DisplayObject"] = org.slplayer.component.ui.DisplayObject;
 org.slplayer.component.ui.DisplayObject.__name__ = ["org","slplayer","component","ui","DisplayObject"];
@@ -1172,7 +1172,13 @@ org.slplayer.component.ui.DisplayObject.checkFilterOnElt = function(cmpClass,elt
 	throw "cannot instantiate " + Type.getClassName(cmpClass) + " on this type of HTML element: " + elt.nodeName.toLowerCase();
 }
 org.slplayer.component.ui.DisplayObject.prototype = {
-	init: function() {
+	clean: function() {
+	}
+	,init: function() {
+	}
+	,remove: function() {
+		this.clean();
+		this.getSLPlayer().removeAssociatedComponent(this.rootElement,this);
 	}
 	,getSLPlayer: function() {
 		return org.slplayer.component.SLPlayerComponent.getSLPlayer(this);
@@ -5488,10 +5494,7 @@ org.slplayer.component.group.Groupable.startGroupable = function(groupable) {
 	var groupId = groupable.rootElement.getAttribute("data-group-id");
 	if(groupId == null) return;
 	var groupElements = js.Lib.document.getElementsByClassName(groupId);
-	if(groupElements.length < 1) {
-		haxe.Log.trace("WARNING: could not find the group component " + groupId,{ fileName : "IGroupable.hx", lineNumber : 57, className : "org.slplayer.component.group.Groupable", methodName : "startGroupable"});
-		return;
-	}
+	if(groupElements.length < 1) return;
 	if(groupElements.length > 1) throw "ERROR " + groupElements.length + " Group components are declared with the same group id " + groupId;
 	groupable.groupElement = groupElements[0];
 }
@@ -5521,19 +5524,16 @@ org.slplayer.component.navigation.Layer = function(rootElement,SLPId) {
 };
 $hxClasses["org.slplayer.component.navigation.Layer"] = org.slplayer.component.navigation.Layer;
 org.slplayer.component.navigation.Layer.__name__ = ["org","slplayer","component","navigation","Layer"];
+org.slplayer.component.navigation.Layer.getLayerNodes = function(pageName,slPlayerId,root) {
+	var document = root;
+	if(root == null) document = js.Lib.document.documentElement;
+	return document.getElementsByClassName(pageName);
+}
 org.slplayer.component.navigation.Layer.__super__ = org.slplayer.component.ui.DisplayObject;
 org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
 	doHide: function(transitionData,preventTransitions,e) {
-		haxe.Log.trace("doHide " + Std.string(preventTransitions),{ fileName : "Layer.hx", lineNumber : 364, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
-		haxe.Log.trace("remove " + this.rootElement.childNodes.length + " children ---",{ fileName : "Layer.hx", lineNumber : 365, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
-		if(e != null && e.target != this.rootElement) {
-			haxe.Log.trace("End transition event from another html element",{ fileName : "Layer.hx", lineNumber : 367, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
-			return;
-		}
-		if(preventTransitions == false && this.doHideCallback == null) {
-			haxe.Log.trace("Warning: end transition callback already called",{ fileName : "Layer.hx", lineNumber : 371, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
-			return;
-		}
+		if(e != null && e.target != this.rootElement) return;
+		if(preventTransitions == false && this.doHideCallback == null) return;
 		if(preventTransitions == false) {
 			this.endTransition(org.slplayer.component.navigation.transition.TransitionType.hide,transitionData,this.doHideCallback);
 			this.doHideCallback = null;
@@ -5544,17 +5544,18 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 			event.initCustomEvent("onLayerHide",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
 			this.rootElement.dispatchEvent(event);
 		} catch( e1 ) {
-			haxe.Log.trace("Error: could not dispatch event " + Std.string(e1),{ fileName : "Layer.hx", lineNumber : 394, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
+			null;
 		}
 		while(this.rootElement.childNodes.length > 0) {
 			var element = this.rootElement.childNodes[0];
 			this.rootElement.removeChild(element);
 			this.childrenArray.push(element);
 			if(element.tagName != null && (element.tagName.toLowerCase() == "audio" || element.tagName.toLowerCase() == "video")) try {
-				element.pause();
-				element.currentTime = 0;
+				var audioElement = element;
+				audioElement.pause();
+				audioElement.currentTime = 0;
 			} catch( e1 ) {
-				haxe.Log.trace("Layer error: could not access audio or video element",{ fileName : "Layer.hx", lineNumber : 415, className : "org.slplayer.component.navigation.Layer", methodName : "doHide"});
+				null;
 			}
 		}
 		this.rootElement.style.display = "none";
@@ -5562,11 +5563,9 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 	,hide: function(transitionData,preventTransitions) {
 		if(this.status != org.slplayer.component.navigation.LayerStatus.visible && this.status != org.slplayer.component.navigation.LayerStatus.notInit) return;
 		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) {
-			haxe.Log.trace("Warning: hide break previous transition hide",{ fileName : "Layer.hx", lineNumber : 335, className : "org.slplayer.component.navigation.Layer", methodName : "hide"});
 			this.doHideCallback(null);
 			this.removeTransitionEvent(this.doHideCallback);
 		} else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) {
-			haxe.Log.trace("Warning: hide break previous transition show",{ fileName : "Layer.hx", lineNumber : 341, className : "org.slplayer.component.navigation.Layer", methodName : "hide"});
 			this.doShowCallback(null);
 			this.removeTransitionEvent(this.doShowCallback);
 		}
@@ -5581,31 +5580,19 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 		} else this.doHide(transitionData,preventTransitions,null);
 	}
 	,doShow: function(transitionData,preventTransitions,e) {
-		haxe.Log.trace("doShow",{ fileName : "Layer.hx", lineNumber : 303, className : "org.slplayer.component.navigation.Layer", methodName : "doShow"});
-		if(e != null && e.target != this.rootElement) {
-			haxe.Log.trace("End transition event from another html element",{ fileName : "Layer.hx", lineNumber : 305, className : "org.slplayer.component.navigation.Layer", methodName : "doShow"});
-			return;
-		}
-		if(preventTransitions == false && this.doShowCallback == null) {
-			haxe.Log.trace("Warning: end transition callback already called",{ fileName : "Layer.hx", lineNumber : 309, className : "org.slplayer.component.navigation.Layer", methodName : "doShow"});
-			return;
-		}
+		if(e != null && e.target != this.rootElement) return;
+		if(preventTransitions == false && this.doShowCallback == null) return;
 		if(preventTransitions == false) this.endTransition(org.slplayer.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
 		this.doShowCallback = null;
 		this.status = org.slplayer.component.navigation.LayerStatus.visible;
 	}
 	,show: function(transitionData,preventTransitions) {
 		if(preventTransitions == null) preventTransitions = false;
-		if(this.status != org.slplayer.component.navigation.LayerStatus.hidden && this.status != org.slplayer.component.navigation.LayerStatus.notInit) {
-			haxe.Log.trace("Warning: can not show the layer, since it has the status '" + Std.string(this.status) + "'",{ fileName : "Layer.hx", lineNumber : 227, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
-			return;
-		}
+		if(this.status != org.slplayer.component.navigation.LayerStatus.hidden && this.status != org.slplayer.component.navigation.LayerStatus.notInit) return;
 		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) {
-			haxe.Log.trace("Warning: hide break previous transition hide",{ fileName : "Layer.hx", lineNumber : 232, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
 			this.doHideCallback(null);
 			this.removeTransitionEvent(this.doHideCallback);
 		} else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) {
-			haxe.Log.trace("Warning: hide break previous transition show",{ fileName : "Layer.hx", lineNumber : 238, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
 			this.doShowCallback(null);
 			this.removeTransitionEvent(this.doShowCallback);
 		}
@@ -5614,13 +5601,14 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 			var element = this.childrenArray.shift();
 			this.rootElement.appendChild(element);
 			if(element.tagName != null && (element.tagName.toLowerCase() == "audio" || element.tagName.toLowerCase() == "video")) try {
-				if(element.autoplay == true) {
-					element.currentTime = 0;
-					element.play();
+				var audioElement = element;
+				if(audioElement.autoplay == true) {
+					audioElement.currentTime = 0;
+					audioElement.play();
 				}
-				element.muted = org.slplayer.component.sound.SoundOn.isMuted;
+				audioElement.muted = org.slplayer.component.sound.SoundOn.isMuted;
 			} catch( e ) {
-				haxe.Log.trace("Layer error: could not access audio or video element",{ fileName : "Layer.hx", lineNumber : 266, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
+				null;
 			}
 		}
 		try {
@@ -5628,7 +5616,7 @@ org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.compone
 			event.initCustomEvent("onLayerShow",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
 			this.rootElement.dispatchEvent(event);
 		} catch( e ) {
-			haxe.Log.trace("Error: could not dispatch event " + Std.string(e),{ fileName : "Layer.hx", lineNumber : 282, className : "org.slplayer.component.navigation.Layer", methodName : "show"});
+			null;
 		}
 		if(preventTransitions == false) {
 			this.doShowCallback = (function(f,a1,a2) {
@@ -5741,11 +5729,6 @@ org.slplayer.component.navigation.Page.getPageNodes = function(slPlayerId,root) 
 	if(root == null) document = js.Lib.document.documentElement;
 	return document.getElementsByClassName("Page");
 }
-org.slplayer.component.navigation.Page.getLayerNodes = function(pageName,slPlayerId,root) {
-	var document = root;
-	if(root == null) document = js.Lib.document.documentElement;
-	return document.getElementsByClassName(pageName);
-}
 org.slplayer.component.navigation.Page.getPageByName = function(pageName,slPlayerId,root) {
 	var document = root;
 	if(root == null) document = js.Lib.document.documentElement;
@@ -5769,9 +5752,8 @@ org.slplayer.component.navigation.Page.__super__ = org.slplayer.component.ui.Dis
 org.slplayer.component.navigation.Page.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
 	close: function(transitionData,preventCloseByClassName,preventTransitions) {
 		if(preventTransitions == null) preventTransitions = false;
-		haxe.Log.trace("close " + Std.string(transitionData) + ", " + this.name + " - " + Std.string(preventTransitions),{ fileName : "Page.hx", lineNumber : 253, className : "org.slplayer.component.navigation.Page", methodName : "close"});
 		if(preventCloseByClassName == null) preventCloseByClassName = new Array();
-		var nodes = org.slplayer.component.navigation.Page.getLayerNodes(this.name,this.SLPlayerInstanceId,this.groupElement);
+		var nodes = org.slplayer.component.navigation.Layer.getLayerNodes(this.name,this.SLPlayerInstanceId,this.groupElement);
 		var _g1 = 0, _g = nodes.length;
 		while(_g1 < _g) {
 			var idxLayerNode = _g1++;
@@ -5795,11 +5777,24 @@ org.slplayer.component.navigation.Page.prototype = $extend(org.slplayer.componen
 				}
 			}
 		}
+		var nodes1 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href",this.name);
+		var _g1 = 0, _g = nodes1.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes1[idxLayerNode];
+			org.slplayer.util.DomTools.removeClass(element,"page-opened");
+		}
+		var nodes2 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href","#" + this.name);
+		var _g1 = 0, _g = nodes2.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes2[idxLayerNode];
+			org.slplayer.util.DomTools.removeClass(element,"page-opened");
+		}
 	}
 	,doOpen: function(transitionData,preventTransitions) {
 		if(preventTransitions == null) preventTransitions = false;
-		haxe.Log.trace("doOpen " + Std.string(transitionData) + ", " + this.name + " - " + Std.string(preventTransitions),{ fileName : "Page.hx", lineNumber : 231, className : "org.slplayer.component.navigation.Page", methodName : "doOpen"});
-		var nodes = org.slplayer.component.navigation.Page.getLayerNodes(this.name,this.SLPlayerInstanceId,this.groupElement);
+		var nodes = org.slplayer.component.navigation.Layer.getLayerNodes(this.name,this.SLPlayerInstanceId,this.groupElement);
 		var _g1 = 0, _g = nodes.length;
 		while(_g1 < _g) {
 			var idxLayerNode = _g1++;
@@ -5811,10 +5806,23 @@ org.slplayer.component.navigation.Page.prototype = $extend(org.slplayer.componen
 				layerInstance.show(transitionData,preventTransitions);
 			}
 		}
+		var nodes1 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href",this.name);
+		var _g1 = 0, _g = nodes1.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes1[idxLayerNode];
+			org.slplayer.util.DomTools.addClass(element,"page-opened");
+		}
+		var nodes2 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href","#" + this.name);
+		var _g1 = 0, _g = nodes2.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes2[idxLayerNode];
+			org.slplayer.util.DomTools.addClass(element,"page-opened");
+		}
 	}
 	,closeOthers: function(transitionData,preventTransitions) {
 		if(preventTransitions == null) preventTransitions = false;
-		haxe.Log.trace("closeOthers(" + Std.string(transitionData) + ") - " + Std.string(preventTransitions),{ fileName : "Page.hx", lineNumber : 211, className : "org.slplayer.component.navigation.Page", methodName : "closeOthers"});
 		var nodes = org.slplayer.component.navigation.Page.getPageNodes(this.SLPlayerInstanceId,this.groupElement);
 		var _g1 = 0, _g = nodes.length;
 		while(_g1 < _g) {
@@ -5831,13 +5839,17 @@ org.slplayer.component.navigation.Page.prototype = $extend(org.slplayer.componen
 	,open: function(transitionDataShow,transitionDataHide,doCloseOthers,preventTransitions) {
 		if(preventTransitions == null) preventTransitions = false;
 		if(doCloseOthers == null) doCloseOthers = true;
-		haxe.Log.trace("open - " + Std.string(doCloseOthers) + " - name=" + this.name + " - " + Std.string(preventTransitions),{ fileName : "Page.hx", lineNumber : 200, className : "org.slplayer.component.navigation.Page", methodName : "open"});
 		if(doCloseOthers) this.closeOthers(transitionDataHide,preventTransitions);
 		this.doOpen(transitionDataShow,preventTransitions);
 	}
 	,init: function() {
 		org.slplayer.component.ui.DisplayObject.prototype.init.call(this);
-		if(org.slplayer.util.DomTools.getMeta("initialPageName") == this.name || this.groupElement != null && this.groupElement.getAttribute("data-initial-page-name") == this.name) this.open(null,null,true,true);
+		if(this.groupElement == null) this.groupElement = js.Lib.document.body;
+		if(org.slplayer.util.DomTools.getMeta("initialPageName") == this.name || this.groupElement.getAttribute("data-initial-page-name") == this.name) org.slplayer.util.DomTools.doLater((function(f,a1,a2,a3,a4) {
+			return function() {
+				return f(a1,a2,a3,a4);
+			};
+		})($bind(this,this.open),null,null,true,true));
 	}
 	,groupElement: null
 	,name: null
@@ -5851,7 +5863,7 @@ org.slplayer.component.navigation.link.LinkBase = function(rootElement,SLPId) {
 	if(rootElement.getAttribute("href") != null) {
 		this.linkName = StringTools.trim(rootElement.getAttribute("href"));
 		this.linkName = HxOverrides.substr(this.linkName,this.linkName.indexOf("#") + 1,null);
-	} else haxe.Log.trace("Warning: the link has no href atribute (" + Std.string(rootElement) + ")",{ fileName : "LinkBase.hx", lineNumber : 93, className : "org.slplayer.component.navigation.link.LinkBase", methodName : "new"});
+	} else null;
 	if(rootElement.getAttribute("target") != null && StringTools.trim(rootElement.getAttribute("target")) != "") this.targetAttr = StringTools.trim(rootElement.getAttribute("target"));
 };
 $hxClasses["org.slplayer.component.navigation.link.LinkBase"] = org.slplayer.component.navigation.link.LinkBase;
@@ -5984,7 +5996,7 @@ org.slplayer.component.navigation.link.TouchLink.prototype = $extend(org.slplaye
 		}
 	}
 	,onClick: function(e) {
-		haxe.Log.trace("CLICK ",{ fileName : "TouchLink.hx", lineNumber : 123, className : "org.slplayer.component.navigation.link.TouchLink", methodName : "onClick"});
+		null;
 	}
 	,onTouchStart: function(e) {
 		var event = e;
@@ -6037,7 +6049,6 @@ org.slplayer.component.sound.SoundOn = function(rootElement,SLPId) {
 $hxClasses["org.slplayer.component.sound.SoundOn"] = org.slplayer.component.sound.SoundOn;
 org.slplayer.component.sound.SoundOn.__name__ = ["org","slplayer","component","sound","SoundOn"];
 org.slplayer.component.sound.SoundOn.mute = function(doMute) {
-	haxe.Log.trace("Sound mute " + Std.string(doMute),{ fileName : "SoundOn.hx", lineNumber : 54, className : "org.slplayer.component.sound.SoundOn", methodName : "mute"});
 	var audioTags = js.Lib.document.getElementsByTagName("audio");
 	var _g1 = 0, _g = audioTags.length;
 	while(_g1 < _g) {
@@ -6076,7 +6087,6 @@ org.slplayer.component.sound.SoundOff.__name__ = ["org","slplayer","component","
 org.slplayer.component.sound.SoundOff.__super__ = org.slplayer.component.sound.SoundOn;
 org.slplayer.component.sound.SoundOff.prototype = $extend(org.slplayer.component.sound.SoundOn.prototype,{
 	onClick: function(e) {
-		haxe.Log.trace("Sound onClick",{ fileName : "SoundOff.hx", lineNumber : 23, className : "org.slplayer.component.sound.SoundOff", methodName : "onClick"});
 		org.slplayer.component.sound.SoundOn.mute(true);
 	}
 	,__class__: org.slplayer.component.sound.SoundOff
@@ -6086,9 +6096,10 @@ org.slplayer.core.Application = function(id,args) {
 	this.dataObject = args;
 	this.id = id;
 	this.nodesIdSequence = 0;
-	this.registeredComponents = new Array();
+	this.registeredUIComponents = new Array();
+	this.registeredNonUIComponents = new Array();
 	this.nodeToCmpInstances = new Hash();
-	this.metaParameters = new Hash();
+	this.applicationContext = new org.slplayer.core.ApplicationContext();
 };
 $hxClasses["org.slplayer.core.Application"] = org.slplayer.core.Application;
 $hxExpose(org.slplayer.core.Application, "app");
@@ -6116,7 +6127,7 @@ org.slplayer.core.Application.prototype = {
 	getUnconflictedClassTag: function(displayObjectClassName) {
 		var classTag = displayObjectClassName;
 		if(classTag.indexOf(".") != -1) classTag = HxOverrides.substr(classTag,classTag.lastIndexOf(".") + 1,null);
-		var _g = 0, _g1 = this.registeredComponents;
+		var _g = 0, _g1 = this.getRegisteredUIComponents();
 		while(_g < _g1.length) {
 			var rc = _g1[_g];
 			++_g;
@@ -6142,6 +6153,27 @@ org.slplayer.core.Application.prototype = {
 		}
 		return new List();
 	}
+	,removeAllAssociatedComponent: function(node) {
+		var nodeId = node.getAttribute("data-" + "slpid");
+		if(nodeId != null) {
+			node.removeAttribute("data-" + "slpid");
+			var isError = !this.nodeToCmpInstances.remove(nodeId);
+			if(isError) throw "Could not find the node in the associated components list.";
+		} else null;
+	}
+	,removeAssociatedComponent: function(node,cmp) {
+		var nodeId = node.getAttribute("data-" + "slpid");
+		var associatedCmps;
+		if(nodeId != null) {
+			associatedCmps = this.nodeToCmpInstances.get(nodeId);
+			var isError = !associatedCmps.remove(cmp);
+			if(isError) throw "Could not find the component in the node's associated components list.";
+			if(associatedCmps.isEmpty()) {
+				node.removeAttribute("data-" + "slpid");
+				this.nodeToCmpInstances.remove(nodeId);
+			}
+		} else null;
+	}
 	,addAssociatedComponent: function(node,cmp) {
 		var nodeId = node.getAttribute("data-" + "slpid");
 		var associatedCmps;
@@ -6154,112 +6186,147 @@ org.slplayer.core.Application.prototype = {
 		associatedCmps.add(cmp);
 		this.nodeToCmpInstances.set(nodeId,associatedCmps);
 	}
-	,callInitOnComponents: function() {
-		var $it0 = this.nodeToCmpInstances.iterator();
+	,cleanNode: function(node) {
+		if(node.nodeType != js.Lib.document.body.nodeType) return;
+		var comps = this.getAssociatedComponents(node,org.slplayer.component.ui.DisplayObject);
+		var $it0 = comps.iterator();
 		while( $it0.hasNext() ) {
-			var l = $it0.next();
-			var $it1 = l.iterator();
-			while( $it1.hasNext() ) {
-				var c = $it1.next();
-				c.init();
-			}
+			var c = $it0.next();
+			c.remove();
+		}
+		var _g1 = 0, _g = node.childNodes.length;
+		while(_g1 < _g) {
+			var childCnt = _g1++;
+			this.cleanNode(node.childNodes[childCnt]);
 		}
 	}
-	,createComponentsOfType: function(componentClassName,args) {
-		var componentClass = Type.resolveClass(componentClassName);
+	,resolveCompClass: function(classname) {
+		var componentClass = Type.resolveClass(classname);
 		if(componentClass == null) {
-			var rslErrMsg = "ERROR cannot resolve " + componentClassName;
-			throw rslErrMsg;
-			return;
+			throw "ERROR cannot resolve " + classname;
+			null;
 		}
-		if(org.slplayer.component.ui.DisplayObject.isDisplayObject(componentClass)) {
-			var classTag = this.getUnconflictedClassTag(componentClassName);
-			var taggedNodes = new Array();
-			var taggedNodesCollection = this.htmlRootElement.getElementsByClassName(classTag);
-			var _g1 = 0, _g = taggedNodesCollection.length;
-			while(_g1 < _g) {
-				var nodeCnt = _g1++;
-				taggedNodes.push(taggedNodesCollection[nodeCnt]);
-			}
-			if(componentClassName != classTag) {
-				taggedNodesCollection = this.htmlRootElement.getElementsByClassName(componentClassName);
-				var _g1 = 0, _g = taggedNodesCollection.length;
-				while(_g1 < _g) {
-					var nodeCnt = _g1++;
-					taggedNodes.push(taggedNodesCollection[nodeCnt]);
-				}
-			}
-			var _g = 0;
-			while(_g < taggedNodes.length) {
-				var node = taggedNodes[_g];
-				++_g;
-				var newDisplayObject;
-				newDisplayObject = Type.createInstance(componentClass,[node,this.id]);
-			}
-		} else {
-			var cmpInstance = null;
-			if(args != null) cmpInstance = Type.createInstance(componentClass,[args]); else cmpInstance = Type.createInstance(componentClass,[]);
-			if(cmpInstance != null && js.Boot.__instanceof(cmpInstance,org.slplayer.component.ISLPlayerComponent)) cmpInstance.initSLPlayerComponent(this.id);
-		}
+		return componentClass;
 	}
-	,initComponents: function() {
-		this.initMetaParameters();
-		this.registerComponentsforInit();
-		var _g = 0, _g1 = this.registeredComponents;
+	,createNonUIComponents: function() {
+		var _g = 0, _g1 = this.getRegisteredNonUIComponents();
 		while(_g < _g1.length) {
 			var rc = _g1[_g];
 			++_g;
-			this.createComponentsOfType(rc.classname,rc.args);
+			var componentClass = this.resolveCompClass(rc.classname);
+			if(componentClass == null) continue;
+			var cmpInstance = null;
+			if(rc.args != null) cmpInstance = Type.createInstance(componentClass,[rc.args]); else cmpInstance = Type.createInstance(componentClass,[]);
+			if(cmpInstance != null && js.Boot.__instanceof(cmpInstance,org.slplayer.component.ISLPlayerComponent)) cmpInstance.initSLPlayerComponent(this.id);
 		}
-		this.callInitOnComponents();
 	}
-	,registerComponent: function(componentClassName,args) {
-		this.registeredComponents.push({ classname : componentClassName, args : args});
+	,initUIComponents: function(compInstances) {
+		var $it0 = compInstances.iterator();
+		while( $it0.hasNext() ) {
+			var ci = $it0.next();
+			ci.init();
+		}
 	}
-	,registerComponentsforInit: function() {
-		org.slplayer.component.navigation.Layer;
-		this.registerComponent("org.slplayer.component.navigation.Layer");
-		org.slplayer.component.navigation.link.LinkToPage;
-		this.registerComponent("org.slplayer.component.navigation.link.LinkToPage");
-		org.slplayer.component.sound.SoundOff;
-		this.registerComponent("org.slplayer.component.sound.SoundOff");
-		com.intermedia.components.ResizeGallery;
-		this.registerComponent("com.intermedia.components.ResizeGallery");
-		org.slplayer.component.sound.SoundOn;
-		this.registerComponent("org.slplayer.component.sound.SoundOn");
-		org.slplayer.component.navigation.link.LinkClosePage;
-		this.registerComponent("org.slplayer.component.navigation.link.LinkClosePage");
-		org.slplayer.component.group.Group;
-		this.registerComponent("org.slplayer.component.group.Group");
-		org.slplayer.component.navigation.link.TouchLink;
-		this.registerComponent("org.slplayer.component.navigation.link.TouchLink");
-		com.intermedia.components.ContextualResizer;
-		this.registerComponent("com.intermedia.components.ContextualResizer");
-		org.slplayer.component.navigation.Page;
-		this.registerComponent("org.slplayer.component.navigation.Page");
+	,createUIComponents: function(node) {
+		if(node.nodeType != js.Lib.document.body.nodeType) return null;
+		if(node.getAttribute("data-" + "slpid") != null) return null;
+		var compsToInit = new List();
+		if(node.getAttribute("class") != null) {
+			var _g = 0, _g1 = node.getAttribute("class").split(" ");
+			while(_g < _g1.length) {
+				var classValue = [_g1[_g]];
+				++_g;
+				var _g2 = 0, _g3 = this.getRegisteredUIComponents();
+				while(_g2 < _g3.length) {
+					var rc = _g3[_g2];
+					++_g2;
+					var componentClassAttrValues = [this.getUnconflictedClassTag(rc.classname)];
+					if(componentClassAttrValues[0] != rc.classname) componentClassAttrValues.push(rc.classname);
+					if(!Lambda.exists(componentClassAttrValues,(function(classValue) {
+						return function(s) {
+							return s == classValue[0];
+						};
+					})(classValue))) continue;
+					var componentClass = this.resolveCompClass(rc.classname);
+					if(componentClass == null) continue;
+					var newDisplayObject = null;
+					newDisplayObject = Type.createInstance(componentClass,[node,this.id]);
+					compsToInit.add(newDisplayObject);
+				}
+			}
+		}
+		var _g1 = 0, _g = node.childNodes.length;
+		while(_g1 < _g) {
+			var cc = _g1++;
+			var res = this.createUIComponents(node.childNodes[cc]);
+			if(res != null) compsToInit = Lambda.concat(compsToInit,res);
+		}
+		return compsToInit;
 	}
-	,initMetaParameters: function() {
-		this.metaParameters.set("initialPageName","page1");
+	,initNode: function(node) {
+		var comps = this.createUIComponents(node);
+		if(comps == null) return;
+		this.initUIComponents(comps);
+	}
+	,initComponents: function() {
+		this.initNode(this.htmlRootElement);
+		this.createNonUIComponents();
 	}
 	,initDom: function(appendTo) {
 		this.htmlRootElement = appendTo;
 		if(this.htmlRootElement == null || this.htmlRootElement.nodeType != js.Lib.document.documentElement.nodeType) this.htmlRootElement = js.Lib.document.documentElement;
-		if(this.htmlRootElement == null) {
-			haxe.Log.trace("ERROR Lib.document.documentElement is null => You are trying to start your application while the document loading is probably not complete yet." + " To fix that, add the noAutoStart option to your slplayer application and control the application startup with: window.onload = function() { myApplication.init() };",{ fileName : "Application.hx", lineNumber : 188, className : "org.slplayer.core.Application", methodName : "initDom"});
-			return;
-		}
+		if(this.htmlRootElement == null) return;
 	}
-	,getMetaParameter: function(metaParamKey) {
-		return this.metaParameters.get(metaParamKey);
+	,getRegisteredNonUIComponents: function() {
+		return this.applicationContext.registeredNonUIComponents;
 	}
-	,metaParameters: null
-	,registeredComponents: null
+	,registeredNonUIComponents: null
+	,getRegisteredUIComponents: function() {
+		return this.applicationContext.registeredUIComponents;
+	}
+	,registeredUIComponents: null
+	,applicationContext: null
 	,dataObject: null
 	,htmlRootElement: null
 	,nodeToCmpInstances: null
 	,nodesIdSequence: null
 	,id: null
 	,__class__: org.slplayer.core.Application
+	,__properties__: {get_registeredUIComponents:"getRegisteredUIComponents",get_registeredNonUIComponents:"getRegisteredNonUIComponents"}
+}
+org.slplayer.core.ApplicationContext = function() {
+	this.registeredUIComponents = new Array();
+	this.registeredNonUIComponents = new Array();
+	this.registerComponentsforInit();
+};
+$hxClasses["org.slplayer.core.ApplicationContext"] = org.slplayer.core.ApplicationContext;
+org.slplayer.core.ApplicationContext.__name__ = ["org","slplayer","core","ApplicationContext"];
+org.slplayer.core.ApplicationContext.prototype = {
+	registerComponentsforInit: function() {
+		org.slplayer.component.navigation.Layer;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.Layer", args : null});
+		org.slplayer.component.navigation.link.LinkToPage;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.link.LinkToPage", args : null});
+		org.slplayer.component.sound.SoundOff;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.sound.SoundOff", args : null});
+		com.intermedia.components.ResizeGallery;
+		this.registeredUIComponents.push({ classname : "com.intermedia.components.ResizeGallery", args : null});
+		org.slplayer.component.sound.SoundOn;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.sound.SoundOn", args : null});
+		org.slplayer.component.navigation.link.LinkClosePage;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.link.LinkClosePage", args : null});
+		org.slplayer.component.group.Group;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.group.Group", args : null});
+		org.slplayer.component.navigation.link.TouchLink;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.link.TouchLink", args : null});
+		com.intermedia.components.ContextualResizer;
+		this.registeredUIComponents.push({ classname : "com.intermedia.components.ContextualResizer", args : null});
+		org.slplayer.component.navigation.Page;
+		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.Page", args : null});
+	}
+	,registeredNonUIComponents: null
+	,registeredUIComponents: null
+	,__class__: org.slplayer.core.ApplicationContext
 }
 org.slplayer.util = {}
 org.slplayer.util.DomTools = function() { }
@@ -6282,6 +6349,7 @@ org.slplayer.util.DomTools.getElementsByAttribute = function(elt,attr,value) {
 org.slplayer.util.DomTools.getSingleElement = function(rootElement,className,required) {
 	if(required == null) required = true;
 	var domElements = rootElement.getElementsByClassName(className);
+	if(domElements.length > 1) throw "Error: search for the element with class name \"" + className + "\" gave " + domElements.length + " results";
 	if(domElements != null && domElements.length == 1) return domElements[0]; else {
 		if(required) throw "Error: search for the element with class name \"" + className + "\" gave " + domElements.length + " results";
 		return null;
@@ -6290,32 +6358,63 @@ org.slplayer.util.DomTools.getSingleElement = function(rootElement,className,req
 org.slplayer.util.DomTools.getElementBoundingBox = function(htmlDom) {
 	var halfBorderH = 0;
 	var halfBorderV = 0;
-	return { x : Math.floor(htmlDom.offsetLeft - halfBorderH), y : Math.floor(htmlDom.offsetTop - halfBorderV), w : Math.floor(htmlDom.offsetWidth - halfBorderH), h : Math.floor(htmlDom.offsetHeight - halfBorderV)};
+	var scrollTop = 0;
+	var scrollLeft = 0;
+	var element = htmlDom;
+	while(element.parentNode != null && element.tagName.toLowerCase() != "body") {
+		scrollTop -= element.scrollTop;
+		scrollLeft -= element.scrollLeft;
+		element = element.parentNode;
+	}
+	scrollTop -= element.scrollTop;
+	scrollLeft -= element.scrollLeft;
+	return { x : Math.floor(htmlDom.offsetLeft - halfBorderH) + scrollLeft, y : Math.floor(htmlDom.offsetTop - halfBorderV) + scrollTop, w : Math.floor(htmlDom.offsetWidth - halfBorderH), h : Math.floor(htmlDom.offsetHeight - halfBorderV)};
+}
+org.slplayer.util.DomTools.localToGlobal = function(x,y,htmlDom) {
+	var element = htmlDom;
+	while(element.parentNode != null && element.tagName.toLowerCase() != "body") {
+		x -= element.offsetLeft;
+		y -= element.offsetTop;
+		element = element.parentNode;
+	}
+	x -= element.offsetLeft;
+	y -= element.offsetTop;
+	return { x : x, y : y};
 }
 org.slplayer.util.DomTools.inspectTrace = function(obj,callingClass) {
-	haxe.Log.trace("-- " + callingClass + " inspecting element --",{ fileName : "DomTools.hx", lineNumber : 104, className : "org.slplayer.util.DomTools", methodName : "inspectTrace"});
 	var _g = 0, _g1 = Reflect.fields(obj);
 	while(_g < _g1.length) {
 		var prop = _g1[_g];
 		++_g;
-		haxe.Log.trace("- " + prop + " = " + Std.string(Reflect.field(obj,prop)),{ fileName : "DomTools.hx", lineNumber : 107, className : "org.slplayer.util.DomTools", methodName : "inspectTrace"});
+		null;
 	}
-	haxe.Log.trace("-- --",{ fileName : "DomTools.hx", lineNumber : 109, className : "org.slplayer.util.DomTools", methodName : "inspectTrace"});
+	null;
 }
 org.slplayer.util.DomTools.toggleClass = function(element,className) {
 	if(org.slplayer.util.DomTools.hasClass(element,className)) org.slplayer.util.DomTools.removeClass(element,className); else org.slplayer.util.DomTools.addClass(element,className);
 }
 org.slplayer.util.DomTools.addClass = function(element,className) {
 	if(element.className == null) element.className = "";
-	if(!org.slplayer.util.DomTools.hasClass(element,className)) element.className += " " + className;
+	if(!org.slplayer.util.DomTools.hasClass(element,className)) {
+		if(element.className != "") element.className += " ";
+		element.className += className;
+	}
 }
 org.slplayer.util.DomTools.removeClass = function(element,className) {
 	if(element.className == null) return;
-	if(org.slplayer.util.DomTools.hasClass(element,className)) element.className = StringTools.replace(element.className,className,"");
+	if(org.slplayer.util.DomTools.hasClass(element,className)) {
+		var arr = element.className.split(" ");
+		var _g1 = 0, _g = arr.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			if(arr[idx] == className) arr[idx] = "";
+		}
+		element.className = arr.join(" ");
+	}
 }
 org.slplayer.util.DomTools.hasClass = function(element,className) {
 	if(element.className == null) return false;
-	return element.className.indexOf(className) > -1;
+	return Lambda.has(element.className.split(" "),className);
 }
 org.slplayer.util.DomTools.setMeta = function(metaName,metaValue,attributeName) {
 	if(attributeName == null) attributeName = "content";
@@ -6391,10 +6490,7 @@ org.slplayer.util.DomTools.getBaseTag = function() {
 org.slplayer.util.DomTools.setBaseTag = function(href) {
 	var head = js.Lib.document.getElementsByTagName("head")[0];
 	var baseNodes = js.Lib.document.getElementsByTagName("base");
-	if(baseNodes.length > 0) {
-		haxe.Log.trace("Warning: base tag already set in the head section. Current value (\"" + baseNodes[0].getAttribute("href") + "\") will be replaced by \"" + href + "\"",{ fileName : "DomTools.hx", lineNumber : 279, className : "org.slplayer.util.DomTools", methodName : "setBaseTag"});
-		baseNodes[0].setAttribute("href",href);
-	} else {
+	if(baseNodes.length > 0) baseNodes[0].setAttribute("href",href); else {
 		var node = js.Lib.document.createElement("base");
 		node.setAttribute("href",href);
 		node.setAttribute("target","_self");
@@ -6461,6 +6557,20 @@ silex.ModelBase.prototype = {
 	,hoveredItem: null
 	,selectedItem: null
 	,debugInfo: null
+	,getClasses: function(viewHtmlDom,slPlayerId,finalType) {
+		var classes = new Array();
+		if(viewHtmlDom == null) return classes;
+		var className = Type.getClassName(finalType);
+		className = HxOverrides.substr(className,className.lastIndexOf(".") + 1,null);
+		var nodes = viewHtmlDom.getElementsByClassName(className);
+		var _g1 = 0, _g = nodes.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			var instances = org.slplayer.core.Application.get(slPlayerId).getAssociatedComponents(nodes[idx],finalType);
+			if(instances.length == 1) classes.push(instances.first()); else throw "Error: there should be 1 and only 1 instance of " + Type.getClassName(finalType) + " associated with this node, and there is " + instances.length + " (" + nodes[idx].className + ")";
+		}
+		return classes;
+	}
 	,__class__: silex.ModelBase
 	,__properties__: {set_selectedItem:"setSelectedItem",set_hoveredItem:"setHoveredItem"}
 }
@@ -6500,7 +6610,6 @@ silex.Silex.init = function(unused) {
 		js.Lib.document.body.innerHTML = StringTools.htmlUnescape(org.slplayer.util.DomTools.getMeta("publicationBody"));
 		org.slplayer.util.DomTools.setBaseTag("./publications/" + silex.Silex.publicationName + "/");
 	}
-	haxe.Log.trace(" application.init " + Std.string(js.Lib.document.body),{ fileName : "Silex.hx", lineNumber : 128, className : "silex.Silex", methodName : "init"});
 	application.initComponents();
 }
 silex.component = {}
@@ -6516,7 +6625,30 @@ silex.component.ComponentModel.getInstance = function() {
 }
 silex.component.ComponentModel.__super__ = silex.ModelBase;
 silex.component.ComponentModel.prototype = $extend(silex.ModelBase.prototype,{
-	setSelectedItem: function(item) {
+	removeComponent: function(element) {
+		var publicationModel = silex.publication.PublicationModel.getInstance();
+		var viewHtmlDom = element;
+		var modelHtmlDom = publicationModel.getModelFromView(element);
+		publicationModel.application.removeAllAssociatedComponent(viewHtmlDom);
+		viewHtmlDom.parentNode.removeChild(viewHtmlDom);
+		modelHtmlDom.parentNode.removeChild(modelHtmlDom);
+		if(this.selectedItem == viewHtmlDom) this.setSelectedItem(null);
+		this.dispatchEvent(this.createEvent("onComponentListChange"),"ComponentModel class");
+	}
+	,addComponent: function(nodeName,layer,position) {
+		if(position == null) position = 0;
+		var publicationModel = silex.publication.PublicationModel.getInstance();
+		var viewHtmlDom = layer.rootElement;
+		var modelHtmlDom = publicationModel.getModelFromView(layer.rootElement);
+		var newNode = js.Lib.document.createElement(nodeName);
+		if(position > viewHtmlDom.childNodes.length - 1) viewHtmlDom.appendChild(newNode); else viewHtmlDom.insertBefore(newNode,viewHtmlDom.childNodes[position]);
+		publicationModel.prepareForEdit(newNode);
+		var cloneNode = newNode.cloneNode(true);
+		if(position > modelHtmlDom.childNodes.length - 1) modelHtmlDom.appendChild(cloneNode); else modelHtmlDom.insertBefore(cloneNode,modelHtmlDom.childNodes[position]);
+		this.dispatchEvent(this.createEvent("onComponentListChange",newNode),"ComponentModel class");
+		return newNode;
+	}
+	,setSelectedItem: function(item) {
 		return silex.ModelBase.prototype.setSelectedItem.call(this,item);
 	}
 	,__class__: silex.component.ComponentModel
@@ -6558,7 +6690,52 @@ silex.layer.LayerModel.getInstance = function() {
 }
 silex.layer.LayerModel.__super__ = silex.ModelBase;
 silex.layer.LayerModel.prototype = $extend(silex.ModelBase.prototype,{
-	setSelectedItem: function(item) {
+	removeLayer: function(layer,page) {
+		var publicationModel = silex.publication.PublicationModel.getInstance();
+		var viewHtmlDom = layer.rootElement;
+		var modelHtmlDom = publicationModel.getModelFromView(layer.rootElement);
+		org.slplayer.util.DomTools.removeClass(viewHtmlDom,page.name);
+		org.slplayer.util.DomTools.removeClass(modelHtmlDom,page.name);
+		var allPageNodes = org.slplayer.component.navigation.Page.getPageNodes(publicationModel.application.id,publicationModel.viewHtmlDom);
+		var found = false;
+		var _g1 = 0, _g = allPageNodes.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			if(org.slplayer.util.DomTools.hasClass(viewHtmlDom,allPageNodes[idx].getAttribute("name"))) {
+				found = true;
+				break;
+			}
+		}
+		if(layer.rootElement.getAttribute("data-master") == null && found == false) {
+			publicationModel.application.removeAllAssociatedComponent(viewHtmlDom);
+			viewHtmlDom.parentNode.removeChild(viewHtmlDom);
+			modelHtmlDom.parentNode.removeChild(modelHtmlDom);
+		} else layer.hide(null,true);
+		if(this.selectedItem == layer) this.setSelectedItem(null);
+		this.dispatchEvent(this.createEvent("onLayerListChange"),"LayerModel class");
+	}
+	,addLayer: function(page,layerName,position) {
+		if(position == null) position = 0;
+		var publicationModel = silex.publication.PublicationModel.getInstance();
+		var viewHtmlDom = publicationModel.viewHtmlDom;
+		var modelHtmlDom = publicationModel.modelHtmlDom;
+		var newNode = js.Lib.document.createElement("div");
+		newNode.className = "Layer " + page.name;
+		newNode.title = layerName;
+		if(position > viewHtmlDom.childNodes.length - 1) viewHtmlDom.appendChild(newNode); else viewHtmlDom.insertBefore(newNode,viewHtmlDom.childNodes[position]);
+		publicationModel.prepareForEdit(newNode);
+		if(position > modelHtmlDom.childNodes.length - 1) modelHtmlDom.appendChild(newNode.cloneNode(true)); else modelHtmlDom.insertBefore(newNode.cloneNode(true),modelHtmlDom.childNodes[position]);
+		var newLayer = new org.slplayer.component.navigation.Layer(newNode,publicationModel.application.id);
+		newLayer.init();
+		this.dispatchEvent(this.createEvent("onLayerListChange",newLayer),"LayerModel class");
+	}
+	,addMaster: function(layer,page) {
+		org.slplayer.util.DomTools.addClass(layer.rootElement,page.name);
+		org.slplayer.util.DomTools.addClass(silex.publication.PublicationModel.getInstance().getModelFromView(layer.rootElement),page.name);
+		layer.show();
+		this.dispatchEvent(this.createEvent("onLayerListChange",layer),"LayerModel class");
+	}
+	,setSelectedItem: function(item) {
 		var model = silex.component.ComponentModel.getInstance();
 		model.setSelectedItem(null);
 		model.setHoveredItem(null);
@@ -6579,7 +6756,58 @@ silex.page.PageModel.getInstance = function() {
 }
 silex.page.PageModel.__super__ = silex.ModelBase;
 silex.page.PageModel.prototype = $extend(silex.ModelBase.prototype,{
-	setSelectedItem: function(item) {
+	removePage: function(page) {
+		var publicationModel = silex.publication.PublicationModel.getInstance();
+		var viewHtmlDom = publicationModel.viewHtmlDom;
+		var modelHtmlDom = publicationModel.modelHtmlDom;
+		var initialPageName = org.slplayer.util.DomTools.getMeta("initialPageName",null,publicationModel.headHtmlDom);
+		org.slplayer.component.navigation.Page.getPageByName(initialPageName,publicationModel.application.id,viewHtmlDom).open(null,null,true,true);
+		var nodes = org.slplayer.component.navigation.Layer.getLayerNodes(page.name,publicationModel.application.id,viewHtmlDom);
+		var _g1 = 0, _g = nodes.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var layerNode = nodes[0];
+			var layerInstance = publicationModel.application.getAssociatedComponents(layerNode,org.slplayer.component.navigation.Layer).first();
+			silex.layer.LayerModel.getInstance().removeLayer(layerInstance,page);
+		}
+		var pages = org.slplayer.component.navigation.Page.getPageNodes(publicationModel.application.id,modelHtmlDom);
+		var _g1 = 0, _g = pages.length;
+		while(_g1 < _g) {
+			var pageIdx = _g1++;
+			if(pages[pageIdx].getAttribute("name") == page.name) {
+				pages[pageIdx].parentNode.removeChild(pages[pageIdx]);
+				break;
+			}
+		}
+		publicationModel.application.removeAllAssociatedComponent(page.rootElement);
+		page.rootElement.parentNode.removeChild(page.rootElement);
+		if(this.selectedItem == page) this.setSelectedItem(null);
+		this.dispatchEvent(this.createEvent("onPageListChange"),"PageModel class");
+	}
+	,getNewName: function() {
+		return "New Page Name " + Math.round(Math.random() * 999999);
+	}
+	,addPage: function(name) {
+		if(name == null) name = "";
+		if(name == "") name = this.getNewName();
+		var className = name.toLowerCase().split(" ").join("");
+		var publicationModel = silex.publication.PublicationModel.getInstance();
+		var viewHtmlDom = publicationModel.viewHtmlDom;
+		var modelHtmlDom = publicationModel.modelHtmlDom;
+		var newNode = js.Lib.document.createElement("a");
+		newNode.className = "Page";
+		newNode.setAttribute("name",className);
+		newNode.innerHTML = name;
+		modelHtmlDom.appendChild(newNode.cloneNode(true));
+		viewHtmlDom.appendChild(newNode);
+		publicationModel.prepareForEdit(newNode);
+		var newPage = new org.slplayer.component.navigation.Page(newNode,publicationModel.application.id);
+		newPage.init();
+		silex.layer.LayerModel.getInstance().addLayer(newPage,"body");
+		org.slplayer.component.navigation.Page.getPageByName(className,publicationModel.application.id,viewHtmlDom).open(null,null,true,true);
+		this.dispatchEvent(this.createEvent("onPageListChange",newPage),"PageModel class");
+	}
+	,setSelectedItem: function(item) {
 		var model = silex.layer.LayerModel.getInstance();
 		model.setSelectedItem(null);
 		model.setHoveredItem(null);
@@ -6600,23 +6828,9 @@ silex.property.PropertyModel.getInstance = function() {
 }
 silex.property.PropertyModel.__super__ = silex.ModelBase;
 silex.property.PropertyModel.prototype = $extend(silex.ModelBase.prototype,{
-	getModel: function(viewHtmlDom) {
-		if(silex.component.ComponentModel.getInstance().selectedItem == null && silex.layer.LayerModel.getInstance().selectedItem == null) throw "Error: no component nor layer is selected.";
-		var results = null;
-		var id = null;
-		if(silex.component.ComponentModel.getInstance().selectedItem != null) id = silex.component.ComponentModel.getInstance().selectedItem.getAttribute("data-silex-component-id");
-		if(id == null) {
-			if(silex.layer.LayerModel.getInstance().selectedItem != null) {
-				id = silex.layer.LayerModel.getInstance().selectedItem.rootElement.getAttribute("data-silex-layer-id");
-				if(id != null) results = org.slplayer.util.DomTools.getElementsByAttribute(silex.publication.PublicationModel.getInstance().modelHtmlDom,"data-silex-layer-id",id); else throw "Error: the selected layer has not a Silex ID. It should have the ID in the " + "data-silex-layer-id" + " or " + "data-silex-component-id" + " attributes";
-			} else throw "Error: the selected component has not a Silex ID. It should have the ID in the " + "data-silex-component-id" + " attribute";
-		} else results = org.slplayer.util.DomTools.getElementsByAttribute(silex.publication.PublicationModel.getInstance().modelHtmlDom,"data-silex-component-id",id);
-		if(results == null || results.length != 1) throw "Error: 1 and only 1 component or layer is expected to have ID \"" + id + "\".";
-		return results[0];
-	}
-	,getStyle: function(viewHtmlDom,name) {
+	getStyle: function(viewHtmlDom,name) {
 		var value;
-		var modelHtmlDom = this.getModel(viewHtmlDom);
+		var modelHtmlDom = silex.publication.PublicationModel.getInstance().getModelFromView(viewHtmlDom);
 		try {
 			value = Reflect.field(modelHtmlDom.style,name);
 		} catch( e ) {
@@ -6625,7 +6839,7 @@ silex.property.PropertyModel.prototype = $extend(silex.ModelBase.prototype,{
 		return value;
 	}
 	,setStyle: function(viewHtmlDom,name,value) {
-		var modelHtmlDom = this.getModel(viewHtmlDom);
+		var modelHtmlDom = silex.publication.PublicationModel.getInstance().getModelFromView(viewHtmlDom);
 		try {
 			viewHtmlDom.style[name] = value;
 			modelHtmlDom.style[name] = value;
@@ -6637,7 +6851,7 @@ silex.property.PropertyModel.prototype = $extend(silex.ModelBase.prototype,{
 	}
 	,getProperty: function(viewHtmlDom,name) {
 		var value;
-		var modelHtmlDom = this.getModel(viewHtmlDom);
+		var modelHtmlDom = silex.publication.PublicationModel.getInstance().getModelFromView(viewHtmlDom);
 		try {
 			value = Reflect.field(modelHtmlDom,name);
 		} catch( e ) {
@@ -6646,10 +6860,36 @@ silex.property.PropertyModel.prototype = $extend(silex.ModelBase.prototype,{
 		return value;
 	}
 	,setProperty: function(viewHtmlDom,name,value) {
-		var modelHtmlDom = this.getModel(viewHtmlDom);
+		var modelHtmlDom = silex.publication.PublicationModel.getInstance().getModelFromView(viewHtmlDom);
 		try {
 			viewHtmlDom[name] = value;
 			modelHtmlDom[name] = value;
+		} catch( e ) {
+			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
+		}
+		var propertyData = { name : name, value : value, viewHtmlDom : viewHtmlDom, modelHtmlDom : modelHtmlDom};
+		this.dispatchEvent(this.createEvent("onPropertyChange",propertyData),this.debugInfo);
+	}
+	,getAttribute: function(viewHtmlDom,name) {
+		var value;
+		var modelHtmlDom = silex.publication.PublicationModel.getInstance().getModelFromView(viewHtmlDom);
+		try {
+			value = modelHtmlDom.getAttribute(name);
+		} catch( e ) {
+			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
+		}
+		return value;
+	}
+	,setAttribute: function(viewHtmlDom,name,value) {
+		var modelHtmlDom = silex.publication.PublicationModel.getInstance().getModelFromView(viewHtmlDom);
+		try {
+			if(value == null) {
+				viewHtmlDom.removeAttribute(name);
+				modelHtmlDom.removeAttribute(name);
+			} else {
+				viewHtmlDom.setAttribute(name,value);
+				modelHtmlDom.setAttribute(name,value);
+			}
 		} catch( e ) {
 			throw "Error: the selected element has no field " + name + " or there was an error (" + Std.string(e) + ")";
 		}
@@ -6686,16 +6926,75 @@ silex.publication.PublicationModel.getInstance = function() {
 	if(silex.publication.PublicationModel.instance == null) silex.publication.PublicationModel.instance = new silex.publication.PublicationModel();
 	return silex.publication.PublicationModel.instance;
 }
-silex.publication.PublicationModel.currentName = null;
 silex.publication.PublicationModel.__super__ = silex.ModelBase;
 silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype,{
-	onListResult: function(publications) {
+	onSaveSuccess: function() {
+		this.dispatchEvent(this.createEvent("onPublicationSaveSuccess"),this.debugInfo);
+		null;
+	}
+	,onSaveError: function(msg) {
+		this.dispatchEvent(this.createEvent("onPublicationSaveError"),this.debugInfo);
+		throw "An error occured while saving the publication (" + msg + ")";
+	}
+	,prepareForSave: function(modelDom) {
+		if(modelDom.nodeType != 1) return;
+		modelDom.removeAttribute("data-silex-component-id");
+		modelDom.removeAttribute("data-silex-layer-id");
+		var _g1 = 0, _g = modelDom.childNodes.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			var modelChild = modelDom.childNodes[idx];
+			this.prepareForSave(modelChild);
+		}
+	}
+	,doSavePublicationData: function(successCallback) {
+		if(successCallback == null) successCallback = $bind(this,this.onSaveSuccess);
+		var tempModelHead = this.headHtmlDom.cloneNode(true);
+		var tempModelBody = this.modelHtmlDom.cloneNode(true);
+		this.prepareForSave(tempModelBody);
+		this.currentData.html = "<HTML>\r\n\t\t<HEAD>\r\n\t\t\t" + tempModelHead.innerHTML + "\r\n\t\t</HEAD>\r\n\t\t<BODY>\r\n\t\t\t" + tempModelBody.innerHTML + "\r\n\t\t</BODY>\r\n\t</HTML>\r\n\t\t";
+		this.publicationService.setPublicationData(this.currentName,this.currentData,successCallback,$bind(this,this.onSaveError));
+	}
+	,save: function(successCallback) {
+		if(this.currentData == null) throw "Error: can not save the publication because no publication is loaded.";
+		var pageModel = silex.page.PageModel.getInstance();
+		pageModel.setHoveredItem(null);
+		pageModel.setSelectedItem(null);
+		this.dispatchEvent(this.createEvent("onPublicationSaveStart"),this.debugInfo);
+		this.publicationService.setPublicationConfig(this.currentName,this.currentConfig,(function(f,a1) {
+			return function() {
+				return f(a1);
+			};
+		})($bind(this,this.doSavePublicationData),successCallback),$bind(this,this.onSaveError));
+	}
+	,saveAs: function(newName) {
+		if(this.currentData == null) throw "Error: can not save the publication because no publication is loaded.";
+		var oldName = this.currentName;
+		this.currentName = newName;
+		this.publicationService.duplicate(oldName,newName,$bind(this,this.onSaveSuccess),$bind(this,this.onSaveError));
+	}
+	,doSaveACopy: function(newName) {
+		if(this.currentData == null) throw "Error: can not save the publication because no publication is loaded.";
+		this.publicationService.duplicate(this.currentName,newName,(function(f) {
+			return function() {
+				return f();
+			};
+		})($bind(this,this.save)),$bind(this,this.onSaveError));
+	}
+	,saveACopy: function(newName) {
+		if(this.currentData == null) throw "Error: can not save the publication because no publication is loaded.";
+		this.save((function(f,a1) {
+			return function() {
+				return f(a1);
+			};
+		})($bind(this,this.doSaveACopy),newName));
+	}
+	,onListResult: function(publications) {
 		var data = new Array();
 		if(publications != null) {
 			var $it0 = publications.keys();
 			while( $it0.hasNext() ) {
 				var publicationName = $it0.next();
-				haxe.Log.trace("Publication " + publicationName,{ fileName : "PublicationModel.hx", lineNumber : 382, className : "silex.publication.PublicationModel", methodName : "onListResult"});
 				var item = { name : publicationName, configData : publications.get(publicationName)};
 				data.push(item);
 			}
@@ -6704,7 +7003,6 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 	}
 	,onError: function(msg) {
 		this.dispatchEvent(this.createEvent("onPublicationError"),this.debugInfo);
-		haxe.Log.trace("An error occured while loading publications list (" + msg + ")",{ fileName : "PublicationModel.hx", lineNumber : 370, className : "silex.publication.PublicationModel", methodName : "onError"});
 		throw "An error occured while loading publications list (" + msg + ")";
 	}
 	,initSLPlayerApplication: function(rootElement) {
@@ -6714,14 +7012,14 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 		var initialPageName = org.slplayer.util.DomTools.getMeta("initialPageName",null,this.headHtmlDom);
 		if(initialPageName != null) {
 			var page = org.slplayer.component.navigation.Page.getPageByName(initialPageName,this.application.id,this.viewHtmlDom);
-			if(page != null) silex.page.PageModel.getInstance().setSelectedItem(page); else haxe.Log.trace("Warning: could not resolve default page name (" + initialPageName + ")",{ fileName : "PublicationModel.hx", lineNumber : 337, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
-		} else haxe.Log.trace("Warning: no initial page found",{ fileName : "PublicationModel.hx", lineNumber : 341, className : "silex.publication.PublicationModel", methodName : "initSLPlayerApplication"});
+			if(page != null) silex.page.PageModel.getInstance().setSelectedItem(page); else null;
+		} else null;
 	}
 	,generateNewId: function() {
 		return silex.publication.PublicationModel.nextId++ + "";
 	}
 	,prepareForEdit: function(modelDom) {
-		if(modelDom.className == null) return;
+		if(modelDom.nodeType != 1) return;
 		if(modelDom.parentNode == null) this.fixDomRoot(modelDom); else if(org.slplayer.util.DomTools.hasClass(modelDom.parentNode,"Layer")) {
 			modelDom.setAttribute("data-silex-component-id",this.generateNewId());
 			this.fixDom(modelDom);
@@ -6743,22 +7041,30 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 		org.slplayer.util.DomTools.addClass(modelDom,"PublicationGroup");
 	}
 	,initViewHtmlDom: function() {
-		haxe.Log.trace("initViewHtmlDom",{ fileName : "PublicationModel.hx", lineNumber : 245, className : "silex.publication.PublicationModel", methodName : "initViewHtmlDom"});
 		this.viewHtmlDom = this.modelHtmlDom.cloneNode(true);
+		this.viewHtmlDom.className = "silex-view";
 		org.slplayer.util.DomTools.addCssRules(this.currentData.css,this.viewHtmlDom);
 	}
 	,onData: function(publicationData) {
 		this.currentData = publicationData;
 		this.modelHtmlDom = js.Lib.document.createElement("div");
 		this.headHtmlDom = js.Lib.document.createElement("div");
-		var xml;
-		try {
-			xml = new haxe.xml.Fast(Xml.parse(this.currentData.html).firstChild());
-		} catch( e ) {
-			throw "Error in the HTML data of the publication " + silex.publication.PublicationModel.currentName + ". Note that valid XHTML is expected. Error message: " + Std.string(e);
+		var headOpenIdx = this.currentData.html.indexOf("<head");
+		if(headOpenIdx == -1) headOpenIdx = this.currentData.html.indexOf("<HEAD");
+		var headCloseIdx = this.currentData.html.indexOf("</head>");
+		if(headCloseIdx == -1) headCloseIdx = this.currentData.html.indexOf("</HEAD>");
+		var bodyOpenIdx = this.currentData.html.indexOf("<body");
+		if(bodyOpenIdx == -1) bodyOpenIdx = this.currentData.html.indexOf("<BODY");
+		var bodyCloseIdx = this.currentData.html.indexOf("</body>");
+		if(bodyCloseIdx == -1) bodyCloseIdx = this.currentData.html.indexOf("</BODY>");
+		if(headOpenIdx > -1 && headCloseIdx > -1) {
+			var closingTagIdx = this.currentData.html.indexOf(">",headOpenIdx);
+			this.headHtmlDom.innerHTML = this.currentData.html.substring(closingTagIdx + 1,headCloseIdx);
 		}
-		if(xml.hasNode.resolve("body")) this.modelHtmlDom.innerHTML = xml.node.resolve("body").getInnerHTML(); else if(xml.hasNode.resolve("BODY")) this.modelHtmlDom.innerHTML = xml.node.resolve("BODY").getInnerHTML();
-		if(xml.hasNode.resolve("head")) this.headHtmlDom.innerHTML = xml.node.resolve("head").getInnerHTML(); else if(xml.hasNode.resolve("HEAD")) this.headHtmlDom.innerHTML = xml.node.resolve("HEAD").getInnerHTML();
+		if(bodyOpenIdx > -1 && bodyCloseIdx > -1) {
+			var closingTagIdx = this.currentData.html.indexOf(">",bodyOpenIdx);
+			this.modelHtmlDom.innerHTML = this.currentData.html.substring(closingTagIdx + 1,bodyCloseIdx);
+		}
 		this.prepareForEdit(this.modelHtmlDom);
 		this.initViewHtmlDom();
 		this.dispatchEvent(this.createEvent("onPublicationData"),this.debugInfo);
@@ -6766,18 +7072,39 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 	}
 	,onConfig: function(publicationConfig) {
 		this.currentConfig = publicationConfig;
-		this.publicationService.getPublicationData(silex.publication.PublicationModel.currentName,$bind(this,this.onData),$bind(this,this.onError));
+		this.publicationService.getPublicationData(this.currentName,$bind(this,this.onData),$bind(this,this.onError));
 		this.dispatchEvent(this.createEvent("onPublicationConfigChange"),this.debugInfo);
 	}
 	,load: function(name,configData) {
 		var currentBasTag = org.slplayer.util.DomTools.getBaseTag();
-		if(currentBasTag == "./publications/" + silex.publication.PublicationModel.currentName + "/" || currentBasTag == "./publications/" + "admin" + "/") org.slplayer.util.DomTools.setBaseTag("./publications/" + name + "/"); else org.slplayer.util.DomTools.setBaseTag("../" + name + "/");
-		silex.publication.PublicationModel.currentName = name;
+		if(currentBasTag == "./publications/" + this.currentName + "/" || currentBasTag == "./publications/" + "admin" + "/") org.slplayer.util.DomTools.setBaseTag("./publications/" + name + "/"); else org.slplayer.util.DomTools.setBaseTag("../" + name + "/");
+		this.currentName = name;
 		var pageModel = silex.page.PageModel.getInstance();
 		pageModel.setHoveredItem(null);
 		pageModel.setSelectedItem(null);
 		this.dispatchEvent(this.createEvent("onPublicationChange"),this.debugInfo);
-		if(name == "") haxe.Log.trace("unload",{ fileName : "PublicationModel.hx", lineNumber : 174, className : "silex.publication.PublicationModel", methodName : "load"}); else if(configData != null) this.onConfig(configData); else this.publicationService.getPublicationConfig(name,$bind(this,this.onConfig),$bind(this,this.onError));
+		if(name == "") {
+			this.currentConfig = null;
+			this.currentData = null;
+			this.viewHtmlDom = null;
+			this.modelHtmlDom = null;
+		} else if(configData != null) this.onConfig(configData); else this.publicationService.getPublicationConfig(name,$bind(this,this.onConfig),$bind(this,this.onError));
+	}
+	,getModelFromView: function(viewHtmlDom) {
+		if(viewHtmlDom == null) return null;
+		try {
+			var results = null;
+			var id = viewHtmlDom.getAttribute("data-silex-component-id");
+			if(id != null) results = org.slplayer.util.DomTools.getElementsByAttribute(silex.publication.PublicationModel.getInstance().modelHtmlDom,"data-silex-component-id",id); else {
+				id = viewHtmlDom.getAttribute("data-silex-layer-id");
+				if(id != null) results = org.slplayer.util.DomTools.getElementsByAttribute(silex.publication.PublicationModel.getInstance().modelHtmlDom,"data-silex-layer-id",id); else throw "Error: the selected layer has not a Silex ID. It should have the ID in the " + "data-silex-layer-id" + " or " + "data-silex-component-id" + " attributes";
+			}
+			if(results == null || results.length != 1) throw "Error: 1 and only 1 component or layer is expected to have ID \"" + id + "\" (" + Std.string(results) + ").";
+			return results[0];
+		} catch( e ) {
+			throw "Error, could not retrieve the model for element " + Std.string(viewHtmlDom) + " (" + Std.string(e) + ").";
+		}
+		return null;
 	}
 	,unload: function() {
 		this.load("");
@@ -6791,6 +7118,7 @@ silex.publication.PublicationModel.prototype = $extend(silex.ModelBase.prototype
 	,modelHtmlDom: null
 	,currentConfig: null
 	,currentData: null
+	,currentName: null
 	,publicationService: null
 	,__class__: silex.publication.PublicationModel
 });
@@ -6826,6 +7154,9 @@ silex.publication.PublicationService.prototype = $extend(silex.ServiceBase.proto
 	}
 	,getPublicationData: function(publicationName,onResult,onError) {
 		this.callServerMethod("getPublicationData",[publicationName,this.publicationFolder],onResult,onError);
+	}
+	,setPublicationConfig: function(publicationName,publicationConfigData,onResult,onError) {
+		this.callServerMethod("setPublicationConfig",[publicationName,publicationConfigData,this.publicationFolder],onResult,onError);
 	}
 	,getPublicationConfig: function(publicationName,onResult,onError) {
 		this.callServerMethod("getPublicationConfig",[publicationName,this.publicationFolder],onResult,onError);
@@ -6919,10 +7250,12 @@ hscript.Parser.tokenMax = 0;
 js.Lib.onerror = null;
 org.slplayer.component.navigation.Layer.EVENT_TYPE_SHOW = "onLayerShow";
 org.slplayer.component.navigation.Layer.EVENT_TYPE_HIDE = "onLayerHide";
+org.slplayer.component.navigation.Page.__meta__ = { obj : { tagNameFilter : ["a"]}};
 org.slplayer.component.navigation.Page.CLASS_NAME = "Page";
 org.slplayer.component.navigation.Page.CONFIG_NAME_ATTR = "name";
 org.slplayer.component.navigation.Page.CONFIG_INITIAL_PAGE_NAME = "initialPageName";
 org.slplayer.component.navigation.Page.ATTRIBUTE_INITIAL_PAGE_NAME = "data-initial-page-name";
+org.slplayer.component.navigation.Page.OPENED_PAGE_CSS_CLASS = "page-opened";
 org.slplayer.component.navigation.link.LinkBase.__meta__ = { obj : { tagNameFilter : ["a"]}};
 org.slplayer.component.navigation.link.LinkBase.CONFIG_PAGE_NAME_ATTR = "href";
 org.slplayer.component.navigation.link.LinkBase.CONFIG_TARGET_ATTR = "target";
@@ -6950,20 +7283,25 @@ silex.ServiceBase.DEFAULT_GATEWAY_URL = "../../";
 silex.Silex.CONFIG_PUBLICATION_NAME = "publicationName";
 silex.Silex.CONFIG_PUBLICATION_BODY = "publicationBody";
 silex.Silex.CONFIG_USE_DEEPLINK = "useDeeplink";
-silex.Silex.LOADER_SCRIPT_PATH = "../../loader.js";
+silex.Silex.LOADER_SCRIPT_PATH = "../../libs/silex/loader.js";
 silex.component.ComponentModel.COMPONENT_ID_ATTRIBUTE_NAME = "data-silex-component-id";
 silex.component.ComponentModel.DEBUG_INFO = "ComponentModel class";
 silex.component.ComponentModel.ON_SELECTION_CHANGE = "onComponentSelectionChange";
 silex.component.ComponentModel.ON_HOVER_CHANGE = "onComponentHoverChange";
+silex.component.ComponentModel.ON_LIST_CHANGE = "onComponentListChange";
 silex.interpreter.Interpreter.CONFIG_TAG_DEBUG_MODE_ACTION = "debugModeAction";
 silex.interpreter.Interpreter.BASIC_CONTEXT = { Lib : js.Lib, Math : Math, Timer : haxe.Timer, StringTools : StringTools, DomTools : org.slplayer.util.DomTools, Application : org.slplayer.core.Application, Page : org.slplayer.component.navigation.Page, Layer : org.slplayer.component.navigation.Layer};
 silex.layer.LayerModel.LAYER_ID_ATTRIBUTE_NAME = "data-silex-layer-id";
 silex.layer.LayerModel.DEBUG_INFO = "LayerModel class";
 silex.layer.LayerModel.ON_SELECTION_CHANGE = "onLayerSelectionChange";
 silex.layer.LayerModel.ON_HOVER_CHANGE = "onLayerHoverChange";
+silex.layer.LayerModel.ON_LIST_CHANGE = "onLayerListChange";
+silex.layer.LayerModel.MASTER_PROPERTY_NAME = "data-master";
 silex.page.PageModel.DEBUG_INFO = "PageModel class";
 silex.page.PageModel.ON_SELECTION_CHANGE = "onPageSelectionChange";
 silex.page.PageModel.ON_HOVER_CHANGE = "onPageHoverChange";
+silex.page.PageModel.ON_LIST_CHANGE = "onPageListChange";
+silex.page.PageModel.NEW_LAYER_NAME = "body";
 silex.property.PropertyModel.DEBUG_INFO = "PropertyModel class";
 silex.property.PropertyModel.ON_STYLE_CHANGE = "onStyleChange";
 silex.property.PropertyModel.ON_PROPERTY_CHANGE = "onPropertyChange";
@@ -6974,6 +7312,9 @@ silex.publication.PublicationModel.ON_DATA = "onPublicationData";
 silex.publication.PublicationModel.ON_CONFIG = "onPublicationConfigChange";
 silex.publication.PublicationModel.ON_CONFIG_CHANGE = "onPublicationConfigChange";
 silex.publication.PublicationModel.ON_ERROR = "onPublicationError";
+silex.publication.PublicationModel.ON_SAVE_START = "onPublicationSaveStart";
+silex.publication.PublicationModel.ON_SAVE_SUCCESS = "onPublicationSaveSuccess";
+silex.publication.PublicationModel.ON_SAVE_ERROR = "onPublicationSaveError";
 silex.publication.PublicationModel.nextId = 0;
 silex.publication.PublicationService.SERVICE_NAME = "publicationService";
 silex.publication.PublicationService.PUBLICATION_FOLDER = "./publications/";

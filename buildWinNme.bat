@@ -1,0 +1,1 @@
+nme test build.nmml windows -debug
