@@ -3,7 +3,7 @@ ECHO.
 SET target=Dev
 SET config_file=config.xml
 SET input_files_path=icons ./icons/icon_114.png splashScreens ./splashScreens/splashScreen-640x960.png config.xml index.html ../../bin/app.css ../../bin/assets ../../bin/app.js
-SET output_file_path=WebApp_PhoneGapBuild_%target%.zip
+SET output_file_path=PhoneGapBuild_%target%.zip
 
 cls
 

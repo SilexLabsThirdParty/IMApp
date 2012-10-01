@@ -1,9 +1,5 @@
-
---next
-
 -swf9 bin/app.swf
 -swf-version 10.2
---remap js:cocktail
 -cp src/
 -cp ../Silex/src/
 -cp ../Cocktail/src/
@@ -15,3 +11,4 @@
 -D silexClientSide
 --no-traces
 -lib hscript
+--remap js:cocktail

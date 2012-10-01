@@ -9,10 +9,8 @@
 		resizable="true" ></window>
  
 	<compilerflag name="--macro org.slplayer.core.Builder.create( './src/index.html' )" />
-<!--
--->
 	<compilerflag name="--remap js:cocktail" />
-
+	
 	<compilerflag name="-D silexClientSide" />
 	<compilerflag name="-D slpdebug" />
 	<compilerflag name="-D stopOnError" />
