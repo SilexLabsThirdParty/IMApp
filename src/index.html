@@ -12,8 +12,8 @@
 		<script data-slp-use="org.slplayer.component.navigation.link.TouchLink"></script>
 		<script data-slp-use="org.slplayer.component.sound.SoundOn"></script>
 		<script data-slp-use="org.slplayer.component.sound.SoundOff"></script>
-		<script data-slp-use="com.intermedia.components.ContextualResizer"></script>
-		<script data-slp-use="com.intermedia.components.ResizeGallery"></script>
+		<!--<script data-slp-use="com.intermedia.components.ContextualResizer"></script>
+		<!--<script data-slp-use="com.intermedia.components.ResizeGallery"></script>-->
  </HEAD>
 	
 <BODY>
@@ -21,10 +21,10 @@
 		
 		<!-- NAV -->
 		<A href="#page1" class="LinkToPage">
-			<IMG class="accueil transition-opac" src="assets/accueil.png"></IMG>
+			<IMG class="accueil transition-opac" alt="accueil" src="assets/accueil.png" width="110" height="50"></IMG>
 		</A>
 		<A href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down">
-			<img class="display transition-opac" src="assets/miniatures.png"></img>
+			<img class="thumbs-display transition-opac" src="assets/miniatures.png"></img>
 		</A>
 
 		<!-- THUMBS SLIDER -->
@@ -36,7 +36,7 @@
 			<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/pop.mp3"></SOURCE>
 			</AUDIO>
-			<DIV class="thumb-container" >
+			<!--<DIV class="thumb-container" >
 				<A href="#page2 " class="LinkToPage" >
 					<IMG src="assets/seychelles-thumb.jpg" class="ContextualResizer transition-opac"></IMG>	
 				</A>
@@ -48,6 +48,20 @@
 				</A>
 				<A href="#page5" class="LinkToPage">
 					<IMG src="assets/mer.croatie-thumb.jpg" class="ContextualResizer transition-opac"></IMG>
+				</A>
+			</DIV>-->
+			<DIV class="thumb-container" >
+				<A href="#page2 " class="LinkToPage" >
+					<IMG src="assets/seychelles-thumb.jpg" class="transition-opac"></IMG>	
+				</A>
+				<A href="#page3" class="LinkToPage">
+					<IMG src="assets/maldives-thumb.jpg" class="transition-opac"></IMG>		
+				</A>
+				<A href="#page4" class="LinkToPage">
+					<IMG src="assets/rocher.bonifacio-thumb.jpg" class="transition-opac"></IMG>		
+				</A>
+				<A href="#page5" class="LinkToPage">
+					<IMG src="assets/mer.croatie-thumb.jpg" class="transition-opac"></IMG>
 				</A>
 			</DIV>
 		</DIV>
@@ -65,7 +79,8 @@
 
 			<!-- NAV -->
 			<A href="#page2" class="LinkToPage">
-				<IMG src="assets/button.png" class="ResizeGallery transition-opac"></IMG>
+				<!--<IMG src="assets/button.png" class="ResizeGallery transition-opac"></IMG>-->
+				<IMG src="assets/button.png" class="transition-opac gallery-display"></IMG>
 			</A>
 		</DIV>
 

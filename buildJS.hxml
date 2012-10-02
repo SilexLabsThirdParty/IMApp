@@ -1,15 +1,13 @@
 -js bin/app.js
 
 -cp src/
--cp ../Silex/src/
--cp ../SLPlayer/src/
 -cp ../Cocktail/src/
--main silex.Silex
+-cp ../SLPlayer/src/
+-main org.slplayer.core.Application
 --macro org.slplayer.core.Builder.create('./src/index.html')
 #-D slpdebug
 -D disableEmbedHtml
 -D stopOnError
 -D silexClientSide
---no-traces
 -lib hscript
-
+--no-traces
