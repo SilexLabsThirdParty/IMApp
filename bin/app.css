@@ -23,12 +23,12 @@ body{
 	/*max-height:750px;
 	max-width: 1000px;*/
 }
-.transition-opac{
+/*.transition-opac{
 	transition: opacity ease-in-out .2s;
 	-moz-transition: opacity ease-in-out .2s;
 	-webkit-transition: opacity ease-in-out .2s;
 	-o-transition: opacity ease-in-out .2s;
-}
+}*/
 .big-img{
 	z-index: 0;
 	position: absolute;
@@ -61,23 +61,27 @@ body{
 .page-right, .page-left, .page-center{
 	position:absolute;
 	z-index: 0;
-	transition: ease-in-out opacity 2s, left 2s;
+	transition: ease-out left 0.4s;
+	-moz-transition: ease-out left 0.4s;
+	-webkit-transition: ease-out left 0.4s;
+	-o-transition: ease-out left 0.4s;
+	/*transition: ease-in-out opacity 2s, left 2s;
 	-moz-transition: ease-in-out opacity 2s, left 2s;
 	-webkit-transition: ease-in-out opacity 2s, left 2s;
-	-o-transition: ease-in-out opacity 2s, left 2s;
+	-o-transition: ease-in-out opacity 2s, left 2s;*/
 }
 .page-left{
 	left: -100%;
-	opacity: 0.1;
+	/*opacity: 0.1;*/
 }
 .page-right{
 	left: 100%;
-	opacity: 0.1;
+	/*opacity: 0.1;*/
 }
 .page-center{
 	z-index: 0;
 	left: 0px;
-	opacity: 1;
+	/*opacity: 1;*/
 }
 
 /**********************/
