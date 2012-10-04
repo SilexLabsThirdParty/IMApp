@@ -1,1 +1,0 @@
-adl Air_config.xml ../../bin/
