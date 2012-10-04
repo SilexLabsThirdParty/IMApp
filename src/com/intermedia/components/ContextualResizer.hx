@@ -3,7 +3,7 @@ package com.intermedia.components;
 import js.Lib;
 import js.Dom;
 
-import org.slplayer.component.ui.DisplayObject;
+import brix.component.ui.DisplayObject;
 
 /**
  * 

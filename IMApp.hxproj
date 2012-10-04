@@ -17,8 +17,7 @@
   <classpaths>
     <class path="src" />
     <class path="..\Cocktail\src" />
-    <class path="..\SLPlayer\src" />
-    <class path="..\Silex\src" />
+    <class path="..\Brix\src" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -47,8 +46,8 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="OpenDocument" />
-    <option testMovieCommand="bin/index.html" />
+    <option testMovie="Custom" />
+    <option testMovieCommand="buildJS.hxml" />
   </options>
   <!-- Plugin storage -->
   <storage />

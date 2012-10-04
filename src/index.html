@@ -4,16 +4,16 @@
 		<LINK href="app.css" type="text/css" rel="stylesheet"></LINK>
 		<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
 		<META name="initialPageName" content="page1"></META>
-		<script data-slp-use="org.slplayer.component.group.Group"></script>
-		<script data-slp-use="org.slplayer.component.navigation.Page"></script>
-		<script data-slp-use="org.slplayer.component.navigation.Layer"></script>
-		<script data-slp-use="org.slplayer.component.navigation.link.LinkToPage"></script>
-		<script data-slp-use="org.slplayer.component.navigation.link.LinkClosePage"></script>
-		<script data-slp-use="org.slplayer.component.navigation.link.TouchLink"></script>
-		<script data-slp-use="org.slplayer.component.sound.SoundOn"></script>
-		<script data-slp-use="org.slplayer.component.sound.SoundOff"></script>
-		<script data-slp-use="com.intermedia.components.ContextualResizer"></script>
-		<script data-slp-use="com.intermedia.components.ResizeGallery"></script>
+		<script data-brix-use="brix.component.group.Group"></script>
+		<script data-brix-use="brix.component.navigation.Page"></script>
+		<script data-brix-use="brix.component.navigation.Layer"></script>
+		<script data-brix-use="brix.component.navigation.link.LinkToPage"></script>
+		<script data-brix-use="brix.component.navigation.link.LinkClosePage"></script>
+		<script data-brix-use="brix.component.navigation.link.TouchLink"></script>
+		<script data-brix-use="brix.component.sound.SoundOn"></script>
+		<script data-brix-use="brix.component.sound.SoundOff"></script>
+		<!--<script data-brix-use="com.intermedia.components.ContextualResizer"></script>
+		<!--<script data-brix-use="com.intermedia.components.ResizeGallery"></script>-->
  </HEAD>
 	
 <BODY>
@@ -21,10 +21,10 @@
 		
 		<!-- NAV -->
 		<A href="#page1" class="LinkToPage">
-			<IMG class="accueil transition-opac" src="assets/accueil.png"></IMG>
+			<IMG class="accueil transition-opac" alt="accueil" src="assets/accueil.png" width="110" height="50"></IMG>
 		</A>
 		<A href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down">
-			<img class="display transition-opac" src="assets/miniatures.png"></img>
+			<img class="thumbs-display transition-opac" src="assets/miniatures.png"></img>
 		</A>
 
 		<!-- THUMBS SLIDER -->
@@ -36,7 +36,7 @@
 			<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/pop.mp3"></SOURCE>
 			</AUDIO>
-			<DIV class="thumb-container" >
+			<!--<DIV class="thumb-container" >
 				<A href="#page2 " class="LinkToPage" >
 					<IMG src="assets/seychelles-thumb.jpg" class="ContextualResizer transition-opac"></IMG>	
 				</A>
@@ -48,6 +48,20 @@
 				</A>
 				<A href="#page5" class="LinkToPage">
 					<IMG src="assets/mer.croatie-thumb.jpg" class="ContextualResizer transition-opac"></IMG>
+				</A>
+			</DIV>-->
+			<DIV class="thumb-container" >
+				<A href="#page2 " class="LinkToPage" >
+					<IMG src="assets/image1-thumb.jpg" class="transition-opac"></IMG>	
+				</A>
+				<A href="#page3" class="LinkToPage">
+					<IMG src="assets/image2-thumb.jpg" class="transition-opac"></IMG>		
+				</A>
+				<A href="#page4" class="LinkToPage">
+					<IMG src="assets/image3-thumb.jpg" class="transition-opac"></IMG>		
+				</A>
+				<A href="#page5" class="LinkToPage">
+					<IMG src="assets/image4-thumb.jpg" class="transition-opac"></IMG>
 				</A>
 			</DIV>
 		</DIV>
@@ -65,7 +79,8 @@
 
 			<!-- NAV -->
 			<A href="#page2" class="LinkToPage">
-				<IMG src="assets/button.png" class="ResizeGallery transition-opac"></IMG>
+				<!--<IMG src="assets/button.png" class="ResizeGallery transition-opac"></IMG>-->
+				<IMG src="assets/button.png" class="transition-opac gallery-display"></IMG>
 			</A>
 		</DIV>
 
@@ -74,7 +89,7 @@
 		<DIV class="Layer Group page2">
 			
 			<!-- IMAGE -->
-			<IMG class="big-img" src="assets/seychelles.jpg"></IMG>	
+			<IMG class="big-img" src="assets/image1.jpg"></IMG>	
 		
 			<!-- AUDIO -->
 			<AUDIO autoplay="autoplay">
@@ -95,7 +110,7 @@
 		<DIV class="Layer Group page3">
 			
 			<!-- IMAGE -->
-			<IMG class="big-img" src="assets/maldives.jpg"></IMG>	
+			<IMG class="big-img" src="assets/image2.jpg"></IMG>	
 
 			<!-- AUDIO -->
 			<AUDIO autoplay="autoplay">
@@ -122,7 +137,7 @@
 		<A class="Page" name="page4"></A>
 		<DIV class="Layer Group page4">
 			<!-- IMAGE -->
-			<IMG class="big-img" src="assets/rocher.bonifacio.jpg"></IMG>
+			<IMG class="big-img" src="assets/image3.jpg"></IMG>
 			
 			<!-- AUDIO -->
 			<AUDIO autoplay="autoplay">
@@ -148,7 +163,7 @@
 		<A class="Page" name="page5"></A>
 		<DIV class="Layer Group page5 ">
 			<!-- IMAGE -->	
-			<IMG class="big-img" src="assets/mer.croatie.jpg"></IMG>	
+			<IMG class="big-img" src="assets/image4.jpg"></IMG>	
 			
 			<!-- AUDIO -->
 			<AUDIO autoplay="autoplay">
