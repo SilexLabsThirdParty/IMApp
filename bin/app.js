@@ -838,6 +838,1171 @@ Type.allEnums = function(e) {
 	}
 	return all;
 }
+var brix = {}
+brix.component = {}
+brix.component.IBrixComponent = function() { }
+$hxClasses["brix.component.IBrixComponent"] = brix.component.IBrixComponent;
+brix.component.IBrixComponent.__name__ = ["brix","component","IBrixComponent"];
+brix.component.IBrixComponent.prototype = {
+	getBrixApplication: null
+	,brixInstanceId: null
+	,__class__: brix.component.IBrixComponent
+}
+brix.component.BrixComponent = function() { }
+$hxClasses["brix.component.BrixComponent"] = brix.component.BrixComponent;
+brix.component.BrixComponent.__name__ = ["brix","component","BrixComponent"];
+brix.component.BrixComponent.initBrixComponent = function(component,brixInstanceId) {
+	component.brixInstanceId = brixInstanceId;
+}
+brix.component.BrixComponent.getBrixApplication = function(component) {
+	return brix.core.Application.get(component.brixInstanceId);
+}
+brix.component.BrixComponent.checkRequiredParameters = function(cmpClass,elt) {
+	var requires = haxe.rtti.Meta.getType(cmpClass).requires;
+	if(requires == null) return;
+	var _g = 0;
+	while(_g < requires.length) {
+		var r = requires[_g];
+		++_g;
+		if(elt.getAttribute(Std.string(r)) == null || StringTools.trim(elt.getAttribute(Std.string(r))) == "") throw Std.string(r) + " parameter is required for " + Type.getClassName(cmpClass);
+	}
+}
+brix.component.ui = {}
+brix.component.ui.IDisplayObject = function() { }
+$hxClasses["brix.component.ui.IDisplayObject"] = brix.component.ui.IDisplayObject;
+brix.component.ui.IDisplayObject.__name__ = ["brix","component","ui","IDisplayObject"];
+brix.component.ui.IDisplayObject.__interfaces__ = [brix.component.IBrixComponent];
+brix.component.ui.IDisplayObject.prototype = {
+	rootElement: null
+	,__class__: brix.component.ui.IDisplayObject
+}
+brix.component.ui.DisplayObject = function(rootElement,BrixId) {
+	this.rootElement = rootElement;
+	brix.component.BrixComponent.initBrixComponent(this,BrixId);
+	this.getBrixApplication().addAssociatedComponent(rootElement,this);
+};
+$hxClasses["brix.component.ui.DisplayObject"] = brix.component.ui.DisplayObject;
+brix.component.ui.DisplayObject.__name__ = ["brix","component","ui","DisplayObject"];
+brix.component.ui.DisplayObject.__interfaces__ = [brix.component.ui.IDisplayObject];
+brix.component.ui.DisplayObject.isDisplayObject = function(cmpClass) {
+	if(cmpClass == Type.resolveClass("brix.component.ui.DisplayObject")) return true;
+	if(Type.getSuperClass(cmpClass) != null) return brix.component.ui.DisplayObject.isDisplayObject(Type.getSuperClass(cmpClass));
+	return false;
+}
+brix.component.ui.DisplayObject.checkFilterOnElt = function(cmpClass,elt) {
+	if(elt.nodeType != js.Lib.document.body.nodeType) throw "cannot instantiate " + Type.getClassName(cmpClass) + " on a non element node.";
+	var tagFilter = haxe.rtti.Meta.getType(cmpClass) != null?haxe.rtti.Meta.getType(cmpClass).tagNameFilter:null;
+	if(tagFilter == null) return;
+	if(Lambda.exists(tagFilter,function(s) {
+		return elt.nodeName.toLowerCase() == Std.string(s).toLowerCase();
+	})) return;
+	throw "cannot instantiate " + Type.getClassName(cmpClass) + " on this type of HTML element: " + elt.nodeName.toLowerCase();
+}
+brix.component.ui.DisplayObject.prototype = {
+	clean: function() {
+	}
+	,init: function() {
+	}
+	,remove: function() {
+		this.clean();
+		this.getBrixApplication().removeAssociatedComponent(this.rootElement,this);
+	}
+	,getBrixApplication: function() {
+		return brix.component.BrixComponent.getBrixApplication(this);
+	}
+	,rootElement: null
+	,brixInstanceId: null
+	,__class__: brix.component.ui.DisplayObject
+}
+brix.component.group = {}
+brix.component.group.Group = function(rootElement,BrixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+};
+$hxClasses["brix.component.group.Group"] = brix.component.group.Group;
+brix.component.group.Group.__name__ = ["brix","component","group","Group"];
+brix.component.group.Group.__super__ = brix.component.ui.DisplayObject;
+brix.component.group.Group.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
+	__class__: brix.component.group.Group
+});
+brix.component.group.IGroupable = function() { }
+$hxClasses["brix.component.group.IGroupable"] = brix.component.group.IGroupable;
+brix.component.group.IGroupable.__name__ = ["brix","component","group","IGroupable"];
+brix.component.group.IGroupable.__interfaces__ = [brix.component.ui.IDisplayObject];
+brix.component.group.IGroupable.prototype = {
+	groupElement: null
+	,__class__: brix.component.group.IGroupable
+}
+brix.component.group.Groupable = function() { }
+$hxClasses["brix.component.group.Groupable"] = brix.component.group.Groupable;
+brix.component.group.Groupable.__name__ = ["brix","component","group","Groupable"];
+brix.component.group.Groupable.startGroupable = function(groupable) {
+	var groupId = groupable.rootElement.getAttribute("data-group-id");
+	if(groupId == null) return;
+	var groupElements = js.Lib.document.getElementsByClassName(groupId);
+	if(groupElements.length < 1) return;
+	if(groupElements.length > 1) throw "ERROR " + groupElements.length + " Group components are declared with the same group id " + groupId;
+	groupable.groupElement = groupElements[0];
+}
+brix.component.navigation = {}
+brix.component.navigation.LayerStatus = $hxClasses["brix.component.navigation.LayerStatus"] = { __ename__ : ["brix","component","navigation","LayerStatus"], __constructs__ : ["showTransition","hideTransition","visible","hidden","notInit"] }
+brix.component.navigation.LayerStatus.showTransition = ["showTransition",0];
+brix.component.navigation.LayerStatus.showTransition.toString = $estr;
+brix.component.navigation.LayerStatus.showTransition.__enum__ = brix.component.navigation.LayerStatus;
+brix.component.navigation.LayerStatus.hideTransition = ["hideTransition",1];
+brix.component.navigation.LayerStatus.hideTransition.toString = $estr;
+brix.component.navigation.LayerStatus.hideTransition.__enum__ = brix.component.navigation.LayerStatus;
+brix.component.navigation.LayerStatus.visible = ["visible",2];
+brix.component.navigation.LayerStatus.visible.toString = $estr;
+brix.component.navigation.LayerStatus.visible.__enum__ = brix.component.navigation.LayerStatus;
+brix.component.navigation.LayerStatus.hidden = ["hidden",3];
+brix.component.navigation.LayerStatus.hidden.toString = $estr;
+brix.component.navigation.LayerStatus.hidden.__enum__ = brix.component.navigation.LayerStatus;
+brix.component.navigation.LayerStatus.notInit = ["notInit",4];
+brix.component.navigation.LayerStatus.notInit.toString = $estr;
+brix.component.navigation.LayerStatus.notInit.__enum__ = brix.component.navigation.LayerStatus;
+brix.component.navigation.Layer = function(rootElement,BrixId) {
+	this.hasTransitionStarted = false;
+	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+	this.childrenArray = new Array();
+	this.status = brix.component.navigation.LayerStatus.notInit;
+	this.styleAttrDisplay = rootElement.style.display;
+};
+$hxClasses["brix.component.navigation.Layer"] = brix.component.navigation.Layer;
+brix.component.navigation.Layer.__name__ = ["brix","component","navigation","Layer"];
+brix.component.navigation.Layer.getLayerNodes = function(pageName,brixId,root) {
+	var document = root;
+	if(root == null) document = js.Lib.document.documentElement;
+	return document.getElementsByClassName(pageName);
+}
+brix.component.navigation.Layer.__super__ = brix.component.ui.DisplayObject;
+brix.component.navigation.Layer.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
+	cleanupVideoElements: function(nodeList) {
+		var _g1 = 0, _g = nodeList.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			try {
+				var element = nodeList[idx];
+				element.pause();
+				element.currentTime = 0;
+			} catch( e ) {
+				null;
+			}
+		}
+	}
+	,cleanupAudioElements: function(nodeList) {
+		var _g1 = 0, _g = nodeList.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			try {
+				var element = nodeList[idx];
+				element.pause();
+				element.currentTime = 0;
+			} catch( e ) {
+				null;
+			}
+		}
+	}
+	,setupVideoElements: function(nodeList) {
+		var _g1 = 0, _g = nodeList.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			try {
+				var element = nodeList[idx];
+				if(element.autoplay == true) {
+					element.currentTime = 0;
+					element.play();
+				}
+				element.muted = brix.component.sound.SoundOn.isMuted;
+			} catch( e ) {
+				null;
+			}
+		}
+	}
+	,setupAudioElements: function(nodeList) {
+		var _g1 = 0, _g = nodeList.length;
+		while(_g1 < _g) {
+			var idx = _g1++;
+			try {
+				var element = nodeList[idx];
+				if(element.autoplay == true) {
+					element.currentTime = 0;
+					element.play();
+				}
+				element.muted = brix.component.sound.SoundOn.isMuted;
+			} catch( e ) {
+				null;
+			}
+		}
+	}
+	,doHide: function(transitionData,preventTransitions,e) {
+		if(e != null && e.target != this.rootElement) return;
+		if(preventTransitions == false && this.doHideCallback == null) return;
+		if(preventTransitions == false) {
+			this.endTransition(brix.component.navigation.transition.TransitionType.hide,transitionData,this.doHideCallback);
+			this.doHideCallback = null;
+		}
+		this.status = brix.component.navigation.LayerStatus.hidden;
+		try {
+			var event = js.Lib.document.createEvent("CustomEvent");
+			event.initCustomEvent("onLayerHide",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
+			this.rootElement.dispatchEvent(event);
+		} catch( e1 ) {
+			null;
+		}
+		var audioNodes = this.rootElement.getElementsByTagName("audio");
+		this.cleanupAudioElements(audioNodes);
+		var videoNodes = this.rootElement.getElementsByTagName("video");
+		this.cleanupVideoElements(videoNodes);
+		while(this.rootElement.childNodes.length > 0) {
+			var element = this.rootElement.childNodes[0];
+			this.rootElement.removeChild(element);
+			this.childrenArray.push(element);
+		}
+		this.rootElement.style.display = "none";
+	}
+	,hide: function(transitionData,preventTransitions) {
+		if(this.status != brix.component.navigation.LayerStatus.visible && this.status != brix.component.navigation.LayerStatus.notInit) return;
+		if(this.status == brix.component.navigation.LayerStatus.hideTransition) {
+			this.doHideCallback(null);
+			this.removeTransitionEvent(this.doHideCallback);
+		} else if(this.status == brix.component.navigation.LayerStatus.showTransition) {
+			this.doShowCallback(null);
+			this.removeTransitionEvent(this.doShowCallback);
+		}
+		this.status = brix.component.navigation.LayerStatus.hideTransition;
+		if(preventTransitions == false) {
+			this.doHideCallback = (function(f,a1,a2) {
+				return function(e) {
+					return f(a1,a2,e);
+				};
+			})($bind(this,this.doHide),transitionData,preventTransitions);
+			this.startTransition(brix.component.navigation.transition.TransitionType.hide,transitionData,this.doHideCallback);
+		} else this.doHide(transitionData,preventTransitions,null);
+	}
+	,doShow: function(transitionData,preventTransitions,e) {
+		if(e != null && e.target != this.rootElement) return;
+		if(preventTransitions == false && this.doShowCallback == null) return;
+		if(preventTransitions == false) this.endTransition(brix.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
+		this.doShowCallback = null;
+		this.status = brix.component.navigation.LayerStatus.visible;
+	}
+	,show: function(transitionData,preventTransitions) {
+		if(preventTransitions == null) preventTransitions = false;
+		if(this.status != brix.component.navigation.LayerStatus.hidden && this.status != brix.component.navigation.LayerStatus.notInit) return;
+		if(this.status == brix.component.navigation.LayerStatus.hideTransition) {
+			this.doHideCallback(null);
+			this.removeTransitionEvent(this.doHideCallback);
+		} else if(this.status == brix.component.navigation.LayerStatus.showTransition) {
+			this.doShowCallback(null);
+			this.removeTransitionEvent(this.doShowCallback);
+		}
+		this.status = brix.component.navigation.LayerStatus.showTransition;
+		while(this.childrenArray.length > 0) {
+			var element = this.childrenArray.shift();
+			this.rootElement.appendChild(element);
+		}
+		var audioNodes = this.rootElement.getElementsByTagName("audio");
+		this.setupAudioElements(audioNodes);
+		var videoNodes = this.rootElement.getElementsByTagName("video");
+		this.setupVideoElements(videoNodes);
+		try {
+			var event = js.Lib.document.createEvent("CustomEvent");
+			event.initCustomEvent("onLayerShow",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
+			this.rootElement.dispatchEvent(event);
+		} catch( e ) {
+			null;
+		}
+		if(preventTransitions == false) {
+			this.doShowCallback = (function(f,a1,a2) {
+				return function(e) {
+					return f(a1,a2,e);
+				};
+			})($bind(this,this.doShow),transitionData,preventTransitions);
+			this.startTransition(brix.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
+		} else this.doShow(transitionData,preventTransitions,null);
+		this.rootElement.style.display = this.styleAttrDisplay;
+	}
+	,removeTransitionEvent: function(onEndCallback) {
+		this.rootElement.removeEventListener("transitionend",onEndCallback,false);
+		this.rootElement.removeEventListener("transitionEnd",onEndCallback,false);
+		this.rootElement.removeEventListener("webkitTransitionEnd",onEndCallback,false);
+		this.rootElement.removeEventListener("oTransitionEnd",onEndCallback,false);
+		this.rootElement.removeEventListener("MSTransitionEnd",onEndCallback,false);
+	}
+	,addTransitionEvent: function(onEndCallback) {
+		this.rootElement.addEventListener("transitionend",onEndCallback,false);
+		this.rootElement.addEventListener("transitionEnd",onEndCallback,false);
+		this.rootElement.addEventListener("webkitTransitionEnd",onEndCallback,false);
+		this.rootElement.addEventListener("oTransitionEnd",onEndCallback,false);
+		this.rootElement.addEventListener("MSTransitionEnd",onEndCallback,false);
+	}
+	,endTransition: function(type,transitionData,onComplete) {
+		this.removeTransitionEvent(onComplete);
+		if(transitionData != null) brix.util.DomTools.removeClass(this.rootElement,transitionData.endStyleName);
+		var transitionData2 = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,type);
+		if(transitionData2 != null) brix.util.DomTools.removeClass(this.rootElement,transitionData2.endStyleName);
+	}
+	,doStartTransition: function(sumOfTransitions,onComplete) {
+		var _g = 0;
+		while(_g < sumOfTransitions.length) {
+			var transition = sumOfTransitions[_g];
+			++_g;
+			brix.util.DomTools.removeClass(this.rootElement,transition.startStyleName);
+		}
+		if(onComplete != null) this.addTransitionEvent(onComplete);
+		brix.component.navigation.transition.TransitionTools.setTransitionProperty(this.rootElement,"transitionDuration",null);
+		var _g = 0;
+		while(_g < sumOfTransitions.length) {
+			var transition = sumOfTransitions[_g];
+			++_g;
+			brix.util.DomTools.addClass(this.rootElement,transition.endStyleName);
+		}
+	}
+	,startTransition: function(type,transitionData,onComplete) {
+		var transitionData2 = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,type);
+		var sumOfTransitions = new Array();
+		if(transitionData != null) sumOfTransitions.push(transitionData);
+		if(transitionData2 != null) sumOfTransitions.push(transitionData2);
+		if(sumOfTransitions.length == 0) {
+			if(onComplete != null) onComplete(null);
+		} else {
+			this.hasTransitionStarted = true;
+			brix.component.navigation.transition.TransitionTools.setTransitionProperty(this.rootElement,"transitionDuration","0");
+			var _g = 0;
+			while(_g < sumOfTransitions.length) {
+				var transition = sumOfTransitions[_g];
+				++_g;
+				brix.util.DomTools.addClass(this.rootElement,transition.startStyleName);
+			}
+			brix.util.DomTools.doLater((function(f,a1,a2) {
+				return function() {
+					return f(a1,a2);
+				};
+			})($bind(this,this.doStartTransition),sumOfTransitions,onComplete));
+		}
+	}
+	,doHideCallback: null
+	,doShowCallback: null
+	,styleAttrDisplay: null
+	,hasTransitionStarted: null
+	,status: null
+	,childrenArray: null
+	,__class__: brix.component.navigation.Layer
+});
+brix.component.navigation.Page = function(rootElement,BrixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+	brix.component.group.Groupable.startGroupable(this);
+	this.name = rootElement.getAttribute("name");
+	if(this.name == null || this.name == "") throw "Pages have to have a 'name' attribute";
+};
+$hxClasses["brix.component.navigation.Page"] = brix.component.navigation.Page;
+brix.component.navigation.Page.__name__ = ["brix","component","navigation","Page"];
+brix.component.navigation.Page.__interfaces__ = [brix.component.group.IGroupable];
+brix.component.navigation.Page.openPage = function(pageName,isPopup,transitionDataShow,transitionDataHide,brixId,root) {
+	var document = root;
+	if(root == null) document = js.Lib.document.documentElement;
+	var page = brix.component.navigation.Page.getPageByName(pageName,brixId,document);
+	if(page == null) {
+		page = brix.component.navigation.Page.getPageByName(pageName,brixId);
+		if(page == null) throw "Error, could not find a page with name " + pageName;
+	}
+	page.open(transitionDataShow,transitionDataHide,!isPopup);
+}
+brix.component.navigation.Page.closePage = function(pageName,transitionData,brixId,root) {
+	var document = root;
+	if(root == null) document = js.Lib.document.documentElement;
+	var page = brix.component.navigation.Page.getPageByName(pageName,brixId,document);
+	if(page == null) {
+		page = brix.component.navigation.Page.getPageByName(pageName,brixId);
+		if(page == null) throw "Error, could not find a page with name " + pageName;
+	}
+	page.close(transitionData);
+}
+brix.component.navigation.Page.getPageNodes = function(brixId,root) {
+	var document = root;
+	if(root == null) document = js.Lib.document.documentElement;
+	return document.getElementsByClassName("Page");
+}
+brix.component.navigation.Page.getPageByName = function(pageName,brixId,root) {
+	var document = root;
+	if(root == null) document = js.Lib.document.documentElement;
+	var pages = brix.component.navigation.Page.getPageNodes(brixId,document);
+	var _g1 = 0, _g = pages.length;
+	while(_g1 < _g) {
+		var pageIdx = _g1++;
+		if(pages[pageIdx].getAttribute("name") == pageName) {
+			var pageInstances = brix.core.Application.get(brixId).getAssociatedComponents(pages[pageIdx],brix.component.navigation.Page);
+			var $it0 = pageInstances.iterator();
+			while( $it0.hasNext() ) {
+				var page = $it0.next();
+				return page;
+			}
+			return null;
+		}
+	}
+	return null;
+}
+brix.component.navigation.Page.__super__ = brix.component.ui.DisplayObject;
+brix.component.navigation.Page.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
+	close: function(transitionData,preventCloseByClassName,preventTransitions) {
+		if(preventTransitions == null) preventTransitions = false;
+		if(preventCloseByClassName == null) preventCloseByClassName = new Array();
+		var nodes = brix.component.navigation.Layer.getLayerNodes(this.name,this.brixInstanceId,this.groupElement);
+		var _g1 = 0, _g = nodes.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var layerNode = nodes[idxLayerNode];
+			var hasForbiddenClass = false;
+			var _g2 = 0;
+			while(_g2 < preventCloseByClassName.length) {
+				var className = preventCloseByClassName[_g2];
+				++_g2;
+				if(brix.util.DomTools.hasClass(layerNode,className)) {
+					hasForbiddenClass = true;
+					break;
+				}
+			}
+			if(!hasForbiddenClass) {
+				var layerInstances = this.getBrixApplication().getAssociatedComponents(layerNode,brix.component.navigation.Layer);
+				var $it0 = layerInstances.iterator();
+				while( $it0.hasNext() ) {
+					var layerInstance = $it0.next();
+					(js.Boot.__cast(layerInstance , brix.component.navigation.Layer)).hide(transitionData,preventTransitions);
+				}
+			}
+		}
+		var nodes1 = brix.util.DomTools.getElementsByAttribute(this.groupElement,"href",this.name);
+		var _g1 = 0, _g = nodes1.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes1[idxLayerNode];
+			brix.util.DomTools.removeClass(element,"page-opened");
+		}
+		var nodes2 = brix.util.DomTools.getElementsByAttribute(this.groupElement,"href","#" + this.name);
+		var _g1 = 0, _g = nodes2.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes2[idxLayerNode];
+			brix.util.DomTools.removeClass(element,"page-opened");
+		}
+	}
+	,doOpen: function(transitionData,preventTransitions) {
+		if(preventTransitions == null) preventTransitions = false;
+		var nodes = brix.component.navigation.Layer.getLayerNodes(this.name,this.brixInstanceId,this.groupElement);
+		var _g1 = 0, _g = nodes.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var layerNode = nodes[idxLayerNode];
+			var layerInstances = this.getBrixApplication().getAssociatedComponents(layerNode,brix.component.navigation.Layer);
+			var $it0 = layerInstances.iterator();
+			while( $it0.hasNext() ) {
+				var layerInstance = $it0.next();
+				layerInstance.show(transitionData,preventTransitions);
+			}
+		}
+		var nodes1 = brix.util.DomTools.getElementsByAttribute(this.groupElement,"href",this.name);
+		var _g1 = 0, _g = nodes1.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes1[idxLayerNode];
+			brix.util.DomTools.addClass(element,"page-opened");
+		}
+		var nodes2 = brix.util.DomTools.getElementsByAttribute(this.groupElement,"href","#" + this.name);
+		var _g1 = 0, _g = nodes2.length;
+		while(_g1 < _g) {
+			var idxLayerNode = _g1++;
+			var element = nodes2[idxLayerNode];
+			brix.util.DomTools.addClass(element,"page-opened");
+		}
+	}
+	,closeOthers: function(transitionData,preventTransitions) {
+		if(preventTransitions == null) preventTransitions = false;
+		var nodes = brix.component.navigation.Page.getPageNodes(this.brixInstanceId,this.groupElement);
+		var _g1 = 0, _g = nodes.length;
+		while(_g1 < _g) {
+			var idxPageNode = _g1++;
+			var pageNode = nodes[idxPageNode];
+			var pageInstances = this.getBrixApplication().getAssociatedComponents(pageNode,brix.component.navigation.Page);
+			var $it0 = pageInstances.iterator();
+			while( $it0.hasNext() ) {
+				var pageInstance = $it0.next();
+				if(pageInstance != this) pageInstance.close(transitionData,[this.name],preventTransitions);
+			}
+		}
+	}
+	,open: function(transitionDataShow,transitionDataHide,doCloseOthers,preventTransitions) {
+		if(preventTransitions == null) preventTransitions = false;
+		if(doCloseOthers == null) doCloseOthers = true;
+		if(doCloseOthers) this.closeOthers(transitionDataHide,preventTransitions);
+		this.doOpen(transitionDataShow,preventTransitions);
+	}
+	,init: function() {
+		brix.component.ui.DisplayObject.prototype.init.call(this);
+		if(this.groupElement == null) this.groupElement = js.Lib.document.body;
+		if(brix.util.DomTools.getMeta("initialPageName") == this.name || this.groupElement.getAttribute("data-initial-page-name") == this.name) brix.util.DomTools.doLater((function(f,a1,a2,a3,a4) {
+			return function() {
+				return f(a1,a2,a3,a4);
+			};
+		})($bind(this,this.open),null,null,true,true));
+	}
+	,groupElement: null
+	,name: null
+	,__class__: brix.component.navigation.Page
+});
+brix.component.navigation.link = {}
+brix.component.navigation.link.LinkBase = function(rootElement,BrixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+	brix.component.group.Groupable.startGroupable(this);
+	rootElement.addEventListener("click",$bind(this,this.onClick),false);
+	if(rootElement.getAttribute("href") != null) {
+		this.linkName = StringTools.trim(rootElement.getAttribute("href"));
+		this.linkName = HxOverrides.substr(this.linkName,this.linkName.indexOf("#") + 1,null);
+	} else null;
+	if(rootElement.getAttribute("target") != null && StringTools.trim(rootElement.getAttribute("target")) != "") this.targetAttr = StringTools.trim(rootElement.getAttribute("target"));
+};
+$hxClasses["brix.component.navigation.link.LinkBase"] = brix.component.navigation.link.LinkBase;
+brix.component.navigation.link.LinkBase.__name__ = ["brix","component","navigation","link","LinkBase"];
+brix.component.navigation.link.LinkBase.__interfaces__ = [brix.component.group.IGroupable];
+brix.component.navigation.link.LinkBase.__super__ = brix.component.ui.DisplayObject;
+brix.component.navigation.link.LinkBase.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
+	onClick: function(e) {
+		e.preventDefault();
+		this.transitionDataShow = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,brix.component.navigation.transition.TransitionType.show);
+		this.transitionDataHide = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,brix.component.navigation.transition.TransitionType.hide);
+	}
+	,transitionDataHide: null
+	,transitionDataShow: null
+	,targetAttr: null
+	,linkName: null
+	,groupElement: null
+	,__class__: brix.component.navigation.link.LinkBase
+});
+brix.component.navigation.link.LinkClosePage = function(rootElement,BrixId) {
+	brix.component.navigation.link.LinkBase.call(this,rootElement,BrixId);
+};
+$hxClasses["brix.component.navigation.link.LinkClosePage"] = brix.component.navigation.link.LinkClosePage;
+brix.component.navigation.link.LinkClosePage.__name__ = ["brix","component","navigation","link","LinkClosePage"];
+brix.component.navigation.link.LinkClosePage.__super__ = brix.component.navigation.link.LinkBase;
+brix.component.navigation.link.LinkClosePage.prototype = $extend(brix.component.navigation.link.LinkBase.prototype,{
+	onClick: function(e) {
+		brix.component.navigation.link.LinkBase.prototype.onClick.call(this,e);
+		brix.component.navigation.Page.closePage(this.linkName,this.transitionDataHide,this.brixInstanceId);
+	}
+	,__class__: brix.component.navigation.link.LinkClosePage
+});
+brix.component.navigation.link.LinkToPage = function(rootElement,BrixId) {
+	brix.component.navigation.link.LinkBase.call(this,rootElement,BrixId);
+};
+$hxClasses["brix.component.navigation.link.LinkToPage"] = brix.component.navigation.link.LinkToPage;
+brix.component.navigation.link.LinkToPage.__name__ = ["brix","component","navigation","link","LinkToPage"];
+brix.component.navigation.link.LinkToPage.__super__ = brix.component.navigation.link.LinkBase;
+brix.component.navigation.link.LinkToPage.prototype = $extend(brix.component.navigation.link.LinkBase.prototype,{
+	onClick: function(e) {
+		brix.component.navigation.link.LinkBase.prototype.onClick.call(this,e);
+		brix.component.navigation.Page.openPage(this.linkName,this.targetAttr == "_top",this.transitionDataShow,this.transitionDataHide,this.brixInstanceId,this.groupElement);
+	}
+	,__class__: brix.component.navigation.link.LinkToPage
+});
+brix.component.navigation.link.TouchType = $hxClasses["brix.component.navigation.link.TouchType"] = { __ename__ : ["brix","component","navigation","link","TouchType"], __constructs__ : ["swipeLeft","swipeRight","swipeUp","swipeDown","pinchOpen","pinchClose"] }
+brix.component.navigation.link.TouchType.swipeLeft = ["swipeLeft",0];
+brix.component.navigation.link.TouchType.swipeLeft.toString = $estr;
+brix.component.navigation.link.TouchType.swipeLeft.__enum__ = brix.component.navigation.link.TouchType;
+brix.component.navigation.link.TouchType.swipeRight = ["swipeRight",1];
+brix.component.navigation.link.TouchType.swipeRight.toString = $estr;
+brix.component.navigation.link.TouchType.swipeRight.__enum__ = brix.component.navigation.link.TouchType;
+brix.component.navigation.link.TouchType.swipeUp = ["swipeUp",2];
+brix.component.navigation.link.TouchType.swipeUp.toString = $estr;
+brix.component.navigation.link.TouchType.swipeUp.__enum__ = brix.component.navigation.link.TouchType;
+brix.component.navigation.link.TouchType.swipeDown = ["swipeDown",3];
+brix.component.navigation.link.TouchType.swipeDown.toString = $estr;
+brix.component.navigation.link.TouchType.swipeDown.__enum__ = brix.component.navigation.link.TouchType;
+brix.component.navigation.link.TouchType.pinchOpen = ["pinchOpen",4];
+brix.component.navigation.link.TouchType.pinchOpen.toString = $estr;
+brix.component.navigation.link.TouchType.pinchOpen.__enum__ = brix.component.navigation.link.TouchType;
+brix.component.navigation.link.TouchType.pinchClose = ["pinchClose",5];
+brix.component.navigation.link.TouchType.pinchClose.toString = $estr;
+brix.component.navigation.link.TouchType.pinchClose.__enum__ = brix.component.navigation.link.TouchType;
+brix.component.navigation.link.TouchLink = function(rootElement,BrixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+	brix.component.group.Groupable.startGroupable(this);
+	var element;
+	if(this.groupElement != null) element = this.groupElement; else element = js.Lib.document.body;
+	var attrStr = rootElement.getAttribute("data-touch-detection-distance");
+	if(attrStr == null || attrStr == "") this.detectDistance = 200; else this.detectDistance = Std.parseInt(attrStr);
+	element.addEventListener("touchmove",$bind(this,this.onTouchMove),false);
+	element.addEventListener("touchstart",$bind(this,this.onTouchStart),false);
+	element.addEventListener("touchend",$bind(this,this.onTouchEnd),false);
+	switch(rootElement.getAttribute("data-touch-type")) {
+	case "left":
+		this.touchType = brix.component.navigation.link.TouchType.swipeLeft;
+		break;
+	case "right":
+		this.touchType = brix.component.navigation.link.TouchType.swipeRight;
+		break;
+	case "up":
+		this.touchType = brix.component.navigation.link.TouchType.swipeUp;
+		break;
+	case "down":
+		this.touchType = brix.component.navigation.link.TouchType.swipeDown;
+		break;
+	case "open":
+		this.touchType = brix.component.navigation.link.TouchType.pinchOpen;
+		throw "not implemented";
+		break;
+	case "close":
+		this.touchType = brix.component.navigation.link.TouchType.pinchClose;
+		throw "not implemented";
+		break;
+	default:
+		throw "Error in param " + "data-touch-type" + " for touch event type (requires left, right, up, down, in, out)";
+	}
+};
+$hxClasses["brix.component.navigation.link.TouchLink"] = brix.component.navigation.link.TouchLink;
+brix.component.navigation.link.TouchLink.__name__ = ["brix","component","navigation","link","TouchLink"];
+brix.component.navigation.link.TouchLink.__interfaces__ = [brix.component.group.IGroupable];
+brix.component.navigation.link.TouchLink.__super__ = brix.component.ui.DisplayObject;
+brix.component.navigation.link.TouchLink.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
+	dispatchClick: function() {
+		var evt = js.Lib.document.createEvent("MouseEvent");
+		evt.initEvent("click",true,true);
+		this.rootElement.dispatchEvent(evt);
+	}
+	,onTouchEnd: function(e) {
+		var event = e;
+		this.touchStart = null;
+	}
+	,onTouchMove: function(e) {
+		var event = e;
+		event.preventDefault();
+		if(this.touchStart == null) return;
+		var xOffset = event.touches.item(0).screenX - this.touchStart.x;
+		var yOffset = event.touches.item(0).screenY - this.touchStart.y;
+		if(Math.abs(xOffset) > 200) {
+			this.touchStart = null;
+			if(xOffset > 0) {
+				if(this.touchType == brix.component.navigation.link.TouchType.swipeLeft) this.dispatchClick();
+			} else if(this.touchType == brix.component.navigation.link.TouchType.swipeRight) this.dispatchClick();
+		} else if(Math.abs(yOffset) > this.detectDistance) {
+			this.touchStart = null;
+			if(yOffset > 0) {
+				if(this.touchType == brix.component.navigation.link.TouchType.swipeUp) this.dispatchClick();
+			} else if(this.touchType == brix.component.navigation.link.TouchType.swipeDown) this.dispatchClick();
+		}
+	}
+	,onClick: function(e) {
+		null;
+	}
+	,onTouchStart: function(e) {
+		var event = e;
+		this.touchStart = { x : event.touches.item(0).screenX, y : event.touches.item(0).screenY};
+	}
+	,touchStart: null
+	,touchType: null
+	,detectDistance: null
+	,groupElement: null
+	,__class__: brix.component.navigation.link.TouchLink
+});
+brix.component.navigation.transition = {}
+brix.component.navigation.transition.TransitionType = $hxClasses["brix.component.navigation.transition.TransitionType"] = { __ename__ : ["brix","component","navigation","transition","TransitionType"], __constructs__ : ["show","hide"] }
+brix.component.navigation.transition.TransitionType.show = ["show",0];
+brix.component.navigation.transition.TransitionType.show.toString = $estr;
+brix.component.navigation.transition.TransitionType.show.__enum__ = brix.component.navigation.transition.TransitionType;
+brix.component.navigation.transition.TransitionType.hide = ["hide",1];
+brix.component.navigation.transition.TransitionType.hide.toString = $estr;
+brix.component.navigation.transition.TransitionType.hide.__enum__ = brix.component.navigation.transition.TransitionType;
+brix.component.navigation.transition.TransitionTools = function() { }
+$hxClasses["brix.component.navigation.transition.TransitionTools"] = brix.component.navigation.transition.TransitionTools;
+brix.component.navigation.transition.TransitionTools.__name__ = ["brix","component","navigation","transition","TransitionTools"];
+brix.component.navigation.transition.TransitionTools.getTransitionData = function(rootElement,type) {
+	var res = null;
+	if(type == brix.component.navigation.transition.TransitionType.show) {
+		var start = rootElement.getAttribute("data-show-start-style");
+		var end = rootElement.getAttribute("data-show-end-style");
+		if(start != null && end != null) res = { startStyleName : start, endStyleName : end};
+	} else {
+		var start = rootElement.getAttribute("data-hide-start-style");
+		var end = rootElement.getAttribute("data-hide-end-style");
+		if(start != null && end != null) res = { startStyleName : start, endStyleName : end};
+	}
+	return res;
+}
+brix.component.navigation.transition.TransitionTools.setTransitionProperty = function(rootElement,name,value) {
+	Reflect.setProperty(rootElement.style,name,value);
+	var prefixed = "MozT" + HxOverrides.substr(name,1,null);
+	rootElement.style[prefixed] = value;
+	var prefixed1 = "webkitT" + HxOverrides.substr(name,1,null);
+	rootElement.style[prefixed1] = value;
+	var prefixed2 = "oT" + HxOverrides.substr(name,1,null);
+	rootElement.style[prefixed2] = value;
+}
+brix.component.sound = {}
+brix.component.sound.SoundOn = function(rootElement,BrixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+	rootElement.onclick = $bind(this,this.onClick);
+};
+$hxClasses["brix.component.sound.SoundOn"] = brix.component.sound.SoundOn;
+brix.component.sound.SoundOn.__name__ = ["brix","component","sound","SoundOn"];
+brix.component.sound.SoundOn.mute = function(doMute) {
+	var audioTags = js.Lib.document.getElementsByTagName("audio");
+	var _g1 = 0, _g = audioTags.length;
+	while(_g1 < _g) {
+		var idx = _g1++;
+		audioTags[idx].muted = doMute;
+	}
+	brix.component.sound.SoundOn.isMuted = doMute;
+	var soundOffButtons = js.Lib.document.getElementsByClassName("SoundOff");
+	var soundOnButtons = js.Lib.document.getElementsByClassName("SoundOn");
+	var _g1 = 0, _g = soundOffButtons.length;
+	while(_g1 < _g) {
+		var idx = _g1++;
+		if(doMute) soundOffButtons[idx].style.visibility = "hidden"; else soundOffButtons[idx].style.visibility = "visible";
+	}
+	var _g1 = 0, _g = soundOnButtons.length;
+	while(_g1 < _g) {
+		var idx = _g1++;
+		if(!doMute) soundOnButtons[idx].style.visibility = "hidden"; else soundOnButtons[idx].style.visibility = "visible";
+	}
+}
+brix.component.sound.SoundOn.__super__ = brix.component.ui.DisplayObject;
+brix.component.sound.SoundOn.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
+	onClick: function(e) {
+		brix.component.sound.SoundOn.mute(false);
+	}
+	,init: function() {
+		brix.component.sound.SoundOn.mute(false);
+	}
+	,__class__: brix.component.sound.SoundOn
+});
+brix.component.sound.SoundOff = function(rootElement,BrixId) {
+	brix.component.sound.SoundOn.call(this,rootElement,BrixId);
+};
+$hxClasses["brix.component.sound.SoundOff"] = brix.component.sound.SoundOff;
+brix.component.sound.SoundOff.__name__ = ["brix","component","sound","SoundOff"];
+brix.component.sound.SoundOff.__super__ = brix.component.sound.SoundOn;
+brix.component.sound.SoundOff.prototype = $extend(brix.component.sound.SoundOn.prototype,{
+	onClick: function(e) {
+		brix.component.sound.SoundOn.mute(true);
+	}
+	,__class__: brix.component.sound.SoundOff
+});
+brix.core = {}
+brix.core.Application = function(id,args) {
+	this.dataObject = args;
+	this.id = id;
+	this.nodesIdSequence = 0;
+	this.registeredUIComponents = new Array();
+	this.registeredNonUIComponents = new Array();
+	this.nodeToCmpInstances = new Hash();
+	this.applicationContext = new brix.core.ApplicationContext();
+};
+$hxClasses["brix.core.Application"] = brix.core.Application;
+$hxExpose(brix.core.Application, "app");
+brix.core.Application.__name__ = ["brix","core","Application"];
+brix.core.Application.get = function(BrixId) {
+	return brix.core.Application.instances.get(BrixId);
+}
+brix.core.Application.main = function() {
+	var newApp = brix.core.Application.createApplication();
+	js.Lib.window.onload = function(e) {
+		newApp.initDom();
+		newApp.initComponents();
+	};
+}
+brix.core.Application.createApplication = function(args) {
+	var newId = brix.core.Application.generateUniqueId();
+	var newInstance = new brix.core.Application(newId,args);
+	brix.core.Application.instances.set(newId,newInstance);
+	return newInstance;
+}
+brix.core.Application.generateUniqueId = function() {
+	return Std.string(Math.round(Math.random() * 10000));
+}
+brix.core.Application.prototype = {
+	getUnconflictedClassTag: function(displayObjectClassName) {
+		var classTag = displayObjectClassName;
+		if(classTag.indexOf(".") != -1) classTag = HxOverrides.substr(classTag,classTag.lastIndexOf(".") + 1,null);
+		var _g = 0, _g1 = this.getRegisteredUIComponents();
+		while(_g < _g1.length) {
+			var rc = _g1[_g];
+			++_g;
+			if(rc.classname != displayObjectClassName && classTag == HxOverrides.substr(rc.classname,classTag.lastIndexOf(".") + 1,null)) return displayObjectClassName;
+		}
+		return classTag;
+	}
+	,getAssociatedComponents: function(node,typeFilter) {
+		var nodeId = node.getAttribute("data-brix-id");
+		if(nodeId != null) {
+			var l = new List();
+			if(this.nodeToCmpInstances.exists(nodeId)) {
+				var $it0 = this.nodeToCmpInstances.get(nodeId).iterator();
+				while( $it0.hasNext() ) {
+					var i = $it0.next();
+					if(js.Boot.__instanceof(i,typeFilter)) {
+						var inst = i;
+						l.add(inst);
+					}
+				}
+			}
+			return l;
+		}
+		return new List();
+	}
+	,removeAllAssociatedComponent: function(node) {
+		var nodeId = node.getAttribute("data-brix-id");
+		if(nodeId != null) {
+			node.removeAttribute("data-brix-id");
+			var isError = !this.nodeToCmpInstances.remove(nodeId);
+			if(isError) throw "Could not find the node in the associated components list.";
+		} else null;
+	}
+	,removeAssociatedComponent: function(node,cmp) {
+		var nodeId = node.getAttribute("data-brix-id");
+		var associatedCmps;
+		if(nodeId != null) {
+			associatedCmps = this.nodeToCmpInstances.get(nodeId);
+			var isError = !associatedCmps.remove(cmp);
+			if(isError) throw "Could not find the component in the node's associated components list.";
+			if(associatedCmps.isEmpty()) {
+				node.removeAttribute("data-brix-id");
+				this.nodeToCmpInstances.remove(nodeId);
+			}
+		} else null;
+	}
+	,addAssociatedComponent: function(node,cmp) {
+		var nodeId = node.getAttribute("data-brix-id");
+		var associatedCmps;
+		if(nodeId != null) associatedCmps = this.nodeToCmpInstances.get(nodeId); else {
+			this.nodesIdSequence++;
+			nodeId = Std.string(this.nodesIdSequence);
+			node.setAttribute("data-brix-id",nodeId);
+			associatedCmps = new List();
+		}
+		associatedCmps.add(cmp);
+		this.nodeToCmpInstances.set(nodeId,associatedCmps);
+	}
+	,cleanNode: function(node) {
+		if(node.nodeType != js.Lib.document.body.nodeType) return;
+		var comps = this.getAssociatedComponents(node,brix.component.ui.DisplayObject);
+		var $it0 = comps.iterator();
+		while( $it0.hasNext() ) {
+			var c = $it0.next();
+			c.remove();
+		}
+		var _g1 = 0, _g = node.childNodes.length;
+		while(_g1 < _g) {
+			var childCnt = _g1++;
+			this.cleanNode(node.childNodes[childCnt]);
+		}
+	}
+	,resolveCompClass: function(classname) {
+		var componentClass = Type.resolveClass(classname);
+		if(componentClass == null) {
+			throw "ERROR cannot resolve " + classname;
+			null;
+		}
+		return componentClass;
+	}
+	,createNonUIComponents: function() {
+		var _g = 0, _g1 = this.getRegisteredNonUIComponents();
+		while(_g < _g1.length) {
+			var rc = _g1[_g];
+			++_g;
+			var componentClass = this.resolveCompClass(rc.classname);
+			if(componentClass == null) continue;
+			var cmpInstance = null;
+			if(rc.args != null) cmpInstance = Type.createInstance(componentClass,[rc.args]); else cmpInstance = Type.createInstance(componentClass,[]);
+			if(cmpInstance != null && js.Boot.__instanceof(cmpInstance,brix.component.IBrixComponent)) cmpInstance.initBrixComponent(this.id);
+		}
+	}
+	,initUIComponents: function(compInstances) {
+		var $it0 = compInstances.iterator();
+		while( $it0.hasNext() ) {
+			var ci = $it0.next();
+			ci.init();
+		}
+	}
+	,createUIComponents: function(node) {
+		if(node.nodeType != 1) return null;
+		if(node.getAttribute("data-brix-id") != null) return null;
+		var compsToInit = new List();
+		if(node.getAttribute("class") != null) {
+			var _g = 0, _g1 = node.getAttribute("class").split(" ");
+			while(_g < _g1.length) {
+				var classValue = [_g1[_g]];
+				++_g;
+				var _g2 = 0, _g3 = this.getRegisteredUIComponents();
+				while(_g2 < _g3.length) {
+					var rc = _g3[_g2];
+					++_g2;
+					var componentClassAttrValues = [this.getUnconflictedClassTag(rc.classname)];
+					if(componentClassAttrValues[0] != rc.classname) componentClassAttrValues.push(rc.classname);
+					if(!Lambda.exists(componentClassAttrValues,(function(classValue) {
+						return function(s) {
+							return s == classValue[0];
+						};
+					})(classValue))) continue;
+					var componentClass = this.resolveCompClass(rc.classname);
+					if(componentClass == null) continue;
+					var newDisplayObject = null;
+					newDisplayObject = Type.createInstance(componentClass,[node,this.id]);
+					compsToInit.add(newDisplayObject);
+				}
+			}
+		}
+		var _g1 = 0, _g = node.childNodes.length;
+		while(_g1 < _g) {
+			var cc = _g1++;
+			var res = this.createUIComponents(node.childNodes[cc]);
+			if(res != null) compsToInit = Lambda.concat(compsToInit,res);
+		}
+		return compsToInit;
+	}
+	,initNode: function(node) {
+		var comps = this.createUIComponents(node);
+		if(comps == null) return;
+		this.initUIComponents(comps);
+	}
+	,initComponents: function() {
+		this.initNode(this.htmlRootElement);
+		this.createNonUIComponents();
+	}
+	,initDom: function(appendTo) {
+		this.htmlRootElement = appendTo;
+		if(this.htmlRootElement == null || this.htmlRootElement.nodeType != js.Lib.document.documentElement.nodeType) this.htmlRootElement = js.Lib.document.documentElement;
+		if(this.htmlRootElement == null) return;
+	}
+	,getRegisteredNonUIComponents: function() {
+		return this.applicationContext.registeredNonUIComponents;
+	}
+	,registeredNonUIComponents: null
+	,getRegisteredUIComponents: function() {
+		return this.applicationContext.registeredUIComponents;
+	}
+	,registeredUIComponents: null
+	,applicationContext: null
+	,dataObject: null
+	,htmlRootElement: null
+	,nodeToCmpInstances: null
+	,nodesIdSequence: null
+	,id: null
+	,__class__: brix.core.Application
+	,__properties__: {get_registeredUIComponents:"getRegisteredUIComponents",get_registeredNonUIComponents:"getRegisteredNonUIComponents"}
+}
+brix.core.ApplicationContext = function() {
+	this.registeredUIComponents = new Array();
+	this.registeredNonUIComponents = new Array();
+	this.registerComponentsforInit();
+};
+$hxClasses["brix.core.ApplicationContext"] = brix.core.ApplicationContext;
+brix.core.ApplicationContext.__name__ = ["brix","core","ApplicationContext"];
+brix.core.ApplicationContext.prototype = {
+	registerComponentsforInit: function() {
+		brix.component.group.Group;
+		this.registeredUIComponents.push({ classname : "brix.component.group.Group", args : null});
+		brix.component.navigation.link.LinkClosePage;
+		this.registeredUIComponents.push({ classname : "brix.component.navigation.link.LinkClosePage", args : null});
+		brix.component.navigation.link.LinkToPage;
+		this.registeredUIComponents.push({ classname : "brix.component.navigation.link.LinkToPage", args : null});
+		brix.component.navigation.Layer;
+		this.registeredUIComponents.push({ classname : "brix.component.navigation.Layer", args : null});
+		brix.component.navigation.link.TouchLink;
+		this.registeredUIComponents.push({ classname : "brix.component.navigation.link.TouchLink", args : null});
+		brix.component.navigation.Page;
+		this.registeredUIComponents.push({ classname : "brix.component.navigation.Page", args : null});
+		brix.component.sound.SoundOn;
+		this.registeredUIComponents.push({ classname : "brix.component.sound.SoundOn", args : null});
+		brix.component.sound.SoundOff;
+		this.registeredUIComponents.push({ classname : "brix.component.sound.SoundOff", args : null});
+	}
+	,registeredNonUIComponents: null
+	,registeredUIComponents: null
+	,__class__: brix.core.ApplicationContext
+}
+brix.util = {}
+brix.util.DomTools = function() { }
+$hxClasses["brix.util.DomTools"] = brix.util.DomTools;
+brix.util.DomTools.__name__ = ["brix","util","DomTools"];
+brix.util.DomTools.doLater = function(callbackFunction,nFrames) {
+	if(nFrames == null) nFrames = 1;
+	haxe.Timer.delay(callbackFunction,Math.round(200 * nFrames));
+}
+brix.util.DomTools.getElementsByAttribute = function(elt,attr,value) {
+	var childElts = elt.getElementsByTagName("*");
+	var filteredChildElts = new Array();
+	var _g1 = 0, _g = childElts.length;
+	while(_g1 < _g) {
+		var cCount = _g1++;
+		if(childElts[cCount].getAttribute(attr) != null && (value == "*" || childElts[cCount].getAttribute(attr) == value)) filteredChildElts.push(childElts[cCount]);
+	}
+	return filteredChildElts;
+}
+brix.util.DomTools.getSingleElement = function(rootElement,className,required) {
+	if(required == null) required = true;
+	var domElements = rootElement.getElementsByClassName(className);
+	if(domElements.length > 1) throw "Error: search for the element with class name \"" + className + "\" gave " + domElements.length + " results";
+	if(domElements != null && domElements.length == 1) return domElements[0]; else {
+		if(required) throw "Error: search for the element with class name \"" + className + "\" gave " + domElements.length + " results";
+		return null;
+	}
+}
+brix.util.DomTools.getElementBoundingBox = function(htmlDom) {
+	if(htmlDom.nodeType != 1) return null;
+	var offsetTop = 0;
+	var offsetLeft = 0;
+	var offsetWidth = 0.0;
+	var offsetHeight = 0.0;
+	var element = htmlDom;
+	while(element != null) {
+		var halfBorderH = (element.offsetWidth - element.clientWidth) / 2.0;
+		var halfBorderV = (element.offsetHeight - element.clientHeight) / 2.0;
+		offsetTop -= element.scrollTop;
+		offsetLeft -= element.scrollLeft;
+		offsetTop += element.offsetTop;
+		offsetLeft += element.offsetLeft;
+		element = element.offsetParent;
+	}
+	return { x : Math.round(offsetLeft), y : Math.round(offsetTop), w : Math.round(htmlDom.offsetWidth + offsetWidth), h : Math.round(htmlDom.offsetHeight + offsetHeight)};
+}
+brix.util.DomTools.inspectTrace = function(obj,callingClass) {
+	var _g = 0, _g1 = Reflect.fields(obj);
+	while(_g < _g1.length) {
+		var prop = _g1[_g];
+		++_g;
+		null;
+	}
+	null;
+}
+brix.util.DomTools.toggleClass = function(element,className) {
+	if(brix.util.DomTools.hasClass(element,className)) brix.util.DomTools.removeClass(element,className); else brix.util.DomTools.addClass(element,className);
+}
+brix.util.DomTools.addClass = function(element,className) {
+	if(element.className == null) element.className = "";
+	Lambda.iter(className.split(" "),function(cn) {
+		if(!Lambda.has(element.className.split(" "),cn)) {
+			if(element.className != "") element.className += " ";
+			element.className += cn;
+		}
+	});
+}
+brix.util.DomTools.removeClass = function(element,className) {
+	if(element.className == null || StringTools.trim(element.className) == "") return;
+	var classNamesToKeep = new Array();
+	var cns = className.split(" ");
+	Lambda.iter(element.className.split(" "),function(ecn) {
+		if(!Lambda.has(cns,ecn)) classNamesToKeep.push(ecn);
+	});
+	element.className = classNamesToKeep.join(" ");
+}
+brix.util.DomTools.hasClass = function(element,className,orderedClassName) {
+	if(orderedClassName == null) orderedClassName = false;
+	if(element.className == null || StringTools.trim(element.className) == "" || className == null || StringTools.trim(className) == "") return false;
+	if(orderedClassName) {
+		var cns = className.split(" ");
+		var ecns = element.className.split(" ");
+		var result = Lambda.map(cns,function(cn) {
+			return Lambda.indexOf(ecns,cn);
+		});
+		var prevR = 0;
+		var $it0 = result.iterator();
+		while( $it0.hasNext() ) {
+			var r = $it0.next();
+			if(r < prevR) return false;
+			prevR = r;
+		}
+		return true;
+	} else {
+		var _g = 0, _g1 = className.split(" ");
+		while(_g < _g1.length) {
+			var cn = _g1[_g];
+			++_g;
+			if(cn == null || StringTools.trim(cn) == "") continue;
+			var found = Lambda.has(element.className.split(" "),cn);
+			if(!found) return false;
+		}
+		return true;
+	}
+}
+brix.util.DomTools.setMeta = function(metaName,metaValue,attributeName) {
+	if(attributeName == null) attributeName = "content";
+	var res = new Hash();
+	var metaTags = js.Lib.document.getElementsByTagName("META");
+	var found = false;
+	var _g1 = 0, _g = metaTags.length;
+	while(_g1 < _g) {
+		var idxNode = _g1++;
+		var node = metaTags[idxNode];
+		var configName = node.getAttribute("name");
+		var configValue = node.getAttribute(attributeName);
+		if(configName != null && configValue != null) {
+			if(configName == metaName) {
+				configValue = metaValue;
+				node.setAttribute(attributeName,metaValue);
+				found = true;
+			}
+			res.set(configName,configValue);
+		}
+	}
+	if(!found) {
+		var node = js.Lib.document.createElement("meta");
+		node.setAttribute("name",metaName);
+		node.setAttribute("content",metaValue);
+		var head = js.Lib.document.getElementsByTagName("head")[0];
+		head.appendChild(node);
+		res.set(metaName,metaValue);
+	}
+	return res;
+}
+brix.util.DomTools.getMeta = function(name,attributeName,head) {
+	if(attributeName == null) attributeName = "content";
+	if(head == null) head = js.Lib.document.documentElement.getElementsByTagName("head")[0];
+	var metaTags = head.getElementsByTagName("meta");
+	var _g1 = 0, _g = metaTags.length;
+	while(_g1 < _g) {
+		var idxNode = _g1++;
+		var node = metaTags[idxNode];
+		var configName = node.getAttribute("name");
+		var configValue = node.getAttribute(attributeName);
+		if(configName == name) return configValue;
+	}
+	return null;
+}
+brix.util.DomTools.addCssRules = function(css,head) {
+	if(head == null) head = js.Lib.document.documentElement.getElementsByTagName("head")[0];
+	var node = js.Lib.document.createElement("style");
+	node.setAttribute("type","text/css");
+	node.appendChild(js.Lib.document.createTextNode(css));
+	head.appendChild(node);
+	return node;
+}
+brix.util.DomTools.embedScript = function(src) {
+	var head = js.Lib.document.getElementsByTagName("head")[0];
+	var scriptNodes = js.Lib.document.getElementsByTagName("script");
+	var _g1 = 0, _g = scriptNodes.length;
+	while(_g1 < _g) {
+		var idxNode = _g1++;
+		var node = scriptNodes[idxNode];
+		if(node.getAttribute("src") == src) return node;
+	}
+	var node = js.Lib.document.createElement("script");
+	node.setAttribute("src",src);
+	head.appendChild(node);
+	return node;
+}
+brix.util.DomTools.getBaseTag = function() {
+	var head = js.Lib.document.getElementsByTagName("head")[0];
+	var baseNodes = js.Lib.document.getElementsByTagName("base");
+	if(baseNodes.length > 0) return baseNodes[0].getAttribute("href"); else return null;
+}
+brix.util.DomTools.setBaseTag = function(href) {
+	var head = js.Lib.document.getElementsByTagName("head")[0];
+	var baseNodes = js.Lib.document.getElementsByTagName("base");
+	if(baseNodes.length > 0) baseNodes[0].setAttribute("href",href); else {
+		var node = js.Lib.document.createElement("base");
+		node.setAttribute("href",href);
+		node.setAttribute("target","_self");
+		if(head.childNodes.length > 0) head.insertBefore(node,head.childNodes[0]); else head.appendChild(node);
+	}
+}
 var haxe = {}
 haxe.Log = function() { }
 $hxClasses["haxe.Log"] = haxe.Log;
@@ -1440,1156 +2605,6 @@ js.Lib["eval"] = function(code) {
 js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
-var org = {}
-org.slplayer = {}
-org.slplayer.component = {}
-org.slplayer.component.ISLPlayerComponent = function() { }
-$hxClasses["org.slplayer.component.ISLPlayerComponent"] = org.slplayer.component.ISLPlayerComponent;
-org.slplayer.component.ISLPlayerComponent.__name__ = ["org","slplayer","component","ISLPlayerComponent"];
-org.slplayer.component.ISLPlayerComponent.prototype = {
-	getSLPlayer: null
-	,SLPlayerInstanceId: null
-	,__class__: org.slplayer.component.ISLPlayerComponent
-}
-org.slplayer.component.SLPlayerComponent = function() { }
-$hxClasses["org.slplayer.component.SLPlayerComponent"] = org.slplayer.component.SLPlayerComponent;
-org.slplayer.component.SLPlayerComponent.__name__ = ["org","slplayer","component","SLPlayerComponent"];
-org.slplayer.component.SLPlayerComponent.initSLPlayerComponent = function(component,SLPlayerInstanceId) {
-	component.SLPlayerInstanceId = SLPlayerInstanceId;
-}
-org.slplayer.component.SLPlayerComponent.getSLPlayer = function(component) {
-	return org.slplayer.core.Application.get(component.SLPlayerInstanceId);
-}
-org.slplayer.component.SLPlayerComponent.checkRequiredParameters = function(cmpClass,elt) {
-	var requires = haxe.rtti.Meta.getType(cmpClass).requires;
-	if(requires == null) return;
-	var _g = 0;
-	while(_g < requires.length) {
-		var r = requires[_g];
-		++_g;
-		if(elt.getAttribute(Std.string(r)) == null || StringTools.trim(elt.getAttribute(Std.string(r))) == "") throw Std.string(r) + " parameter is required for " + Type.getClassName(cmpClass);
-	}
-}
-org.slplayer.component.ui = {}
-org.slplayer.component.ui.IDisplayObject = function() { }
-$hxClasses["org.slplayer.component.ui.IDisplayObject"] = org.slplayer.component.ui.IDisplayObject;
-org.slplayer.component.ui.IDisplayObject.__name__ = ["org","slplayer","component","ui","IDisplayObject"];
-org.slplayer.component.ui.IDisplayObject.__interfaces__ = [org.slplayer.component.ISLPlayerComponent];
-org.slplayer.component.ui.IDisplayObject.prototype = {
-	rootElement: null
-	,__class__: org.slplayer.component.ui.IDisplayObject
-}
-org.slplayer.component.ui.DisplayObject = function(rootElement,SLPId) {
-	this.rootElement = rootElement;
-	org.slplayer.component.SLPlayerComponent.initSLPlayerComponent(this,SLPId);
-	this.getSLPlayer().addAssociatedComponent(rootElement,this);
-};
-$hxClasses["org.slplayer.component.ui.DisplayObject"] = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.ui.DisplayObject.__name__ = ["org","slplayer","component","ui","DisplayObject"];
-org.slplayer.component.ui.DisplayObject.__interfaces__ = [org.slplayer.component.ui.IDisplayObject];
-org.slplayer.component.ui.DisplayObject.isDisplayObject = function(cmpClass) {
-	if(cmpClass == Type.resolveClass("org.slplayer.component.ui.DisplayObject")) return true;
-	if(Type.getSuperClass(cmpClass) != null) return org.slplayer.component.ui.DisplayObject.isDisplayObject(Type.getSuperClass(cmpClass));
-	return false;
-}
-org.slplayer.component.ui.DisplayObject.checkFilterOnElt = function(cmpClass,elt) {
-	if(elt.nodeType != js.Lib.document.body.nodeType) throw "cannot instantiate " + Type.getClassName(cmpClass) + " on a non element node.";
-	var tagFilter = haxe.rtti.Meta.getType(cmpClass) != null?haxe.rtti.Meta.getType(cmpClass).tagNameFilter:null;
-	if(tagFilter == null) return;
-	if(Lambda.exists(tagFilter,function(s) {
-		return elt.nodeName.toLowerCase() == Std.string(s).toLowerCase();
-	})) return;
-	throw "cannot instantiate " + Type.getClassName(cmpClass) + " on this type of HTML element: " + elt.nodeName.toLowerCase();
-}
-org.slplayer.component.ui.DisplayObject.prototype = {
-	clean: function() {
-	}
-	,init: function() {
-	}
-	,remove: function() {
-		this.clean();
-		this.getSLPlayer().removeAssociatedComponent(this.rootElement,this);
-	}
-	,getSLPlayer: function() {
-		return org.slplayer.component.SLPlayerComponent.getSLPlayer(this);
-	}
-	,rootElement: null
-	,SLPlayerInstanceId: null
-	,__class__: org.slplayer.component.ui.DisplayObject
-}
-org.slplayer.component.group = {}
-org.slplayer.component.group.Group = function(rootElement,SLPId) {
-	org.slplayer.component.ui.DisplayObject.call(this,rootElement,SLPId);
-};
-$hxClasses["org.slplayer.component.group.Group"] = org.slplayer.component.group.Group;
-org.slplayer.component.group.Group.__name__ = ["org","slplayer","component","group","Group"];
-org.slplayer.component.group.Group.__super__ = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.group.Group.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	__class__: org.slplayer.component.group.Group
-});
-org.slplayer.component.group.IGroupable = function() { }
-$hxClasses["org.slplayer.component.group.IGroupable"] = org.slplayer.component.group.IGroupable;
-org.slplayer.component.group.IGroupable.__name__ = ["org","slplayer","component","group","IGroupable"];
-org.slplayer.component.group.IGroupable.__interfaces__ = [org.slplayer.component.ui.IDisplayObject];
-org.slplayer.component.group.IGroupable.prototype = {
-	groupElement: null
-	,__class__: org.slplayer.component.group.IGroupable
-}
-org.slplayer.component.group.Groupable = function() { }
-$hxClasses["org.slplayer.component.group.Groupable"] = org.slplayer.component.group.Groupable;
-org.slplayer.component.group.Groupable.__name__ = ["org","slplayer","component","group","Groupable"];
-org.slplayer.component.group.Groupable.startGroupable = function(groupable) {
-	var groupId = groupable.rootElement.getAttribute("data-group-id");
-	if(groupId == null) return;
-	var groupElements = js.Lib.document.getElementsByClassName(groupId);
-	if(groupElements.length < 1) return;
-	if(groupElements.length > 1) throw "ERROR " + groupElements.length + " Group components are declared with the same group id " + groupId;
-	groupable.groupElement = groupElements[0];
-}
-org.slplayer.component.navigation = {}
-org.slplayer.component.navigation.LayerStatus = $hxClasses["org.slplayer.component.navigation.LayerStatus"] = { __ename__ : ["org","slplayer","component","navigation","LayerStatus"], __constructs__ : ["showTransition","hideTransition","visible","hidden","notInit"] }
-org.slplayer.component.navigation.LayerStatus.showTransition = ["showTransition",0];
-org.slplayer.component.navigation.LayerStatus.showTransition.toString = $estr;
-org.slplayer.component.navigation.LayerStatus.showTransition.__enum__ = org.slplayer.component.navigation.LayerStatus;
-org.slplayer.component.navigation.LayerStatus.hideTransition = ["hideTransition",1];
-org.slplayer.component.navigation.LayerStatus.hideTransition.toString = $estr;
-org.slplayer.component.navigation.LayerStatus.hideTransition.__enum__ = org.slplayer.component.navigation.LayerStatus;
-org.slplayer.component.navigation.LayerStatus.visible = ["visible",2];
-org.slplayer.component.navigation.LayerStatus.visible.toString = $estr;
-org.slplayer.component.navigation.LayerStatus.visible.__enum__ = org.slplayer.component.navigation.LayerStatus;
-org.slplayer.component.navigation.LayerStatus.hidden = ["hidden",3];
-org.slplayer.component.navigation.LayerStatus.hidden.toString = $estr;
-org.slplayer.component.navigation.LayerStatus.hidden.__enum__ = org.slplayer.component.navigation.LayerStatus;
-org.slplayer.component.navigation.LayerStatus.notInit = ["notInit",4];
-org.slplayer.component.navigation.LayerStatus.notInit.toString = $estr;
-org.slplayer.component.navigation.LayerStatus.notInit.__enum__ = org.slplayer.component.navigation.LayerStatus;
-org.slplayer.component.navigation.Layer = function(rootElement,SLPId) {
-	this.hasTransitionStarted = false;
-	org.slplayer.component.ui.DisplayObject.call(this,rootElement,SLPId);
-	this.childrenArray = new Array();
-	this.status = org.slplayer.component.navigation.LayerStatus.notInit;
-	this.styleAttrDisplay = rootElement.style.display;
-};
-$hxClasses["org.slplayer.component.navigation.Layer"] = org.slplayer.component.navigation.Layer;
-org.slplayer.component.navigation.Layer.__name__ = ["org","slplayer","component","navigation","Layer"];
-org.slplayer.component.navigation.Layer.getLayerNodes = function(pageName,slPlayerId,root) {
-	var document = root;
-	if(root == null) document = js.Lib.document.documentElement;
-	return document.getElementsByClassName(pageName);
-}
-org.slplayer.component.navigation.Layer.__super__ = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.navigation.Layer.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	cleanupVideoElements: function(nodeList) {
-		var _g1 = 0, _g = nodeList.length;
-		while(_g1 < _g) {
-			var idx = _g1++;
-			try {
-				var element = nodeList[idx];
-				element.pause();
-				element.currentTime = 0;
-			} catch( e ) {
-				null;
-			}
-		}
-	}
-	,cleanupAudioElements: function(nodeList) {
-		var _g1 = 0, _g = nodeList.length;
-		while(_g1 < _g) {
-			var idx = _g1++;
-			try {
-				var element = nodeList[idx];
-				element.pause();
-				element.currentTime = 0;
-			} catch( e ) {
-				null;
-			}
-		}
-	}
-	,setupVideoElements: function(nodeList) {
-		var _g1 = 0, _g = nodeList.length;
-		while(_g1 < _g) {
-			var idx = _g1++;
-			try {
-				var element = nodeList[idx];
-				if(element.autoplay == true) {
-					element.currentTime = 0;
-					element.play();
-				}
-				element.muted = org.slplayer.component.sound.SoundOn.isMuted;
-			} catch( e ) {
-				null;
-			}
-		}
-	}
-	,setupAudioElements: function(nodeList) {
-		var _g1 = 0, _g = nodeList.length;
-		while(_g1 < _g) {
-			var idx = _g1++;
-			try {
-				var element = nodeList[idx];
-				if(element.autoplay == true) {
-					element.currentTime = 0;
-					element.play();
-				}
-				element.muted = org.slplayer.component.sound.SoundOn.isMuted;
-			} catch( e ) {
-				null;
-			}
-		}
-	}
-	,doHide: function(transitionData,preventTransitions,e) {
-		if(e != null && e.target != this.rootElement) return;
-		if(preventTransitions == false && this.doHideCallback == null) return;
-		if(preventTransitions == false) {
-			this.endTransition(org.slplayer.component.navigation.transition.TransitionType.hide,transitionData,this.doHideCallback);
-			this.doHideCallback = null;
-		}
-		this.status = org.slplayer.component.navigation.LayerStatus.hidden;
-		try {
-			var event = js.Lib.document.createEvent("CustomEvent");
-			event.initCustomEvent("onLayerHide",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
-			this.rootElement.dispatchEvent(event);
-		} catch( e1 ) {
-			null;
-		}
-		var audioNodes = this.rootElement.getElementsByTagName("audio");
-		this.cleanupAudioElements(audioNodes);
-		var videoNodes = this.rootElement.getElementsByTagName("video");
-		this.cleanupVideoElements(videoNodes);
-		while(this.rootElement.childNodes.length > 0) {
-			var element = this.rootElement.childNodes[0];
-			this.rootElement.removeChild(element);
-			this.childrenArray.push(element);
-		}
-		this.rootElement.style.display = "none";
-	}
-	,hide: function(transitionData,preventTransitions) {
-		if(this.status != org.slplayer.component.navigation.LayerStatus.visible && this.status != org.slplayer.component.navigation.LayerStatus.notInit) return;
-		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) {
-			this.doHideCallback(null);
-			this.removeTransitionEvent(this.doHideCallback);
-		} else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) {
-			this.doShowCallback(null);
-			this.removeTransitionEvent(this.doShowCallback);
-		}
-		this.status = org.slplayer.component.navigation.LayerStatus.hideTransition;
-		if(preventTransitions == false) {
-			this.doHideCallback = (function(f,a1,a2) {
-				return function(e) {
-					return f(a1,a2,e);
-				};
-			})($bind(this,this.doHide),transitionData,preventTransitions);
-			this.startTransition(org.slplayer.component.navigation.transition.TransitionType.hide,transitionData,this.doHideCallback);
-		} else this.doHide(transitionData,preventTransitions,null);
-	}
-	,doShow: function(transitionData,preventTransitions,e) {
-		if(e != null && e.target != this.rootElement) return;
-		if(preventTransitions == false && this.doShowCallback == null) return;
-		if(preventTransitions == false) this.endTransition(org.slplayer.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
-		this.doShowCallback = null;
-		this.status = org.slplayer.component.navigation.LayerStatus.visible;
-	}
-	,show: function(transitionData,preventTransitions) {
-		if(preventTransitions == null) preventTransitions = false;
-		if(this.status != org.slplayer.component.navigation.LayerStatus.hidden && this.status != org.slplayer.component.navigation.LayerStatus.notInit) return;
-		if(this.status == org.slplayer.component.navigation.LayerStatus.hideTransition) {
-			this.doHideCallback(null);
-			this.removeTransitionEvent(this.doHideCallback);
-		} else if(this.status == org.slplayer.component.navigation.LayerStatus.showTransition) {
-			this.doShowCallback(null);
-			this.removeTransitionEvent(this.doShowCallback);
-		}
-		this.status = org.slplayer.component.navigation.LayerStatus.showTransition;
-		while(this.childrenArray.length > 0) {
-			var element = this.childrenArray.shift();
-			this.rootElement.appendChild(element);
-		}
-		var audioNodes = this.rootElement.getElementsByTagName("audio");
-		this.setupAudioElements(audioNodes);
-		var videoNodes = this.rootElement.getElementsByTagName("video");
-		this.setupVideoElements(videoNodes);
-		try {
-			var event = js.Lib.document.createEvent("CustomEvent");
-			event.initCustomEvent("onLayerShow",false,false,{ transitionData : transitionData, target : this.rootElement, layer : this});
-			this.rootElement.dispatchEvent(event);
-		} catch( e ) {
-			null;
-		}
-		if(preventTransitions == false) {
-			this.doShowCallback = (function(f,a1,a2) {
-				return function(e) {
-					return f(a1,a2,e);
-				};
-			})($bind(this,this.doShow),transitionData,preventTransitions);
-			this.startTransition(org.slplayer.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
-		} else this.doShow(transitionData,preventTransitions,null);
-		this.rootElement.style.display = this.styleAttrDisplay;
-	}
-	,removeTransitionEvent: function(onEndCallback) {
-		this.rootElement.removeEventListener("transitionend",onEndCallback,false);
-		this.rootElement.removeEventListener("transitionEnd",onEndCallback,false);
-		this.rootElement.removeEventListener("webkitTransitionEnd",onEndCallback,false);
-		this.rootElement.removeEventListener("oTransitionEnd",onEndCallback,false);
-		this.rootElement.removeEventListener("MSTransitionEnd",onEndCallback,false);
-	}
-	,addTransitionEvent: function(onEndCallback) {
-		this.rootElement.addEventListener("transitionend",onEndCallback,false);
-		this.rootElement.addEventListener("transitionEnd",onEndCallback,false);
-		this.rootElement.addEventListener("webkitTransitionEnd",onEndCallback,false);
-		this.rootElement.addEventListener("oTransitionEnd",onEndCallback,false);
-		this.rootElement.addEventListener("MSTransitionEnd",onEndCallback,false);
-	}
-	,endTransition: function(type,transitionData,onComplete) {
-		this.removeTransitionEvent(onComplete);
-		if(transitionData != null) org.slplayer.util.DomTools.removeClass(this.rootElement,transitionData.endStyleName);
-		var transitionData2 = org.slplayer.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,type);
-		if(transitionData2 != null) org.slplayer.util.DomTools.removeClass(this.rootElement,transitionData2.endStyleName);
-	}
-	,doStartTransition: function(sumOfTransitions,onComplete) {
-		var _g = 0;
-		while(_g < sumOfTransitions.length) {
-			var transition = sumOfTransitions[_g];
-			++_g;
-			org.slplayer.util.DomTools.removeClass(this.rootElement,transition.startStyleName);
-		}
-		if(onComplete != null) this.addTransitionEvent(onComplete);
-		org.slplayer.component.navigation.transition.TransitionTools.setTransitionProperty(this.rootElement,"transitionDuration",null);
-		var _g = 0;
-		while(_g < sumOfTransitions.length) {
-			var transition = sumOfTransitions[_g];
-			++_g;
-			org.slplayer.util.DomTools.addClass(this.rootElement,transition.endStyleName);
-		}
-	}
-	,startTransition: function(type,transitionData,onComplete) {
-		var transitionData2 = org.slplayer.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,type);
-		var sumOfTransitions = new Array();
-		if(transitionData != null) sumOfTransitions.push(transitionData);
-		if(transitionData2 != null) sumOfTransitions.push(transitionData2);
-		if(sumOfTransitions.length == 0) {
-			if(onComplete != null) onComplete(null);
-		} else {
-			this.hasTransitionStarted = true;
-			org.slplayer.component.navigation.transition.TransitionTools.setTransitionProperty(this.rootElement,"transitionDuration","0");
-			var _g = 0;
-			while(_g < sumOfTransitions.length) {
-				var transition = sumOfTransitions[_g];
-				++_g;
-				org.slplayer.util.DomTools.addClass(this.rootElement,transition.startStyleName);
-			}
-			org.slplayer.util.DomTools.doLater((function(f,a1,a2) {
-				return function() {
-					return f(a1,a2);
-				};
-			})($bind(this,this.doStartTransition),sumOfTransitions,onComplete));
-		}
-	}
-	,doHideCallback: null
-	,doShowCallback: null
-	,styleAttrDisplay: null
-	,hasTransitionStarted: null
-	,status: null
-	,childrenArray: null
-	,__class__: org.slplayer.component.navigation.Layer
-});
-org.slplayer.component.navigation.Page = function(rootElement,SLPId) {
-	org.slplayer.component.ui.DisplayObject.call(this,rootElement,SLPId);
-	org.slplayer.component.group.Groupable.startGroupable(this);
-	this.name = rootElement.getAttribute("name");
-	if(this.name == null || this.name == "") throw "Pages have to have a 'name' attribute";
-};
-$hxClasses["org.slplayer.component.navigation.Page"] = org.slplayer.component.navigation.Page;
-org.slplayer.component.navigation.Page.__name__ = ["org","slplayer","component","navigation","Page"];
-org.slplayer.component.navigation.Page.__interfaces__ = [org.slplayer.component.group.IGroupable];
-org.slplayer.component.navigation.Page.openPage = function(pageName,isPopup,transitionDataShow,transitionDataHide,slPlayerId,root) {
-	var document = root;
-	if(root == null) document = js.Lib.document.documentElement;
-	var page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId,document);
-	if(page == null) {
-		page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId);
-		if(page == null) throw "Error, could not find a page with name " + pageName;
-	}
-	page.open(transitionDataShow,transitionDataHide,!isPopup);
-}
-org.slplayer.component.navigation.Page.closePage = function(pageName,transitionData,slPlayerId,root) {
-	var document = root;
-	if(root == null) document = js.Lib.document.documentElement;
-	var page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId,document);
-	if(page == null) {
-		page = org.slplayer.component.navigation.Page.getPageByName(pageName,slPlayerId);
-		if(page == null) throw "Error, could not find a page with name " + pageName;
-	}
-	page.close(transitionData);
-}
-org.slplayer.component.navigation.Page.getPageNodes = function(slPlayerId,root) {
-	var document = root;
-	if(root == null) document = js.Lib.document.documentElement;
-	return document.getElementsByClassName("Page");
-}
-org.slplayer.component.navigation.Page.getPageByName = function(pageName,slPlayerId,root) {
-	var document = root;
-	if(root == null) document = js.Lib.document.documentElement;
-	var pages = org.slplayer.component.navigation.Page.getPageNodes(slPlayerId,document);
-	var _g1 = 0, _g = pages.length;
-	while(_g1 < _g) {
-		var pageIdx = _g1++;
-		if(pages[pageIdx].getAttribute("name") == pageName) {
-			var pageInstances = org.slplayer.core.Application.get(slPlayerId).getAssociatedComponents(pages[pageIdx],org.slplayer.component.navigation.Page);
-			var $it0 = pageInstances.iterator();
-			while( $it0.hasNext() ) {
-				var page = $it0.next();
-				return page;
-			}
-			return null;
-		}
-	}
-	return null;
-}
-org.slplayer.component.navigation.Page.__super__ = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.navigation.Page.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	close: function(transitionData,preventCloseByClassName,preventTransitions) {
-		if(preventTransitions == null) preventTransitions = false;
-		if(preventCloseByClassName == null) preventCloseByClassName = new Array();
-		var nodes = org.slplayer.component.navigation.Layer.getLayerNodes(this.name,this.SLPlayerInstanceId,this.groupElement);
-		var _g1 = 0, _g = nodes.length;
-		while(_g1 < _g) {
-			var idxLayerNode = _g1++;
-			var layerNode = nodes[idxLayerNode];
-			var hasForbiddenClass = false;
-			var _g2 = 0;
-			while(_g2 < preventCloseByClassName.length) {
-				var className = preventCloseByClassName[_g2];
-				++_g2;
-				if(org.slplayer.util.DomTools.hasClass(layerNode,className)) {
-					hasForbiddenClass = true;
-					break;
-				}
-			}
-			if(!hasForbiddenClass) {
-				var layerInstances = this.getSLPlayer().getAssociatedComponents(layerNode,org.slplayer.component.navigation.Layer);
-				var $it0 = layerInstances.iterator();
-				while( $it0.hasNext() ) {
-					var layerInstance = $it0.next();
-					(js.Boot.__cast(layerInstance , org.slplayer.component.navigation.Layer)).hide(transitionData,preventTransitions);
-				}
-			}
-		}
-		var nodes1 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href",this.name);
-		var _g1 = 0, _g = nodes1.length;
-		while(_g1 < _g) {
-			var idxLayerNode = _g1++;
-			var element = nodes1[idxLayerNode];
-			org.slplayer.util.DomTools.removeClass(element,"page-opened");
-		}
-		var nodes2 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href","#" + this.name);
-		var _g1 = 0, _g = nodes2.length;
-		while(_g1 < _g) {
-			var idxLayerNode = _g1++;
-			var element = nodes2[idxLayerNode];
-			org.slplayer.util.DomTools.removeClass(element,"page-opened");
-		}
-	}
-	,doOpen: function(transitionData,preventTransitions) {
-		if(preventTransitions == null) preventTransitions = false;
-		var nodes = org.slplayer.component.navigation.Layer.getLayerNodes(this.name,this.SLPlayerInstanceId,this.groupElement);
-		var _g1 = 0, _g = nodes.length;
-		while(_g1 < _g) {
-			var idxLayerNode = _g1++;
-			var layerNode = nodes[idxLayerNode];
-			var layerInstances = this.getSLPlayer().getAssociatedComponents(layerNode,org.slplayer.component.navigation.Layer);
-			var $it0 = layerInstances.iterator();
-			while( $it0.hasNext() ) {
-				var layerInstance = $it0.next();
-				layerInstance.show(transitionData,preventTransitions);
-			}
-		}
-		var nodes1 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href",this.name);
-		var _g1 = 0, _g = nodes1.length;
-		while(_g1 < _g) {
-			var idxLayerNode = _g1++;
-			var element = nodes1[idxLayerNode];
-			org.slplayer.util.DomTools.addClass(element,"page-opened");
-		}
-		var nodes2 = org.slplayer.util.DomTools.getElementsByAttribute(this.groupElement,"href","#" + this.name);
-		var _g1 = 0, _g = nodes2.length;
-		while(_g1 < _g) {
-			var idxLayerNode = _g1++;
-			var element = nodes2[idxLayerNode];
-			org.slplayer.util.DomTools.addClass(element,"page-opened");
-		}
-	}
-	,closeOthers: function(transitionData,preventTransitions) {
-		if(preventTransitions == null) preventTransitions = false;
-		var nodes = org.slplayer.component.navigation.Page.getPageNodes(this.SLPlayerInstanceId,this.groupElement);
-		var _g1 = 0, _g = nodes.length;
-		while(_g1 < _g) {
-			var idxPageNode = _g1++;
-			var pageNode = nodes[idxPageNode];
-			var pageInstances = this.getSLPlayer().getAssociatedComponents(pageNode,org.slplayer.component.navigation.Page);
-			var $it0 = pageInstances.iterator();
-			while( $it0.hasNext() ) {
-				var pageInstance = $it0.next();
-				if(pageInstance != this) pageInstance.close(transitionData,[this.name],preventTransitions);
-			}
-		}
-	}
-	,open: function(transitionDataShow,transitionDataHide,doCloseOthers,preventTransitions) {
-		if(preventTransitions == null) preventTransitions = false;
-		if(doCloseOthers == null) doCloseOthers = true;
-		if(doCloseOthers) this.closeOthers(transitionDataHide,preventTransitions);
-		this.doOpen(transitionDataShow,preventTransitions);
-	}
-	,init: function() {
-		org.slplayer.component.ui.DisplayObject.prototype.init.call(this);
-		if(this.groupElement == null) this.groupElement = js.Lib.document.body;
-		if(org.slplayer.util.DomTools.getMeta("initialPageName") == this.name || this.groupElement.getAttribute("data-initial-page-name") == this.name) org.slplayer.util.DomTools.doLater((function(f,a1,a2,a3,a4) {
-			return function() {
-				return f(a1,a2,a3,a4);
-			};
-		})($bind(this,this.open),null,null,true,true));
-	}
-	,groupElement: null
-	,name: null
-	,__class__: org.slplayer.component.navigation.Page
-});
-org.slplayer.component.navigation.link = {}
-org.slplayer.component.navigation.link.LinkBase = function(rootElement,SLPId) {
-	org.slplayer.component.ui.DisplayObject.call(this,rootElement,SLPId);
-	org.slplayer.component.group.Groupable.startGroupable(this);
-	rootElement.addEventListener("click",$bind(this,this.onClick),false);
-	if(rootElement.getAttribute("href") != null) {
-		this.linkName = StringTools.trim(rootElement.getAttribute("href"));
-		this.linkName = HxOverrides.substr(this.linkName,this.linkName.indexOf("#") + 1,null);
-	} else null;
-	if(rootElement.getAttribute("target") != null && StringTools.trim(rootElement.getAttribute("target")) != "") this.targetAttr = StringTools.trim(rootElement.getAttribute("target"));
-};
-$hxClasses["org.slplayer.component.navigation.link.LinkBase"] = org.slplayer.component.navigation.link.LinkBase;
-org.slplayer.component.navigation.link.LinkBase.__name__ = ["org","slplayer","component","navigation","link","LinkBase"];
-org.slplayer.component.navigation.link.LinkBase.__interfaces__ = [org.slplayer.component.group.IGroupable];
-org.slplayer.component.navigation.link.LinkBase.__super__ = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.navigation.link.LinkBase.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	onClick: function(e) {
-		e.preventDefault();
-		this.transitionDataShow = org.slplayer.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,org.slplayer.component.navigation.transition.TransitionType.show);
-		this.transitionDataHide = org.slplayer.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,org.slplayer.component.navigation.transition.TransitionType.hide);
-	}
-	,transitionDataHide: null
-	,transitionDataShow: null
-	,targetAttr: null
-	,linkName: null
-	,groupElement: null
-	,__class__: org.slplayer.component.navigation.link.LinkBase
-});
-org.slplayer.component.navigation.link.LinkClosePage = function(rootElement,SLPId) {
-	org.slplayer.component.navigation.link.LinkBase.call(this,rootElement,SLPId);
-};
-$hxClasses["org.slplayer.component.navigation.link.LinkClosePage"] = org.slplayer.component.navigation.link.LinkClosePage;
-org.slplayer.component.navigation.link.LinkClosePage.__name__ = ["org","slplayer","component","navigation","link","LinkClosePage"];
-org.slplayer.component.navigation.link.LinkClosePage.__super__ = org.slplayer.component.navigation.link.LinkBase;
-org.slplayer.component.navigation.link.LinkClosePage.prototype = $extend(org.slplayer.component.navigation.link.LinkBase.prototype,{
-	onClick: function(e) {
-		org.slplayer.component.navigation.link.LinkBase.prototype.onClick.call(this,e);
-		org.slplayer.component.navigation.Page.closePage(this.linkName,this.transitionDataHide,this.SLPlayerInstanceId);
-	}
-	,__class__: org.slplayer.component.navigation.link.LinkClosePage
-});
-org.slplayer.component.navigation.link.LinkToPage = function(rootElement,SLPId) {
-	org.slplayer.component.navigation.link.LinkBase.call(this,rootElement,SLPId);
-};
-$hxClasses["org.slplayer.component.navigation.link.LinkToPage"] = org.slplayer.component.navigation.link.LinkToPage;
-org.slplayer.component.navigation.link.LinkToPage.__name__ = ["org","slplayer","component","navigation","link","LinkToPage"];
-org.slplayer.component.navigation.link.LinkToPage.__super__ = org.slplayer.component.navigation.link.LinkBase;
-org.slplayer.component.navigation.link.LinkToPage.prototype = $extend(org.slplayer.component.navigation.link.LinkBase.prototype,{
-	onClick: function(e) {
-		org.slplayer.component.navigation.link.LinkBase.prototype.onClick.call(this,e);
-		org.slplayer.component.navigation.Page.openPage(this.linkName,this.targetAttr == "_top",this.transitionDataShow,this.transitionDataHide,this.SLPlayerInstanceId,this.groupElement);
-	}
-	,__class__: org.slplayer.component.navigation.link.LinkToPage
-});
-org.slplayer.component.navigation.link.TouchType = $hxClasses["org.slplayer.component.navigation.link.TouchType"] = { __ename__ : ["org","slplayer","component","navigation","link","TouchType"], __constructs__ : ["swipeLeft","swipeRight","swipeUp","swipeDown","pinchOpen","pinchClose"] }
-org.slplayer.component.navigation.link.TouchType.swipeLeft = ["swipeLeft",0];
-org.slplayer.component.navigation.link.TouchType.swipeLeft.toString = $estr;
-org.slplayer.component.navigation.link.TouchType.swipeLeft.__enum__ = org.slplayer.component.navigation.link.TouchType;
-org.slplayer.component.navigation.link.TouchType.swipeRight = ["swipeRight",1];
-org.slplayer.component.navigation.link.TouchType.swipeRight.toString = $estr;
-org.slplayer.component.navigation.link.TouchType.swipeRight.__enum__ = org.slplayer.component.navigation.link.TouchType;
-org.slplayer.component.navigation.link.TouchType.swipeUp = ["swipeUp",2];
-org.slplayer.component.navigation.link.TouchType.swipeUp.toString = $estr;
-org.slplayer.component.navigation.link.TouchType.swipeUp.__enum__ = org.slplayer.component.navigation.link.TouchType;
-org.slplayer.component.navigation.link.TouchType.swipeDown = ["swipeDown",3];
-org.slplayer.component.navigation.link.TouchType.swipeDown.toString = $estr;
-org.slplayer.component.navigation.link.TouchType.swipeDown.__enum__ = org.slplayer.component.navigation.link.TouchType;
-org.slplayer.component.navigation.link.TouchType.pinchOpen = ["pinchOpen",4];
-org.slplayer.component.navigation.link.TouchType.pinchOpen.toString = $estr;
-org.slplayer.component.navigation.link.TouchType.pinchOpen.__enum__ = org.slplayer.component.navigation.link.TouchType;
-org.slplayer.component.navigation.link.TouchType.pinchClose = ["pinchClose",5];
-org.slplayer.component.navigation.link.TouchType.pinchClose.toString = $estr;
-org.slplayer.component.navigation.link.TouchType.pinchClose.__enum__ = org.slplayer.component.navigation.link.TouchType;
-org.slplayer.component.navigation.link.TouchLink = function(rootElement,SLPId) {
-	org.slplayer.component.ui.DisplayObject.call(this,rootElement,SLPId);
-	org.slplayer.component.group.Groupable.startGroupable(this);
-	var element;
-	if(this.groupElement != null) element = this.groupElement; else element = js.Lib.document.body;
-	var attrStr = rootElement.getAttribute("data-touch-detection-distance");
-	if(attrStr == null || attrStr == "") this.detectDistance = 200; else this.detectDistance = Std.parseInt(attrStr);
-	element.addEventListener("touchmove",$bind(this,this.onTouchMove),false);
-	element.addEventListener("touchstart",$bind(this,this.onTouchStart),false);
-	element.addEventListener("touchend",$bind(this,this.onTouchEnd),false);
-	switch(rootElement.getAttribute("data-touch-type")) {
-	case "left":
-		this.touchType = org.slplayer.component.navigation.link.TouchType.swipeLeft;
-		break;
-	case "right":
-		this.touchType = org.slplayer.component.navigation.link.TouchType.swipeRight;
-		break;
-	case "up":
-		this.touchType = org.slplayer.component.navigation.link.TouchType.swipeUp;
-		break;
-	case "down":
-		this.touchType = org.slplayer.component.navigation.link.TouchType.swipeDown;
-		break;
-	case "open":
-		this.touchType = org.slplayer.component.navigation.link.TouchType.pinchOpen;
-		throw "not implemented";
-		break;
-	case "close":
-		this.touchType = org.slplayer.component.navigation.link.TouchType.pinchClose;
-		throw "not implemented";
-		break;
-	default:
-		throw "Error in param " + "data-touch-type" + " for touch event type (requires left, right, up, down, in, out)";
-	}
-};
-$hxClasses["org.slplayer.component.navigation.link.TouchLink"] = org.slplayer.component.navigation.link.TouchLink;
-org.slplayer.component.navigation.link.TouchLink.__name__ = ["org","slplayer","component","navigation","link","TouchLink"];
-org.slplayer.component.navigation.link.TouchLink.__interfaces__ = [org.slplayer.component.group.IGroupable];
-org.slplayer.component.navigation.link.TouchLink.__super__ = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.navigation.link.TouchLink.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	dispatchClick: function() {
-		var evt = js.Lib.document.createEvent("MouseEvent");
-		evt.initEvent("click",true,true);
-		this.rootElement.dispatchEvent(evt);
-	}
-	,onTouchEnd: function(e) {
-		var event = e;
-		this.touchStart = null;
-	}
-	,onTouchMove: function(e) {
-		var event = e;
-		event.preventDefault();
-		if(this.touchStart == null) return;
-		var xOffset = event.touches.item(0).screenX - this.touchStart.x;
-		var yOffset = event.touches.item(0).screenY - this.touchStart.y;
-		if(Math.abs(xOffset) > 200) {
-			this.touchStart = null;
-			if(xOffset > 0) {
-				if(this.touchType == org.slplayer.component.navigation.link.TouchType.swipeLeft) this.dispatchClick();
-			} else if(this.touchType == org.slplayer.component.navigation.link.TouchType.swipeRight) this.dispatchClick();
-		} else if(Math.abs(yOffset) > this.detectDistance) {
-			this.touchStart = null;
-			if(yOffset > 0) {
-				if(this.touchType == org.slplayer.component.navigation.link.TouchType.swipeUp) this.dispatchClick();
-			} else if(this.touchType == org.slplayer.component.navigation.link.TouchType.swipeDown) this.dispatchClick();
-		}
-	}
-	,onClick: function(e) {
-		null;
-	}
-	,onTouchStart: function(e) {
-		var event = e;
-		this.touchStart = { x : event.touches.item(0).screenX, y : event.touches.item(0).screenY};
-	}
-	,touchStart: null
-	,touchType: null
-	,detectDistance: null
-	,groupElement: null
-	,__class__: org.slplayer.component.navigation.link.TouchLink
-});
-org.slplayer.component.navigation.transition = {}
-org.slplayer.component.navigation.transition.TransitionType = $hxClasses["org.slplayer.component.navigation.transition.TransitionType"] = { __ename__ : ["org","slplayer","component","navigation","transition","TransitionType"], __constructs__ : ["show","hide"] }
-org.slplayer.component.navigation.transition.TransitionType.show = ["show",0];
-org.slplayer.component.navigation.transition.TransitionType.show.toString = $estr;
-org.slplayer.component.navigation.transition.TransitionType.show.__enum__ = org.slplayer.component.navigation.transition.TransitionType;
-org.slplayer.component.navigation.transition.TransitionType.hide = ["hide",1];
-org.slplayer.component.navigation.transition.TransitionType.hide.toString = $estr;
-org.slplayer.component.navigation.transition.TransitionType.hide.__enum__ = org.slplayer.component.navigation.transition.TransitionType;
-org.slplayer.component.navigation.transition.TransitionTools = function() { }
-$hxClasses["org.slplayer.component.navigation.transition.TransitionTools"] = org.slplayer.component.navigation.transition.TransitionTools;
-org.slplayer.component.navigation.transition.TransitionTools.__name__ = ["org","slplayer","component","navigation","transition","TransitionTools"];
-org.slplayer.component.navigation.transition.TransitionTools.getTransitionData = function(rootElement,type) {
-	var res = null;
-	if(type == org.slplayer.component.navigation.transition.TransitionType.show) {
-		var start = rootElement.getAttribute("data-show-start-style");
-		var end = rootElement.getAttribute("data-show-end-style");
-		if(start != null && end != null) res = { startStyleName : start, endStyleName : end};
-	} else {
-		var start = rootElement.getAttribute("data-hide-start-style");
-		var end = rootElement.getAttribute("data-hide-end-style");
-		if(start != null && end != null) res = { startStyleName : start, endStyleName : end};
-	}
-	return res;
-}
-org.slplayer.component.navigation.transition.TransitionTools.setTransitionProperty = function(rootElement,name,value) {
-	Reflect.setProperty(rootElement.style,name,value);
-	var prefixed = "MozT" + HxOverrides.substr(name,1,null);
-	rootElement.style[prefixed] = value;
-	var prefixed1 = "webkitT" + HxOverrides.substr(name,1,null);
-	rootElement.style[prefixed1] = value;
-	var prefixed2 = "oT" + HxOverrides.substr(name,1,null);
-	rootElement.style[prefixed2] = value;
-}
-org.slplayer.component.sound = {}
-org.slplayer.component.sound.SoundOn = function(rootElement,SLPId) {
-	org.slplayer.component.ui.DisplayObject.call(this,rootElement,SLPId);
-	rootElement.onclick = $bind(this,this.onClick);
-};
-$hxClasses["org.slplayer.component.sound.SoundOn"] = org.slplayer.component.sound.SoundOn;
-org.slplayer.component.sound.SoundOn.__name__ = ["org","slplayer","component","sound","SoundOn"];
-org.slplayer.component.sound.SoundOn.mute = function(doMute) {
-	var audioTags = js.Lib.document.getElementsByTagName("audio");
-	var _g1 = 0, _g = audioTags.length;
-	while(_g1 < _g) {
-		var idx = _g1++;
-		audioTags[idx].muted = doMute;
-	}
-	org.slplayer.component.sound.SoundOn.isMuted = doMute;
-	var soundOffButtons = js.Lib.document.getElementsByClassName("SoundOff");
-	var soundOnButtons = js.Lib.document.getElementsByClassName("SoundOn");
-	var _g1 = 0, _g = soundOffButtons.length;
-	while(_g1 < _g) {
-		var idx = _g1++;
-		if(doMute) soundOffButtons[idx].style.visibility = "hidden"; else soundOffButtons[idx].style.visibility = "visible";
-	}
-	var _g1 = 0, _g = soundOnButtons.length;
-	while(_g1 < _g) {
-		var idx = _g1++;
-		if(!doMute) soundOnButtons[idx].style.visibility = "hidden"; else soundOnButtons[idx].style.visibility = "visible";
-	}
-}
-org.slplayer.component.sound.SoundOn.__super__ = org.slplayer.component.ui.DisplayObject;
-org.slplayer.component.sound.SoundOn.prototype = $extend(org.slplayer.component.ui.DisplayObject.prototype,{
-	onClick: function(e) {
-		org.slplayer.component.sound.SoundOn.mute(false);
-	}
-	,init: function() {
-		org.slplayer.component.sound.SoundOn.mute(false);
-	}
-	,__class__: org.slplayer.component.sound.SoundOn
-});
-org.slplayer.component.sound.SoundOff = function(rootElement,SLPId) {
-	org.slplayer.component.sound.SoundOn.call(this,rootElement,SLPId);
-};
-$hxClasses["org.slplayer.component.sound.SoundOff"] = org.slplayer.component.sound.SoundOff;
-org.slplayer.component.sound.SoundOff.__name__ = ["org","slplayer","component","sound","SoundOff"];
-org.slplayer.component.sound.SoundOff.__super__ = org.slplayer.component.sound.SoundOn;
-org.slplayer.component.sound.SoundOff.prototype = $extend(org.slplayer.component.sound.SoundOn.prototype,{
-	onClick: function(e) {
-		org.slplayer.component.sound.SoundOn.mute(true);
-	}
-	,__class__: org.slplayer.component.sound.SoundOff
-});
-org.slplayer.core = {}
-org.slplayer.core.Application = function(id,args) {
-	this.dataObject = args;
-	this.id = id;
-	this.nodesIdSequence = 0;
-	this.registeredUIComponents = new Array();
-	this.registeredNonUIComponents = new Array();
-	this.nodeToCmpInstances = new Hash();
-	this.applicationContext = new org.slplayer.core.ApplicationContext();
-};
-$hxClasses["org.slplayer.core.Application"] = org.slplayer.core.Application;
-$hxExpose(org.slplayer.core.Application, "app");
-org.slplayer.core.Application.__name__ = ["org","slplayer","core","Application"];
-org.slplayer.core.Application.get = function(SLPId) {
-	return org.slplayer.core.Application.instances.get(SLPId);
-}
-org.slplayer.core.Application.main = function() {
-	var newApp = org.slplayer.core.Application.createApplication();
-	js.Lib.window.onload = function(e) {
-		newApp.initDom();
-		newApp.initComponents();
-	};
-}
-org.slplayer.core.Application.createApplication = function(args) {
-	var newId = org.slplayer.core.Application.generateUniqueId();
-	var newInstance = new org.slplayer.core.Application(newId,args);
-	org.slplayer.core.Application.instances.set(newId,newInstance);
-	return newInstance;
-}
-org.slplayer.core.Application.generateUniqueId = function() {
-	return Std.string(Math.round(Math.random() * 10000));
-}
-org.slplayer.core.Application.prototype = {
-	getUnconflictedClassTag: function(displayObjectClassName) {
-		var classTag = displayObjectClassName;
-		if(classTag.indexOf(".") != -1) classTag = HxOverrides.substr(classTag,classTag.lastIndexOf(".") + 1,null);
-		var _g = 0, _g1 = this.getRegisteredUIComponents();
-		while(_g < _g1.length) {
-			var rc = _g1[_g];
-			++_g;
-			if(rc.classname != displayObjectClassName && classTag == HxOverrides.substr(rc.classname,classTag.lastIndexOf(".") + 1,null)) return displayObjectClassName;
-		}
-		return classTag;
-	}
-	,getAssociatedComponents: function(node,typeFilter) {
-		var nodeId = node.getAttribute("data-" + "slpid");
-		if(nodeId != null) {
-			var l = new List();
-			if(this.nodeToCmpInstances.exists(nodeId)) {
-				var $it0 = this.nodeToCmpInstances.get(nodeId).iterator();
-				while( $it0.hasNext() ) {
-					var i = $it0.next();
-					if(js.Boot.__instanceof(i,typeFilter)) {
-						var inst = i;
-						l.add(inst);
-					}
-				}
-			}
-			return l;
-		}
-		return new List();
-	}
-	,removeAllAssociatedComponent: function(node) {
-		var nodeId = node.getAttribute("data-" + "slpid");
-		if(nodeId != null) {
-			node.removeAttribute("data-" + "slpid");
-			var isError = !this.nodeToCmpInstances.remove(nodeId);
-			if(isError) throw "Could not find the node in the associated components list.";
-		} else null;
-	}
-	,removeAssociatedComponent: function(node,cmp) {
-		var nodeId = node.getAttribute("data-" + "slpid");
-		var associatedCmps;
-		if(nodeId != null) {
-			associatedCmps = this.nodeToCmpInstances.get(nodeId);
-			var isError = !associatedCmps.remove(cmp);
-			if(isError) throw "Could not find the component in the node's associated components list.";
-			if(associatedCmps.isEmpty()) {
-				node.removeAttribute("data-" + "slpid");
-				this.nodeToCmpInstances.remove(nodeId);
-			}
-		} else null;
-	}
-	,addAssociatedComponent: function(node,cmp) {
-		var nodeId = node.getAttribute("data-" + "slpid");
-		var associatedCmps;
-		if(nodeId != null) associatedCmps = this.nodeToCmpInstances.get(nodeId); else {
-			this.nodesIdSequence++;
-			nodeId = Std.string(this.nodesIdSequence);
-			node.setAttribute("data-" + "slpid",nodeId);
-			associatedCmps = new List();
-		}
-		associatedCmps.add(cmp);
-		this.nodeToCmpInstances.set(nodeId,associatedCmps);
-	}
-	,cleanNode: function(node) {
-		if(node.nodeType != js.Lib.document.body.nodeType) return;
-		var comps = this.getAssociatedComponents(node,org.slplayer.component.ui.DisplayObject);
-		var $it0 = comps.iterator();
-		while( $it0.hasNext() ) {
-			var c = $it0.next();
-			c.remove();
-		}
-		var _g1 = 0, _g = node.childNodes.length;
-		while(_g1 < _g) {
-			var childCnt = _g1++;
-			this.cleanNode(node.childNodes[childCnt]);
-		}
-	}
-	,resolveCompClass: function(classname) {
-		var componentClass = Type.resolveClass(classname);
-		if(componentClass == null) {
-			throw "ERROR cannot resolve " + classname;
-			null;
-		}
-		return componentClass;
-	}
-	,createNonUIComponents: function() {
-		var _g = 0, _g1 = this.getRegisteredNonUIComponents();
-		while(_g < _g1.length) {
-			var rc = _g1[_g];
-			++_g;
-			var componentClass = this.resolveCompClass(rc.classname);
-			if(componentClass == null) continue;
-			var cmpInstance = null;
-			if(rc.args != null) cmpInstance = Type.createInstance(componentClass,[rc.args]); else cmpInstance = Type.createInstance(componentClass,[]);
-			if(cmpInstance != null && js.Boot.__instanceof(cmpInstance,org.slplayer.component.ISLPlayerComponent)) cmpInstance.initSLPlayerComponent(this.id);
-		}
-	}
-	,initUIComponents: function(compInstances) {
-		var $it0 = compInstances.iterator();
-		while( $it0.hasNext() ) {
-			var ci = $it0.next();
-			ci.init();
-		}
-	}
-	,createUIComponents: function(node) {
-		if(node.nodeType != js.Lib.document.body.nodeType) return null;
-		if(node.getAttribute("data-" + "slpid") != null) return null;
-		var compsToInit = new List();
-		if(node.getAttribute("class") != null) {
-			var _g = 0, _g1 = node.getAttribute("class").split(" ");
-			while(_g < _g1.length) {
-				var classValue = [_g1[_g]];
-				++_g;
-				var _g2 = 0, _g3 = this.getRegisteredUIComponents();
-				while(_g2 < _g3.length) {
-					var rc = _g3[_g2];
-					++_g2;
-					var componentClassAttrValues = [this.getUnconflictedClassTag(rc.classname)];
-					if(componentClassAttrValues[0] != rc.classname) componentClassAttrValues.push(rc.classname);
-					if(!Lambda.exists(componentClassAttrValues,(function(classValue) {
-						return function(s) {
-							return s == classValue[0];
-						};
-					})(classValue))) continue;
-					var componentClass = this.resolveCompClass(rc.classname);
-					if(componentClass == null) continue;
-					var newDisplayObject = null;
-					newDisplayObject = Type.createInstance(componentClass,[node,this.id]);
-					compsToInit.add(newDisplayObject);
-				}
-			}
-		}
-		var _g1 = 0, _g = node.childNodes.length;
-		while(_g1 < _g) {
-			var cc = _g1++;
-			var res = this.createUIComponents(node.childNodes[cc]);
-			if(res != null) compsToInit = Lambda.concat(compsToInit,res);
-		}
-		return compsToInit;
-	}
-	,initNode: function(node) {
-		var comps = this.createUIComponents(node);
-		if(comps == null) return;
-		this.initUIComponents(comps);
-	}
-	,initComponents: function() {
-		this.initNode(this.htmlRootElement);
-		this.createNonUIComponents();
-	}
-	,initDom: function(appendTo) {
-		this.htmlRootElement = appendTo;
-		if(this.htmlRootElement == null || this.htmlRootElement.nodeType != js.Lib.document.documentElement.nodeType) this.htmlRootElement = js.Lib.document.documentElement;
-		if(this.htmlRootElement == null) return;
-	}
-	,getRegisteredNonUIComponents: function() {
-		return this.applicationContext.registeredNonUIComponents;
-	}
-	,registeredNonUIComponents: null
-	,getRegisteredUIComponents: function() {
-		return this.applicationContext.registeredUIComponents;
-	}
-	,registeredUIComponents: null
-	,applicationContext: null
-	,dataObject: null
-	,htmlRootElement: null
-	,nodeToCmpInstances: null
-	,nodesIdSequence: null
-	,id: null
-	,__class__: org.slplayer.core.Application
-	,__properties__: {get_registeredUIComponents:"getRegisteredUIComponents",get_registeredNonUIComponents:"getRegisteredNonUIComponents"}
-}
-org.slplayer.core.ApplicationContext = function() {
-	this.registeredUIComponents = new Array();
-	this.registeredNonUIComponents = new Array();
-	this.registerComponentsforInit();
-};
-$hxClasses["org.slplayer.core.ApplicationContext"] = org.slplayer.core.ApplicationContext;
-org.slplayer.core.ApplicationContext.__name__ = ["org","slplayer","core","ApplicationContext"];
-org.slplayer.core.ApplicationContext.prototype = {
-	registerComponentsforInit: function() {
-		org.slplayer.component.navigation.Layer;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.Layer", args : null});
-		org.slplayer.component.navigation.link.LinkToPage;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.link.LinkToPage", args : null});
-		org.slplayer.component.sound.SoundOff;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.sound.SoundOff", args : null});
-		org.slplayer.component.sound.SoundOn;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.sound.SoundOn", args : null});
-		org.slplayer.component.navigation.link.LinkClosePage;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.link.LinkClosePage", args : null});
-		org.slplayer.component.group.Group;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.group.Group", args : null});
-		org.slplayer.component.navigation.link.TouchLink;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.link.TouchLink", args : null});
-		org.slplayer.component.navigation.Page;
-		this.registeredUIComponents.push({ classname : "org.slplayer.component.navigation.Page", args : null});
-	}
-	,registeredNonUIComponents: null
-	,registeredUIComponents: null
-	,__class__: org.slplayer.core.ApplicationContext
-}
-org.slplayer.util = {}
-org.slplayer.util.DomTools = function() { }
-$hxClasses["org.slplayer.util.DomTools"] = org.slplayer.util.DomTools;
-org.slplayer.util.DomTools.__name__ = ["org","slplayer","util","DomTools"];
-org.slplayer.util.DomTools.doLater = function(callbackFunction,nFrames) {
-	if(nFrames == null) nFrames = 1;
-	haxe.Timer.delay(callbackFunction,Math.round(200 * nFrames));
-}
-org.slplayer.util.DomTools.getElementsByAttribute = function(elt,attr,value) {
-	var childElts = elt.getElementsByTagName("*");
-	var filteredChildElts = new Array();
-	var _g1 = 0, _g = childElts.length;
-	while(_g1 < _g) {
-		var cCount = _g1++;
-		if(childElts[cCount].getAttribute(attr) != null && (value == "*" || childElts[cCount].getAttribute(attr) == value)) filteredChildElts.push(childElts[cCount]);
-	}
-	return filteredChildElts;
-}
-org.slplayer.util.DomTools.getSingleElement = function(rootElement,className,required) {
-	if(required == null) required = true;
-	var domElements = rootElement.getElementsByClassName(className);
-	if(domElements.length > 1) throw "Error: search for the element with class name \"" + className + "\" gave " + domElements.length + " results";
-	if(domElements != null && domElements.length == 1) return domElements[0]; else {
-		if(required) throw "Error: search for the element with class name \"" + className + "\" gave " + domElements.length + " results";
-		return null;
-	}
-}
-org.slplayer.util.DomTools.getElementBoundingBox = function(htmlDom) {
-	var halfBorderH = 0;
-	var halfBorderV = 0;
-	var scrollTop = 0;
-	var scrollLeft = 0;
-	var element = htmlDom;
-	while(element.parentNode != null && element.tagName.toLowerCase() != "body") {
-		scrollTop -= element.scrollTop;
-		scrollLeft -= element.scrollLeft;
-		element = element.parentNode;
-	}
-	scrollTop -= element.scrollTop;
-	scrollLeft -= element.scrollLeft;
-	return { x : Math.floor(htmlDom.offsetLeft - halfBorderH) + scrollLeft, y : Math.floor(htmlDom.offsetTop - halfBorderV) + scrollTop, w : Math.floor(htmlDom.offsetWidth - halfBorderH), h : Math.floor(htmlDom.offsetHeight - halfBorderV)};
-}
-org.slplayer.util.DomTools.localToGlobal = function(x,y,htmlDom) {
-	var element = htmlDom;
-	while(element.parentNode != null && element.tagName.toLowerCase() != "body") {
-		x -= element.offsetLeft;
-		y -= element.offsetTop;
-		element = element.parentNode;
-	}
-	x -= element.offsetLeft;
-	y -= element.offsetTop;
-	return { x : x, y : y};
-}
-org.slplayer.util.DomTools.inspectTrace = function(obj,callingClass) {
-	var _g = 0, _g1 = Reflect.fields(obj);
-	while(_g < _g1.length) {
-		var prop = _g1[_g];
-		++_g;
-		null;
-	}
-	null;
-}
-org.slplayer.util.DomTools.toggleClass = function(element,className) {
-	if(org.slplayer.util.DomTools.hasClass(element,className)) org.slplayer.util.DomTools.removeClass(element,className); else org.slplayer.util.DomTools.addClass(element,className);
-}
-org.slplayer.util.DomTools.addClass = function(element,className) {
-	if(element.className == null) element.className = "";
-	if(!org.slplayer.util.DomTools.hasClass(element,className)) {
-		if(element.className != "") element.className += " ";
-		element.className += className;
-	}
-}
-org.slplayer.util.DomTools.removeClass = function(element,className) {
-	if(element.className == null) return;
-	if(org.slplayer.util.DomTools.hasClass(element,className)) {
-		var arr = element.className.split(" ");
-		var _g1 = 0, _g = arr.length;
-		while(_g1 < _g) {
-			var idx = _g1++;
-			if(arr[idx] == className) arr[idx] = "";
-		}
-		element.className = arr.join(" ");
-	}
-}
-org.slplayer.util.DomTools.hasClass = function(element,className) {
-	if(element.className == null) return false;
-	return Lambda.has(element.className.split(" "),className);
-}
-org.slplayer.util.DomTools.setMeta = function(metaName,metaValue,attributeName) {
-	if(attributeName == null) attributeName = "content";
-	var res = new Hash();
-	var metaTags = js.Lib.document.getElementsByTagName("META");
-	var found = false;
-	var _g1 = 0, _g = metaTags.length;
-	while(_g1 < _g) {
-		var idxNode = _g1++;
-		var node = metaTags[idxNode];
-		var configName = node.getAttribute("name");
-		var configValue = node.getAttribute(attributeName);
-		if(configName != null && configValue != null) {
-			if(configName == metaName) {
-				configValue = metaValue;
-				node.setAttribute(attributeName,metaValue);
-				found = true;
-			}
-			res.set(configName,configValue);
-		}
-	}
-	if(!found) {
-		var node = js.Lib.document.createElement("meta");
-		node.setAttribute("name",metaName);
-		node.setAttribute("content",metaValue);
-		var head = js.Lib.document.getElementsByTagName("head")[0];
-		head.appendChild(node);
-		res.set(metaName,metaValue);
-	}
-	return res;
-}
-org.slplayer.util.DomTools.getMeta = function(name,attributeName,head) {
-	if(attributeName == null) attributeName = "content";
-	if(head == null) head = js.Lib.document.documentElement.getElementsByTagName("head")[0];
-	var metaTags = head.getElementsByTagName("meta");
-	var _g1 = 0, _g = metaTags.length;
-	while(_g1 < _g) {
-		var idxNode = _g1++;
-		var node = metaTags[idxNode];
-		var configName = node.getAttribute("name");
-		var configValue = node.getAttribute(attributeName);
-		if(configName == name) return configValue;
-	}
-	return null;
-}
-org.slplayer.util.DomTools.addCssRules = function(css,head) {
-	if(head == null) head = js.Lib.document.documentElement.getElementsByTagName("head")[0];
-	var node = js.Lib.document.createElement("style");
-	node.setAttribute("type","text/css");
-	node.appendChild(js.Lib.document.createTextNode(css));
-	head.appendChild(node);
-	return node;
-}
-org.slplayer.util.DomTools.embedScript = function(src) {
-	var head = js.Lib.document.getElementsByTagName("head")[0];
-	var scriptNodes = js.Lib.document.getElementsByTagName("script");
-	var _g1 = 0, _g = scriptNodes.length;
-	while(_g1 < _g) {
-		var idxNode = _g1++;
-		var node = scriptNodes[idxNode];
-		if(node.getAttribute("src") == src) return node;
-	}
-	var node = js.Lib.document.createElement("script");
-	node.setAttribute("src",src);
-	head.appendChild(node);
-	return node;
-}
-org.slplayer.util.DomTools.getBaseTag = function() {
-	var head = js.Lib.document.getElementsByTagName("head")[0];
-	var baseNodes = js.Lib.document.getElementsByTagName("base");
-	if(baseNodes.length > 0) return baseNodes[0].getAttribute("href"); else return null;
-}
-org.slplayer.util.DomTools.setBaseTag = function(href) {
-	var head = js.Lib.document.getElementsByTagName("head")[0];
-	var baseNodes = js.Lib.document.getElementsByTagName("base");
-	if(baseNodes.length > 0) baseNodes[0].setAttribute("href",href); else {
-		var node = js.Lib.document.createElement("base");
-		node.setAttribute("href",href);
-		node.setAttribute("target","_self");
-		if(head.childNodes.length > 0) head.insertBefore(node,head.childNodes[0]); else head.appendChild(node);
-	}
-}
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; };
 var $_;
 function $bind(o,m) { var f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; return f; };
@@ -2634,6 +2649,37 @@ if(typeof window != "undefined") {
 		return f(msg,[url + ":" + line]);
 	};
 }
+brix.component.navigation.Layer.EVENT_TYPE_SHOW = "onLayerShow";
+brix.component.navigation.Layer.EVENT_TYPE_HIDE = "onLayerHide";
+brix.component.navigation.Page.__meta__ = { obj : { tagNameFilter : ["a"]}};
+brix.component.navigation.Page.CLASS_NAME = "Page";
+brix.component.navigation.Page.CONFIG_NAME_ATTR = "name";
+brix.component.navigation.Page.CONFIG_INITIAL_PAGE_NAME = "initialPageName";
+brix.component.navigation.Page.ATTRIBUTE_INITIAL_PAGE_NAME = "data-initial-page-name";
+brix.component.navigation.Page.OPENED_PAGE_CSS_CLASS = "page-opened";
+brix.component.navigation.link.LinkBase.__meta__ = { obj : { tagNameFilter : ["a"]}};
+brix.component.navigation.link.LinkBase.CONFIG_PAGE_NAME_ATTR = "href";
+brix.component.navigation.link.LinkBase.CONFIG_TARGET_ATTR = "target";
+brix.component.navigation.link.LinkBase.CONFIG_TARGET_IS_POPUP = "_top";
+brix.component.navigation.link.LinkClosePage.__meta__ = { obj : { tagNameFilter : ["a"]}};
+brix.component.navigation.link.LinkToPage.__meta__ = { obj : { tagNameFilter : ["a"]}};
+brix.component.navigation.link.TouchLink.ATTR_TOUCH_TYPE = "data-touch-type";
+brix.component.navigation.link.TouchLink.ATTR_TOUCH_DETECT_DISTANCE = "data-touch-detection-distance";
+brix.component.navigation.link.TouchLink.DEFAULT_DETECT_DISTANCE = 200;
+brix.component.navigation.transition.TransitionTools.SHOW_START_STYLE_ATTR_NAME = "data-show-start-style";
+brix.component.navigation.transition.TransitionTools.SHOW_END_STYLE_ATTR_NAME = "data-show-end-style";
+brix.component.navigation.transition.TransitionTools.HIDE_START_STYLE_ATTR_NAME = "data-hide-start-style";
+brix.component.navigation.transition.TransitionTools.HIDE_END_STYLE_ATTR_NAME = "data-hide-end-style";
+brix.component.navigation.transition.TransitionTools.EVENT_TYPE_REQUEST = "transitionEventTypeRequest";
+brix.component.navigation.transition.TransitionTools.EVENT_TYPE_STARTED = "transitionEventTypeStarted";
+brix.component.navigation.transition.TransitionTools.EVENT_TYPE_ENDED = "transitionEventTypeEnded";
+brix.component.sound.SoundOn.__meta__ = { obj : { tagNameFilter : ["a"]}};
+brix.component.sound.SoundOn.CLASS_NAME = "SoundOn";
+brix.component.sound.SoundOn.isMuted = false;
+brix.component.sound.SoundOff.__meta__ = { obj : { tagNameFilter : ["a"]}};
+brix.component.sound.SoundOff.CLASS_NAME = "SoundOff";
+brix.core.Application.BRIX_ID_ATTR_NAME = "data-brix-id";
+brix.core.Application.instances = new Hash();
 haxe.Template.splitter = new EReg("(::[A-Za-z0-9_ ()&|!+=/><*.\"-]+::|\\$\\$([A-Za-z0-9_-]+)\\()","");
 haxe.Template.expr_splitter = new EReg("(\\(|\\)|[ \r\n\t]*\"[^\"]*\"[ \r\n\t]*|[!+=/><*.&|-]+)","");
 haxe.Template.expr_trim = new EReg("^[ ]*([^ ]+)[ ]*$","");
@@ -2641,38 +2687,7 @@ haxe.Template.expr_int = new EReg("^[0-9]+$","");
 haxe.Template.expr_float = new EReg("^([+-]?)(?=\\d|,\\d)\\d*(,\\d*)?([Ee]([+-]?\\d+))?$","");
 haxe.Template.globals = { };
 js.Lib.onerror = null;
-org.slplayer.component.navigation.Layer.EVENT_TYPE_SHOW = "onLayerShow";
-org.slplayer.component.navigation.Layer.EVENT_TYPE_HIDE = "onLayerHide";
-org.slplayer.component.navigation.Page.__meta__ = { obj : { tagNameFilter : ["a"]}};
-org.slplayer.component.navigation.Page.CLASS_NAME = "Page";
-org.slplayer.component.navigation.Page.CONFIG_NAME_ATTR = "name";
-org.slplayer.component.navigation.Page.CONFIG_INITIAL_PAGE_NAME = "initialPageName";
-org.slplayer.component.navigation.Page.ATTRIBUTE_INITIAL_PAGE_NAME = "data-initial-page-name";
-org.slplayer.component.navigation.Page.OPENED_PAGE_CSS_CLASS = "page-opened";
-org.slplayer.component.navigation.link.LinkBase.__meta__ = { obj : { tagNameFilter : ["a"]}};
-org.slplayer.component.navigation.link.LinkBase.CONFIG_PAGE_NAME_ATTR = "href";
-org.slplayer.component.navigation.link.LinkBase.CONFIG_TARGET_ATTR = "target";
-org.slplayer.component.navigation.link.LinkBase.CONFIG_TARGET_IS_POPUP = "_top";
-org.slplayer.component.navigation.link.LinkClosePage.__meta__ = { obj : { tagNameFilter : ["a"]}};
-org.slplayer.component.navigation.link.LinkToPage.__meta__ = { obj : { tagNameFilter : ["a"]}};
-org.slplayer.component.navigation.link.TouchLink.ATTR_TOUCH_TYPE = "data-touch-type";
-org.slplayer.component.navigation.link.TouchLink.ATTR_TOUCH_DETECT_DISTANCE = "data-touch-detection-distance";
-org.slplayer.component.navigation.link.TouchLink.DEFAULT_DETECT_DISTANCE = 200;
-org.slplayer.component.navigation.transition.TransitionTools.SHOW_START_STYLE_ATTR_NAME = "data-show-start-style";
-org.slplayer.component.navigation.transition.TransitionTools.SHOW_END_STYLE_ATTR_NAME = "data-show-end-style";
-org.slplayer.component.navigation.transition.TransitionTools.HIDE_START_STYLE_ATTR_NAME = "data-hide-start-style";
-org.slplayer.component.navigation.transition.TransitionTools.HIDE_END_STYLE_ATTR_NAME = "data-hide-end-style";
-org.slplayer.component.navigation.transition.TransitionTools.EVENT_TYPE_REQUEST = "transitionEventTypeRequest";
-org.slplayer.component.navigation.transition.TransitionTools.EVENT_TYPE_STARTED = "transitionEventTypeStarted";
-org.slplayer.component.navigation.transition.TransitionTools.EVENT_TYPE_ENDED = "transitionEventTypeEnded";
-org.slplayer.component.sound.SoundOn.__meta__ = { obj : { tagNameFilter : ["a"]}};
-org.slplayer.component.sound.SoundOn.CLASS_NAME = "SoundOn";
-org.slplayer.component.sound.SoundOn.isMuted = false;
-org.slplayer.component.sound.SoundOff.__meta__ = { obj : { tagNameFilter : ["a"]}};
-org.slplayer.component.sound.SoundOff.CLASS_NAME = "SoundOff";
-org.slplayer.core.Application.SLPID_ATTR_NAME = "slpid";
-org.slplayer.core.Application.instances = new Hash();
-org.slplayer.core.Application.main();
+brix.core.Application.main();
 function $hxExpose(src, path) {
 	var o = window;
 	var parts = path.split(".");

@@ -17,7 +17,7 @@
   <classpaths>
     <class path="src" />
     <class path="..\Cocktail\src" />
-    <class path="..\SLPlayer\src" />
+    <class path="..\Brix\src" />
   </classpaths>
   <!-- Build options -->
   <build>
