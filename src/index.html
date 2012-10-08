@@ -20,19 +20,20 @@
 	<DIV class="pages-container">
 		
 		<!-- NAV -->
-		<A href="#page1" class="LinkToPage">
+		<!--<A href="#home" class="LinkToPage">
 			<IMG class="accueil transition-opac" alt="accueil" src="assets/accueil.png" width="110" height="50"></IMG>
-		</A>
-		<A href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down">
-			<img class="thumbs-display transition-opac" src="assets/miniatures.png"></img>
-		</A>
+		</A>-->
+		<A href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down"></A>
+		<A href="#thumbs" class="LinkClosePage TouchLink" target="_top" data-touch-type="up"></A>
+		<A href="#thumbs" class="LinkToPage thumbs-open" target="_top"></A>
 
-		<!-- THUMBS SLIDER -->
+		<!-- THUMBS -->
 		<A class="Page" name="thumbs"></A>
 		<DIV class="Layer Group thumbs">
-			<A href="#thumbs" class="LinkClosePage">
+			<!--<A href="#thumbs" class="LinkClosePage">
 				<IMG class="close transition-opac" src="assets/close.png"></IMG>
-			</A>
+			</A>-->
+			<A href="#thumbs" class="LinkClosePage thumbs-close"></A>
 			<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/pop.mp3"></SOURCE>
 			</AUDIO>
@@ -51,42 +52,59 @@
 				</A>
 			</DIV>-->
 			<DIV class="thumb-container" >
-				<A href="#page2 " class="LinkToPage" >
-					<IMG src="assets/image1-thumb.jpg" class="transition-opac"></IMG>	
-				</A>
-				<A href="#page3" class="LinkToPage">
-					<IMG src="assets/image2-thumb.jpg" class="transition-opac"></IMG>		
-				</A>
-				<A href="#page4" class="LinkToPage">
-					<IMG src="assets/image3-thumb.jpg" class="transition-opac"></IMG>		
-				</A>
-				<A href="#page5" class="LinkToPage">
-					<IMG src="assets/image4-thumb.jpg" class="transition-opac"></IMG>
-				</A>
+				<DIV class="thumb-mask">
+					<A href="#page1 " class="LinkToPage" >
+						<IMG src="assets/image1-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page2" class="LinkToPage">
+						<IMG src="assets/image2-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page3" class="LinkToPage">
+						<IMG src="assets/image3-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page4" class="LinkToPage">
+						<IMG src="assets/image4-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page5 " class="LinkToPage" >
+						<IMG src="assets/image5-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page6" class="LinkToPage">
+						<IMG src="assets/image6-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page7" class="LinkToPage">
+						<IMG src="assets/image7-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page8" class="LinkToPage">
+						<IMG src="assets/image8-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+					<A href="#page8" class="LinkToPage">
+						<IMG src="assets/image8-thumb.jpg" class="transition-opac"></IMG>
+					</A>
+				</DIV>
 			</DIV>
 		</DIV>
-		<!-- PAGE 1(accueil) -->
-		<A class="Page" name="page1"></A>
-		<DIV class="Layer page1">
+		<!-- HOME PAGE -->
+		<!--<A class="Page" name="home"></A>
+		<DIV class="Layer home">
 			
 			<!-- IMAGE -->
-			<IMG class="big-img" src="assets/ciel.jpg"></IMG>	
+			<!--<IMG class="big-img" src="assets/ciel.jpg"></IMG>	
 		
 			<!-- AUDIO -->
-			<AUDIO autoplay="autoplay">
+			<!--<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
 			</AUDIO>
 
 			<!-- NAV -->
-			<A href="#page2" class="LinkToPage">
+			<!--<A href="#page1" class="LinkToPage">
 				<!--<IMG src="assets/button.png" class="ResizeGallery transition-opac"></IMG>-->
-				<IMG src="assets/button.png" class="transition-opac gallery-display"></IMG>
+				<!--<IMG src="assets/button.png" class="transition-opac gallery-display"></IMG>
 			</A>
-		</DIV>
+		</DIV>-->
 
-		<!-- PAGE 2 -->
-		<A class="Page" name="page2"></A>
-		<DIV class="Layer Group page2">
+		<!-- PAGE 1 -->
+		<A class="Page" name="page1"></A>
+		<DIV class="Layer Group page1">
 			
 			<!-- IMAGE -->
 			<IMG class="big-img" src="assets/image1.jpg"></IMG>	
@@ -97,17 +115,17 @@
 			</AUDIO>
 
 			<!-- NAV -->
-			<A href="#page3" class="LinkToPage TouchLink"
+			<A href="#page2" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
 				data-show-start-style="page-right" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-left">
-				<IMG class="suivant transition-opac" src="assets/suivant.png"></IMG>		
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
 			</A>
 		</DIV>
 		
-		<!-- PAGE 3 -->
-		<A class="Page" name="page3"></A>
-		<DIV class="Layer Group page3">
+		<!-- PAGE 2 -->
+		<A class="Page" name="page2"></A>
+		<DIV class="Layer Group page2">
 			
 			<!-- IMAGE -->
 			<IMG class="big-img" src="assets/image2.jpg"></IMG>	
@@ -118,24 +136,24 @@
 			</AUDIO>
 			
 			<!-- NAV -->
-			<A href="#page2" class="LinkToPage TouchLink"
+			<A href="#page1" class="LinkToPage TouchLink previous-container"
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<IMG class="precedent transition-opac" src="assets/precedent.png"></IMG>
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>
 			</A>
-			<A href="#page4" class="LinkToPage TouchLink"
+			<A href="#page3" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
 				data-show-start-style="page-right" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-left">
-				<IMG class="suivant transition-opac" src="assets/suivant.png"></IMG>
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
 						
 			</A>
 		</DIV>
 			
-		<!-- PAGE 4 -->
-		<A class="Page" name="page4"></A>
-		<DIV class="Layer Group page4">
+		<!-- PAGE 3 -->
+		<A class="Page" name="page3"></A>
+		<DIV class="Layer Group page3">
 			<!-- IMAGE -->
 			<IMG class="big-img" src="assets/image3.jpg"></IMG>
 			
@@ -145,25 +163,129 @@
 			</AUDIO>
 			
 			<!-- NAV -->
-			<A href="#page3" class="LinkToPage TouchLink"
+			<A href="#page2" class="LinkToPage TouchLink previous-container"
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<IMG class="precedent transition-opac" src="assets/precedent.png"></IMG>	
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>	
 			</A>
-			<A href="#page5" class="LinkToPage TouchLink"
+			<A href="#page4" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
 				data-show-start-style="page-right" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-left">
-				<IMG class="suivant transition-opac" src="assets/suivant.png"></IMG>
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
 			</A>
 		</DIV>
 		
-		<!-- PAGE 5 -->	
+		<!-- PAGE 4 -->
+		<A class="Page" name="page4"></A>
+		<DIV class="Layer Group page4">
+			<!-- IMAGE -->
+			<IMG class="big-img" src="assets/image4.jpg"></IMG>
+			
+			<!-- AUDIO -->
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
+			</AUDIO>
+			
+			<!-- NAV -->
+			<A href="#page3" class="LinkToPage TouchLink previous-container"
+				data-touch-type="left"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right">
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>	
+			</A>
+			<A href="#page5" class="LinkToPage TouchLink next-container"
+				data-touch-type="right"
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left">
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
+			</A>
+		</DIV>
+		
+		<!-- PAGE 5 -->
 		<A class="Page" name="page5"></A>
-		<DIV class="Layer Group page5 ">
+		<DIV class="Layer Group page5">
+			<!-- IMAGE -->
+			<IMG class="big-img" src="assets/image5.jpg"></IMG>
+			
+			<!-- AUDIO -->
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
+			</AUDIO>
+			
+			<!-- NAV -->
+			<A href="#page4" class="LinkToPage TouchLink previous-container"
+				data-touch-type="left"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right">
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>	
+			</A>
+			<A href="#page6" class="LinkToPage TouchLink next-container"
+				data-touch-type="right"
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left">
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
+			</A>
+		</DIV>
+		
+		<!-- PAGE 6 -->
+		<A class="Page" name="page6"></A>
+		<DIV class="Layer Group page6">
+			<!-- IMAGE -->
+			<IMG class="big-img" src="assets/image6.jpg"></IMG>
+			
+			<!-- AUDIO -->
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
+			</AUDIO>
+			
+			<!-- NAV -->
+			<A href="#page5" class="LinkToPage TouchLink previous-container"
+				data-touch-type="left"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right">
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>	
+			</A>
+			<A href="#page7" class="LinkToPage TouchLink next-container"
+				data-touch-type="right"
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left">
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
+			</A>
+		</DIV>
+		
+		<!-- PAGE 7 -->
+		<A class="Page" name="page7"></A>
+		<DIV class="Layer Group page7">
+			<!-- IMAGE -->
+			<IMG class="big-img" src="assets/image7.jpg"></IMG>
+			
+			<!-- AUDIO -->
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"></SOURCE>
+			</AUDIO>
+			
+			<!-- NAV -->
+			<A href="#page6" class="LinkToPage TouchLink previous-container"
+				data-touch-type="left"
+				data-show-start-style="page-left" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-right">
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>	
+			</A>
+			<A href="#page8" class="LinkToPage TouchLink next-container"
+				data-touch-type="right"
+				data-show-start-style="page-right" data-show-end-style="page-center"
+				data-hide-start-style="page-center" data-hide-end-style="page-left">
+				<IMG class="next transition-opac" src="assets/next.png"></IMG>
+			</A>
+		</DIV>
+		
+		<!-- PAGE 8 -->	
+		<A class="Page" name="page8"></A>
+		<DIV class="Layer Group page8 ">
 			<!-- IMAGE -->	
-			<IMG class="big-img" src="assets/image4.jpg"></IMG>	
+			<IMG class="big-img" src="assets/image8.jpg"></IMG>	
 			
 			<!-- AUDIO -->
 			<AUDIO autoplay="autoplay">
@@ -171,11 +293,11 @@
 			</AUDIO>
 
 			<!-- NAV -->
-			<A href="#page4" class="LinkToPage TouchLink"
+			<A href="#page7" class="LinkToPage TouchLink previous-container"
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<IMG class="precedent transition-opac" src="assets/precedent.png"></IMG>	
+				<IMG class="previous transition-opac" src="assets/previous.png"></IMG>	
 			</A>
 		</DIV>
 		

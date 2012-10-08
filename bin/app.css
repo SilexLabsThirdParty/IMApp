@@ -1,10 +1,9 @@
 body{
-	background-color:#111111;
+	/*background-color:#111111;*/
+	background-color:#EEEEEE;
 	margin:0;
 	padding:0;
 	overflow:hidden;
-	/*width:100%;
-	height:100%;*/
 }
 .pages-container{
 	width:100%;
@@ -96,10 +95,6 @@ body{
 	margin-top:10px;
 	z-index:1;
 	opacity:0.6;
-	/*max-height:50px;
-	max-width: 110px;*/
-	/*min-height:50px;
-	min-width: 110px;*/
 }
 
 .accueil:hover{
@@ -118,47 +113,49 @@ body{
 	z-index:2;
 }
 
-.precedent{
+.previous-container{
+	position:absolute;
+	width:10%;
+	height:100%;
+	left:0px;
+}
+.previous{
 	position:absolute;
 	left:0;
 	top:50%;
 	margin-top:-24px;
-	max-height:48px;
-	max-width:48px;
-	min-height:4.8px;
-	min-width:4.8px;
 	z-index:1;
 	opacity:0.5;
-	width:10%;
 }
 
-.precedent:hover{
+.previous:hover{
 	opacity:0.8;
 }
 
-.precedent:active{
+.previous:active{
 	opacity:1;
 }
 
-.suivant{
+.next-container{
+	position:absolute;
+	width:10%;
+	height:100%;
+	right:0px;
+}
+.next{
 	position:absolute;
 	right:0;
-	margin-top:-24px;
 	top:50%;
-	max-height:48px;
-	max-width:48px;
-	min-height:4.8px;
-	min-width:4.8px;
+	margin-top:-24px;
 	z-index: 1;
 	opacity:0.5;
-	width:10%;
 }
 
-.suivant:hover{
+.next:hover{
 	opacity: 0.8;
 }
 
-.suivant:active{
+.next:active{
 	opacity:1;
 }
 
@@ -166,19 +163,43 @@ body{
 /* THUMBS */
 /**********/
 
+.thumbs-open{
+	position:absolute;
+	margin-left:10%;
+	width:80%;
+	height:80%;
+	z-index:20;
+}
+
+.thumbs-close{
+	position:absolute;
+	margin-left:10%;
+	width:80%;
+	height:80%;
+	z-index:30;
+}
+
 .thumbs{
-	position: absolute;
+	position:absolute;
+	width:100%;
+	height:100%;
 }
 
 .thumb-container{
-	position: absolute;
-	bottom: 0;	
-	width:70%;
-	padding-left:15%;
-	padding-right:15%;
+	position:absolute;
+	bottom:0;	
+	width:100%;
+	height:100px;
+	/*margin-left:15%;
+	margin-right:15%;*/
 	position:absolute;	
-	z-index:1;
 	background-color: rgba(66,66,66,0.5);
+	overflow-x:hidden;
+	overflow-y:hidden;
+	z-index:10;
+}
+.thumb-mask{
+	width:10000px;
 }
 .thumb-container a img{
 	max-height:80px;
@@ -188,11 +209,11 @@ body{
 	height:100%;
 	width:100%;
 	margin-left:10px;
-	z-index:2;
 	position:relative;
 	margin-top:10px;
 	border: lavender 2px solid;
 	opacity:0.5;
+	z-index:12;
 }
 .thumb-container a img:hover{
 	opacity:1;
@@ -200,7 +221,6 @@ body{
 
 .thumbs-display{
 	position:absolute;
-	z-index:2;
 	max-height:41.7px;
 	max-width:110px;
 	min-height:4.17px;
@@ -210,6 +230,7 @@ body{
 	height:50px;
 	left:10px;
 	bottom:10px;
+	z-index:12;
 }
 
 .thumbs-display:hover{
@@ -222,7 +243,6 @@ body{
 
 .LinkClosePage img{
 	position: absolute;
-	z-index:2;
 	right:0;
 	bottom:5px;
 	max-height:40px;
@@ -233,7 +253,7 @@ body{
 	padding-right:15px;
 	width:10%;
 	height:10%;
-	
+	z-index:12;
 }
 .thumbs-close img:hover{
 	opacity:1;
