@@ -48,7 +48,6 @@ a{
 .page-right, .page-left, .page-center{
 	position:absolute;
 	z-index: 0;
-	top:0;
 	transition: ease-out left 0.4s;
 	-moz-transition: ease-out left 0.4s;
 	-webkit-transition: ease-out left 0.4s;
