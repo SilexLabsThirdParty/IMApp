@@ -1,13 +1,13 @@
 body{
 	/*background-color:#111111;*/
-	background-color:#EEEEEE;
+	background-color:#F5F5F5;
 	margin:0;
 	padding:0;
 	overflow:hidden;
 }
 .pages-container{
-	width:100%;
-	height:100%;
+	/*width:100%;
+	height:100%;*/
 	/*background-color: Dimgray;*/
 	max-height:750px;
 	max-width: 1000px;
@@ -16,11 +16,11 @@ body{
 	z-index: 0;
 }
 .Layer{
-	/*position: relative;*/
+	position:relative;
+	margin:auto;
+	max-width: 1000px;
 	width:100%;
 	height:100%;
-	/*max-height:750px;
-	max-width: 1000px;*/
 }
 /*.transition-opac{
 	transition: opacity ease-in-out .2s;
@@ -28,19 +28,21 @@ body{
 	-webkit-transition: opacity ease-in-out .2s;
 	-o-transition: opacity ease-in-out .2s;
 }*/
-.big-img{
-	z-index: 0;
-	position: absolute;
-	top: 0;
-	left: 0;
-	max-height:750px;
-	max-width: 1000px;
-	/*min-height:75px;
-	min-width: 100px;*/
-	width:100%;
-	height:100%;
+
+a{
+	text-decoration: none;
 }
-.ResizeGallery {
+
+.big-img{
+	position:absolute;
+	margin:auto;
+	top:0;
+	bottom:0;
+	width:100%;
+	max-width: 1000px;
+	z-index: 0;
+}
+/*.ResizeGallery {
 	margin-left:381px;
 	position:absolute;
 	top:35%;
@@ -55,7 +57,7 @@ body{
 
 .ResizeGallery:active{
 	opacity:0.4;
-}
+}*/
 
 .page-right, .page-left, .page-center{
 	position:absolute;
