@@ -1406,7 +1406,6 @@ brix.component.navigation.link.LinkBase.__interfaces__ = [brix.component.group.I
 brix.component.navigation.link.LinkBase.__super__ = brix.component.ui.DisplayObject;
 brix.component.navigation.link.LinkBase.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
 	onClick: function(e) {
-		e.preventDefault();
 		this.transitionDataShow = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,brix.component.navigation.transition.TransitionType.show);
 		this.transitionDataHide = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,brix.component.navigation.transition.TransitionType.hide);
 	}
@@ -1468,7 +1467,7 @@ brix.component.navigation.link.TouchLink = function(rootElement,brixId) {
 	var element;
 	if(this.groupElement != null) element = this.groupElement; else element = js.Lib.document.body;
 	var attrStr = rootElement.getAttribute("data-touch-detection-distance");
-	if(attrStr == null || attrStr == "") this.detectDistance = 200; else this.detectDistance = Std.parseInt(attrStr);
+	if(attrStr == null || attrStr == "") this.detectDistance = 10; else this.detectDistance = Std.parseInt(attrStr);
 	element.addEventListener("touchmove",$bind(this,this.onTouchMove),false);
 	element.addEventListener("touchstart",$bind(this,this.onTouchStart),false);
 	element.addEventListener("touchend",$bind(this,this.onTouchEnd),false);
@@ -1517,7 +1516,7 @@ brix.component.navigation.link.TouchLink.prototype = $extend(brix.component.ui.D
 		if(this.touchStart == null) return;
 		var xOffset = event.touches.item(0).screenX - this.touchStart.x;
 		var yOffset = event.touches.item(0).screenY - this.touchStart.y;
-		if(Math.abs(xOffset) > 200) {
+		if(Math.abs(xOffset) > this.detectDistance) {
 			this.touchStart = null;
 			if(xOffset > 0) {
 				if(this.touchType == brix.component.navigation.link.TouchType.swipeLeft) this.dispatchClick();
@@ -2714,7 +2713,7 @@ brix.component.navigation.link.LinkClosePage.__meta__ = { obj : { tagNameFilter 
 brix.component.navigation.link.LinkToPage.__meta__ = { obj : { tagNameFilter : ["a"]}};
 brix.component.navigation.link.TouchLink.ATTR_TOUCH_TYPE = "data-touch-type";
 brix.component.navigation.link.TouchLink.ATTR_TOUCH_DETECT_DISTANCE = "data-touch-detection-distance";
-brix.component.navigation.link.TouchLink.DEFAULT_DETECT_DISTANCE = 200;
+brix.component.navigation.link.TouchLink.DEFAULT_DETECT_DISTANCE = 10;
 brix.component.navigation.transition.TransitionTools.SHOW_START_STYLE_ATTR_NAME = "data-show-start-style";
 brix.component.navigation.transition.TransitionTools.SHOW_END_STYLE_ATTR_NAME = "data-show-end-style";
 brix.component.navigation.transition.TransitionTools.HIDE_START_STYLE_ATTR_NAME = "data-hide-start-style";
