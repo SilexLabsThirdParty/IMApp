@@ -876,9 +876,9 @@ brix.component.ui.IDisplayObject.prototype = {
 	rootElement: null
 	,__class__: brix.component.ui.IDisplayObject
 }
-brix.component.ui.DisplayObject = function(rootElement,BrixId) {
+brix.component.ui.DisplayObject = function(rootElement,brixId) {
 	this.rootElement = rootElement;
-	brix.component.BrixComponent.initBrixComponent(this,BrixId);
+	brix.component.BrixComponent.initBrixComponent(this,brixId);
 	this.getBrixApplication().addAssociatedComponent(rootElement,this);
 };
 $hxClasses["brix.component.ui.DisplayObject"] = brix.component.ui.DisplayObject;
@@ -915,14 +915,49 @@ brix.component.ui.DisplayObject.prototype = {
 	,__class__: brix.component.ui.DisplayObject
 }
 brix.component.group = {}
-brix.component.group.Group = function(rootElement,BrixId) {
-	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+brix.component.group.Group = function(rootElement,brixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,brixId);
+	var explodedClassName = rootElement.className.split(" ");
+	if(Lambda.has(explodedClassName,"Group")) {
+		brix.component.group.Group.GROUP_SEQ++;
+		var newGroupId = "Group" + brix.component.group.Group.GROUP_SEQ + "r";
+		HxOverrides.remove(explodedClassName,"Group");
+		explodedClassName.unshift(newGroupId);
+		rootElement.className = explodedClassName.join(" ");
+		var $it0 = this.discoverGroupableChilds(rootElement).iterator();
+		while( $it0.hasNext() ) {
+			var gc = $it0.next();
+			gc.setAttribute("data-group-id",newGroupId);
+		}
+	}
 };
 $hxClasses["brix.component.group.Group"] = brix.component.group.Group;
 brix.component.group.Group.__name__ = ["brix","component","group","Group"];
 brix.component.group.Group.__super__ = brix.component.ui.DisplayObject;
 brix.component.group.Group.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
-	__class__: brix.component.group.Group
+	discoverGroupableChilds: function(elt) {
+		var groupables = new List();
+		var _g1 = 0, _g = elt.childNodes.length;
+		while(_g1 < _g) {
+			var childCnt = _g1++;
+			if(elt.childNodes[childCnt].nodeType != 1) continue;
+			if(elt.childNodes[childCnt].className != null) {
+				var _g2 = 0, _g3 = elt.childNodes[childCnt].className.split(" ");
+				while(_g2 < _g3.length) {
+					var c = _g3[_g2];
+					++_g2;
+					var rc = this.getBrixApplication().resolveUIComponentClass(c,brix.component.group.IGroupable);
+					if(rc == null) continue;
+					groupables.add(elt.childNodes[childCnt]);
+					break;
+				}
+				if(Lambda.has(elt.childNodes[childCnt].className.split(" "),"Group")) continue;
+			}
+			groupables = Lambda.concat(groupables,this.discoverGroupableChilds(elt.childNodes[childCnt]));
+		}
+		return groupables;
+	}
+	,__class__: brix.component.group.Group
 });
 brix.component.group.IGroupable = function() { }
 $hxClasses["brix.component.group.IGroupable"] = brix.component.group.IGroupable;
@@ -938,7 +973,7 @@ brix.component.group.Groupable.__name__ = ["brix","component","group","Groupable
 brix.component.group.Groupable.startGroupable = function(groupable) {
 	var groupId = groupable.rootElement.getAttribute("data-group-id");
 	if(groupId == null) return;
-	var groupElements = js.Lib.document.getElementsByClassName(groupId);
+	var groupElements = groupable.getBrixApplication().htmlRootElement.getElementsByClassName(groupId);
 	if(groupElements.length < 1) return;
 	if(groupElements.length > 1) throw "ERROR " + groupElements.length + " Group components are declared with the same group id " + groupId;
 	groupable.groupElement = groupElements[0];
@@ -960,9 +995,9 @@ brix.component.navigation.LayerStatus.hidden.__enum__ = brix.component.navigatio
 brix.component.navigation.LayerStatus.notInit = ["notInit",4];
 brix.component.navigation.LayerStatus.notInit.toString = $estr;
 brix.component.navigation.LayerStatus.notInit.__enum__ = brix.component.navigation.LayerStatus;
-brix.component.navigation.Layer = function(rootElement,BrixId) {
+brix.component.navigation.Layer = function(rootElement,brixId) {
 	this.hasTransitionStarted = false;
-	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+	brix.component.ui.DisplayObject.call(this,rootElement,brixId);
 	this.childrenArray = new Array();
 	this.status = brix.component.navigation.LayerStatus.notInit;
 	this.styleAttrDisplay = rootElement.style.display;
@@ -1189,8 +1224,8 @@ brix.component.navigation.Layer.prototype = $extend(brix.component.ui.DisplayObj
 	,childrenArray: null
 	,__class__: brix.component.navigation.Layer
 });
-brix.component.navigation.Page = function(rootElement,BrixId) {
-	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+brix.component.navigation.Page = function(rootElement,brixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,brixId);
 	brix.component.group.Groupable.startGroupable(this);
 	this.name = rootElement.getAttribute("name");
 	if(this.name == null || this.name == "") throw "Pages have to have a 'name' attribute";
@@ -1336,6 +1371,11 @@ brix.component.navigation.Page.prototype = $extend(brix.component.ui.DisplayObje
 		if(doCloseOthers) this.closeOthers(transitionDataHide,preventTransitions);
 		this.doOpen(transitionDataShow,preventTransitions);
 	}
+	,setPageName: function(newPageName) {
+		this.rootElement.setAttribute("name",newPageName);
+		this.name = newPageName;
+		return newPageName;
+	}
 	,init: function() {
 		brix.component.ui.DisplayObject.prototype.init.call(this);
 		if(this.groupElement == null) this.groupElement = js.Lib.document.body;
@@ -1350,8 +1390,8 @@ brix.component.navigation.Page.prototype = $extend(brix.component.ui.DisplayObje
 	,__class__: brix.component.navigation.Page
 });
 brix.component.navigation.link = {}
-brix.component.navigation.link.LinkBase = function(rootElement,BrixId) {
-	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+brix.component.navigation.link.LinkBase = function(rootElement,brixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,brixId);
 	brix.component.group.Groupable.startGroupable(this);
 	rootElement.addEventListener("click",$bind(this,this.onClick),false);
 	if(rootElement.getAttribute("href") != null) {
@@ -1377,8 +1417,8 @@ brix.component.navigation.link.LinkBase.prototype = $extend(brix.component.ui.Di
 	,groupElement: null
 	,__class__: brix.component.navigation.link.LinkBase
 });
-brix.component.navigation.link.LinkClosePage = function(rootElement,BrixId) {
-	brix.component.navigation.link.LinkBase.call(this,rootElement,BrixId);
+brix.component.navigation.link.LinkClosePage = function(rootElement,brixId) {
+	brix.component.navigation.link.LinkBase.call(this,rootElement,brixId);
 };
 $hxClasses["brix.component.navigation.link.LinkClosePage"] = brix.component.navigation.link.LinkClosePage;
 brix.component.navigation.link.LinkClosePage.__name__ = ["brix","component","navigation","link","LinkClosePage"];
@@ -1390,8 +1430,8 @@ brix.component.navigation.link.LinkClosePage.prototype = $extend(brix.component.
 	}
 	,__class__: brix.component.navigation.link.LinkClosePage
 });
-brix.component.navigation.link.LinkToPage = function(rootElement,BrixId) {
-	brix.component.navigation.link.LinkBase.call(this,rootElement,BrixId);
+brix.component.navigation.link.LinkToPage = function(rootElement,brixId) {
+	brix.component.navigation.link.LinkBase.call(this,rootElement,brixId);
 };
 $hxClasses["brix.component.navigation.link.LinkToPage"] = brix.component.navigation.link.LinkToPage;
 brix.component.navigation.link.LinkToPage.__name__ = ["brix","component","navigation","link","LinkToPage"];
@@ -1422,8 +1462,8 @@ brix.component.navigation.link.TouchType.pinchOpen.__enum__ = brix.component.nav
 brix.component.navigation.link.TouchType.pinchClose = ["pinchClose",5];
 brix.component.navigation.link.TouchType.pinchClose.toString = $estr;
 brix.component.navigation.link.TouchType.pinchClose.__enum__ = brix.component.navigation.link.TouchType;
-brix.component.navigation.link.TouchLink = function(rootElement,BrixId) {
-	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+brix.component.navigation.link.TouchLink = function(rootElement,brixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,brixId);
 	brix.component.group.Groupable.startGroupable(this);
 	var element;
 	if(this.groupElement != null) element = this.groupElement; else element = js.Lib.document.body;
@@ -1536,8 +1576,8 @@ brix.component.navigation.transition.TransitionTools.setTransitionProperty = fun
 	rootElement.style[prefixed2] = value;
 }
 brix.component.sound = {}
-brix.component.sound.SoundOn = function(rootElement,BrixId) {
-	brix.component.ui.DisplayObject.call(this,rootElement,BrixId);
+brix.component.sound.SoundOn = function(rootElement,brixId) {
+	brix.component.ui.DisplayObject.call(this,rootElement,brixId);
 	rootElement.onclick = $bind(this,this.onClick);
 };
 $hxClasses["brix.component.sound.SoundOn"] = brix.component.sound.SoundOn;
@@ -1573,8 +1613,8 @@ brix.component.sound.SoundOn.prototype = $extend(brix.component.ui.DisplayObject
 	}
 	,__class__: brix.component.sound.SoundOn
 });
-brix.component.sound.SoundOff = function(rootElement,BrixId) {
-	brix.component.sound.SoundOn.call(this,rootElement,BrixId);
+brix.component.sound.SoundOff = function(rootElement,brixId) {
+	brix.component.sound.SoundOn.call(this,rootElement,brixId);
 };
 $hxClasses["brix.component.sound.SoundOff"] = brix.component.sound.SoundOff;
 brix.component.sound.SoundOff.__name__ = ["brix","component","sound","SoundOff"];
@@ -1618,7 +1658,34 @@ brix.core.Application.generateUniqueId = function() {
 	return Std.string(Math.round(Math.random() * 10000));
 }
 brix.core.Application.prototype = {
-	getUnconflictedClassTag: function(displayObjectClassName) {
+	resolveComponentClass: function(classname) {
+		var componentClass = Type.resolveClass(classname);
+		if(componentClass == null) {
+			throw "ERROR cannot resolve " + classname;
+			null;
+		}
+		return componentClass;
+	}
+	,resolveUIComponentClass: function(className,typeFilter) {
+		var _g = 0, _g1 = this.getRegisteredUIComponents();
+		while(_g < _g1.length) {
+			var rc = _g1[_g];
+			++_g;
+			var componentClassAttrValues = [this.getUnconflictedClassTag(rc.classname)];
+			if(componentClassAttrValues[0] != rc.classname) componentClassAttrValues.push(rc.classname);
+			if(!Lambda.exists(componentClassAttrValues,function(s) {
+				return s == className;
+			})) continue;
+			var componentClass = this.resolveComponentClass(rc.classname);
+			if(componentClass == null) continue;
+			if(typeFilter != null) {
+				if(!js.Boot.__instanceof(Type.createEmptyInstance(componentClass),typeFilter)) return null;
+			}
+			return componentClass;
+		}
+		return null;
+	}
+	,getUnconflictedClassTag: function(displayObjectClassName) {
 		var classTag = displayObjectClassName;
 		if(classTag.indexOf(".") != -1) classTag = HxOverrides.substr(classTag,classTag.lastIndexOf(".") + 1,null);
 		var _g = 0, _g1 = this.getRegisteredUIComponents();
@@ -1694,20 +1761,12 @@ brix.core.Application.prototype = {
 			this.cleanNode(node.childNodes[childCnt]);
 		}
 	}
-	,resolveCompClass: function(classname) {
-		var componentClass = Type.resolveClass(classname);
-		if(componentClass == null) {
-			throw "ERROR cannot resolve " + classname;
-			null;
-		}
-		return componentClass;
-	}
 	,createNonUIComponents: function() {
 		var _g = 0, _g1 = this.getRegisteredNonUIComponents();
 		while(_g < _g1.length) {
 			var rc = _g1[_g];
 			++_g;
-			var componentClass = this.resolveCompClass(rc.classname);
+			var componentClass = this.resolveComponentClass(rc.classname);
 			if(componentClass == null) continue;
 			var cmpInstance = null;
 			if(rc.args != null) cmpInstance = Type.createInstance(componentClass,[rc.args]); else cmpInstance = Type.createInstance(componentClass,[]);
@@ -1725,28 +1784,16 @@ brix.core.Application.prototype = {
 		if(node.nodeType != 1) return null;
 		if(node.getAttribute("data-brix-id") != null) return null;
 		var compsToInit = new List();
-		if(node.getAttribute("class") != null) {
-			var _g = 0, _g1 = node.getAttribute("class").split(" ");
+		if(node.className != null) {
+			var _g = 0, _g1 = node.className.split(" ");
 			while(_g < _g1.length) {
-				var classValue = [_g1[_g]];
+				var classValue = _g1[_g];
 				++_g;
-				var _g2 = 0, _g3 = this.getRegisteredUIComponents();
-				while(_g2 < _g3.length) {
-					var rc = _g3[_g2];
-					++_g2;
-					var componentClassAttrValues = [this.getUnconflictedClassTag(rc.classname)];
-					if(componentClassAttrValues[0] != rc.classname) componentClassAttrValues.push(rc.classname);
-					if(!Lambda.exists(componentClassAttrValues,(function(classValue) {
-						return function(s) {
-							return s == classValue[0];
-						};
-					})(classValue))) continue;
-					var componentClass = this.resolveCompClass(rc.classname);
-					if(componentClass == null) continue;
-					var newDisplayObject = null;
-					newDisplayObject = Type.createInstance(componentClass,[node,this.id]);
-					compsToInit.add(newDisplayObject);
-				}
+				var componentClass = this.resolveUIComponentClass(classValue);
+				if(componentClass == null) continue;
+				var newDisplayObject = null;
+				newDisplayObject = Type.createInstance(componentClass,[node,this.id]);
+				compsToInit.add(newDisplayObject);
 			}
 		}
 		var _g1 = 0, _g = node.childNodes.length;
@@ -2649,6 +2696,8 @@ if(typeof window != "undefined") {
 		return f(msg,[url + ":" + line]);
 	};
 }
+brix.component.group.Group.GROUP_ID_ATTR = "data-group-id";
+brix.component.group.Group.GROUP_SEQ = 0;
 brix.component.navigation.Layer.EVENT_TYPE_SHOW = "onLayerShow";
 brix.component.navigation.Layer.EVENT_TYPE_HIDE = "onLayerHide";
 brix.component.navigation.Page.__meta__ = { obj : { tagNameFilter : ["a"]}};
