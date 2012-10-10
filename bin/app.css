@@ -48,6 +48,7 @@ a{
 	position:absolute;
 	width:100%;
 	height:100%;
+	visibility: hidden;
 }
 .page-right, .page-left, .page-center{
 	position:absolute;
@@ -85,7 +86,6 @@ a{
 /**********************/
 
 .accueil{
-	/*width:15%;*/
 	left:0;
 	position:absolute;	
 	margin-left:10px;
@@ -165,7 +165,7 @@ a{
 .thumbs-open{
 	position:absolute;
 	margin-left:10%;
-	width:100%;
+	width:80%;
 	height:100%;
 	z-index:5;
 }
@@ -173,7 +173,7 @@ a{
 .thumbs-close{
 	position:absolute;
 	margin-left:10%;
-	width:100%;
+	width:80%;
 	height:100%;
 	z-index:6;
 }

@@ -1,13 +1,16 @@
--js bin/app.js
-
 -cp src/
 -cp ../Cocktail/src/
 -cp ../Brix/src/
 -main brix.core.Application
 --macro brix.core.Builder.create('./src/index.html')
-#-D slpdebug
--D disableEmbedHtml
--D stopOnError
--D silexClientSide
+
 -lib hscript
+
+-D disableEmbedHtml
+-D silexClientSide
+-D stopOnError
+#-D slpdebug
+
+-js bin/app.js
+
 --no-traces

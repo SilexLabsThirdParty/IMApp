@@ -1,14 +1,18 @@
--swf9 bin/app.swf
--swf-version 10.2
 -cp src/
 -cp ../Cocktail/src/
 -cp ../Brix/src/
 -main brix.core.Application
 --macro brix.core.Builder.create('./src/index.html')
+--remap js:cocktail
+-lib hscript
+
+
+-D silexClientSide
+-D stopOnError
 #-D slpdebug
 
--D stopOnError
--D silexClientSide
--lib hscript
+-swf9 bin/app.swf
+-swf-version 10.2
+-swf-header 1024:768:60
+
 --no-traces
---remap js:cocktail
