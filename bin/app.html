@@ -1,97 +1,96 @@
 <HTML>
-	<HEAD>
-		<TITLE>Gallery test</TITLE>
-		<LINK href="app.css" type="text/css" rel="stylesheet"></LINK>
-		<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
-		<META name="initialPageName" content="page1"></META>
-		
-		
-		
-		
-		
-		
-		
-		
-		
- <SCRIPT src="app.js"></SCRIPT></HEAD>
+<HEAD>
+	<TITLE>Gallery test</TITLE>
+	<LINK href="app.css" type="text/css" rel="stylesheet"></LINK>
+	<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
+	<META name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"></META><META name="initialPageName" content="page1"></META>
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+<SCRIPT src="app.js"></SCRIPT></HEAD>
 
 </HTML><BODY>
 	<DIV class="pages-container">
 		
 		
-		<A href="#page1" class="LinkToPage">
-			<IMG class="accueil transition-opac" width="110" alt="accueil" src="assets/accueil.png" height="50"/>
-		</A>
-		<A href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down">
-			<IMG class="thumbs-display transition-opac" src="assets/miniatures.png"/>
-		</A>
+		
+		<A href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down"></A>
+		<A href="#thumbs" class="LinkClosePage TouchLink" target="_top" data-touch-type="up"></A>
+		
 
 		
 		<A class="Page" name="thumbs"></A>
-		<DIV class="Group1 Layer thumbs">
-			<A href="#thumbs" class="LinkClosePage" data-group-id="Group1">
-				<IMG class="close transition-opac" src="assets/close.png"/>
-			</A>
+		<DIV class="Layer thumbs">
+			
+			<A href="#thumbs" class="LinkClosePage thumbs-close"></A>
 			<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/pop.mp3"/>
 			</AUDIO>
-			
 			<DIV class="thumb-container">
-				<A href="#page2 " class="LinkToPage" data-group-id="Group1">
-					<IMG class="transition-opac" src="assets/image1-thumb.jpg"/>	
-				</A>
-				<A href="#page3" class="LinkToPage" data-group-id="Group1">
-					<IMG class="transition-opac" src="assets/image2-thumb.jpg"/>		
-				</A>
-				<A href="#page4" class="LinkToPage" data-group-id="Group1">
-					<IMG class="transition-opac" src="assets/image3-thumb.jpg"/>		
-				</A>
-				<A href="#page5" class="LinkToPage" data-group-id="Group1">
-					<IMG class="transition-opac" src="assets/image4-thumb.jpg"/>
-				</A>
+				<DIV class="thumb-mask">
+					<A href="#page1 " class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image1-thumb.jpg"/>
+					</A>
+					<A href="#page2" class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image2-thumb.jpg"/>
+					</A>
+					<A href="#page3" class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image3-thumb.jpg"/>
+					</A>
+					<A href="#page4" class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image4-thumb.jpg"/>
+					</A>
+					<A href="#page5 " class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image5-thumb.jpg"/>
+					</A>
+					<A href="#page6" class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image6-thumb.jpg"/>
+					</A>
+					<A href="#page7" class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image7-thumb.jpg"/>
+					</A>
+					<A href="#page8" class="LinkToPage">
+						<IMG class="transition-opac" src="assets/image8-thumb.jpg"/>
+					</A>
+				</DIV>
 			</DIV>
 		</DIV>
 		
-		<A class="Page" name="page1"></A>
-		<DIV class="Layer page1">
-			
-			
-			<IMG class="big-img" src="assets/ciel.jpg"/>	
 		
 			
-			<AUDIO autoplay="autoplay">
-				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
-			</AUDIO>
-
 			
-			<A href="#page2" class="LinkToPage">
+			
 				
-				<IMG class="transition-opac gallery-display" src="assets/button.png"/>
-			</A>
-		</DIV>
 
 		
-		<A class="Page" name="page2"></A>
-		<DIV class="Group2 Layer page2">
+		<A class="Page" name="page1"></A>
+		<DIV class="Group1 Layer page1">
 			
 			
 			<IMG class="big-img" src="assets/image1.jpg"/>	
-		
+			
 			
 			<AUDIO autoplay="autoplay">
 				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
 			</AUDIO>
-
 			
-			<A href="#page3" class="LinkToPage TouchLink" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group2" data-show-start-style="page-right" data-touch-type="right">
-				<IMG class="suivant transition-opac" src="assets/suivant.png"/>		
+			
+			<A href="#page2" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group1" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>
 			</A>
 		</DIV>
 		
 		
-		<A class="Page" name="page3"></A>
-		<DIV class="Group3 Layer page3">
+		<A class="Page" name="page2"></A>
+		<DIV class="Group2 Layer page2">
 			
 			
 			<IMG class="big-img" src="assets/image2.jpg"/>	
@@ -102,18 +101,17 @@
 			</AUDIO>
 			
 			
-			<A href="#page2" class="LinkToPage TouchLink" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group3" data-show-start-style="page-left" data-touch-type="left">
-				<IMG class="precedent transition-opac" src="assets/precedent.png"/>
+			<A href="#page1" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group2" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>
 			</A>
-			<A href="#page4" class="LinkToPage TouchLink" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group3" data-show-start-style="page-right" data-touch-type="right">
-				<IMG class="suivant transition-opac" src="assets/suivant.png"/>
-						
+			<A href="#page3" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group2" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>	
 			</A>
 		</DIV>
 			
 		
-		<A class="Page" name="page4"></A>
-		<DIV class="Group4 Layer page4">
+		<A class="Page" name="page3"></A>
+		<DIV class="Group3 Layer page3">
 			
 			<IMG class="big-img" src="assets/image3.jpg"/>
 			
@@ -123,19 +121,99 @@
 			</AUDIO>
 			
 			
-			<A href="#page3" class="LinkToPage TouchLink" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group4" data-show-start-style="page-left" data-touch-type="left">
-				<IMG class="precedent transition-opac" src="assets/precedent.png"/>	
+			<A href="#page2" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group3" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>	
 			</A>
-			<A href="#page5" class="LinkToPage TouchLink" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group4" data-show-start-style="page-right" data-touch-type="right">
-				<IMG class="suivant transition-opac" src="assets/suivant.png"/>
+			<A href="#page4" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group3" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>
+			</A>
+		</DIV>
+		
+		
+		<A class="Page" name="page4"></A>
+		<DIV class="Group4 Layer page4">
+			
+			<IMG class="big-img" src="assets/image4.jpg"/>
+			
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+			
+			
+			<A href="#page3" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group4" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>	
+			</A>
+			<A href="#page5" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group4" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>
+			</A>
+		</DIV>
+		
+		
+		<A class="Page" name="page5"></A>
+		<DIV class="Group5 Layer page5">
+			
+			<IMG class="big-img" src="assets/image5.jpg"/>
+			
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+			
+			
+			<A href="#page4" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group5" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>	
+			</A>
+			<A href="#page6" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group5" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>
+			</A>
+		</DIV>
+		
+		
+		<A class="Page" name="page6"></A>
+		<DIV class="Group6 Layer page6">
+			
+			<IMG class="big-img" src="assets/image6.jpg"/>
+			
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+			
+			
+			<A href="#page5" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group6" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>	
+			</A>
+			<A href="#page7" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group6" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>
+			</A>
+		</DIV>
+		
+		
+		<A class="Page" name="page7"></A>
+		<DIV class="Group7 Layer page7">
+			
+			<IMG class="big-img" src="assets/image7.jpg"/>
+			
+			
+			<AUDIO autoplay="autoplay">
+				<SOURCE type="audio/mp3" src="assets/foto.mp3"/>
+			</AUDIO>
+			
+			
+			<A href="#page6" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group7" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>	
+			</A>
+			<A href="#page8" class="LinkToPage TouchLink next-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-left" data-group-id="Group7" data-show-start-style="page-right" data-touch-type="right">
+				<IMG class="next transition-opac" src="assets/next.png"/>
 			</A>
 		</DIV>
 		
 			
-		<A class="Page" name="page5"></A>
-		<DIV class="Group5 Layer page5 ">
+		<A class="Page" name="page8"></A>
+		<DIV class="Group8 Layer page8">
 				
-			<IMG class="big-img" src="assets/image4.jpg"/>	
+			<IMG class="big-img" src="assets/image8.jpg"/>	
 			
 			
 			<AUDIO autoplay="autoplay">
@@ -143,10 +221,9 @@
 			</AUDIO>
 
 			
-			<A href="#page4" class="LinkToPage TouchLink" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group5" data-show-start-style="page-left" data-touch-type="left">
-				<IMG class="precedent transition-opac" src="assets/precedent.png"/>	
+			<A href="#page7" class="LinkToPage TouchLink previous-container" data-hide-start-style="page-center" data-show-end-style="page-center" data-hide-end-style="page-right" data-group-id="Group8" data-show-start-style="page-left" data-touch-type="left">
+				<IMG class="previous transition-opac" src="assets/previous.png"/>	
 			</A>
 		</DIV>
-		
 	</DIV>
 </BODY>
