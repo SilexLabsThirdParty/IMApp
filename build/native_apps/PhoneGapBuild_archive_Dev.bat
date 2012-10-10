@@ -8,7 +8,7 @@ SET output_file_path=PhoneGapBuild_%target%.zip
 cls
 
 ECHO preparing %config_file% file...
-copy config_%target%.xml %config_file%
+copy PhoneGap_config_%target%.xml %config_file%
 ECHO.
 
 ECHO copying index file...
