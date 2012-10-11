@@ -1094,6 +1094,7 @@ brix.component.navigation.Layer.prototype = $extend(brix.component.ui.DisplayObj
 			this.childrenArray.push(element);
 		}
 		this.rootElement.style.display = "none";
+		this.rootElement.style.visibility = "hidden";
 	}
 	,hide: function(transitionData,preventTransitions) {
 		if(this.status != brix.component.navigation.LayerStatus.visible && this.status != brix.component.navigation.LayerStatus.notInit) return;
@@ -1156,6 +1157,7 @@ brix.component.navigation.Layer.prototype = $extend(brix.component.ui.DisplayObj
 			this.startTransition(brix.component.navigation.transition.TransitionType.show,transitionData,this.doShowCallback);
 		} else this.doShow(transitionData,preventTransitions,null);
 		this.rootElement.style.display = this.styleAttrDisplay;
+		this.rootElement.style.visibility = "visible";
 	}
 	,removeTransitionEvent: function(onEndCallback) {
 		this.rootElement.removeEventListener("transitionend",onEndCallback,false);
