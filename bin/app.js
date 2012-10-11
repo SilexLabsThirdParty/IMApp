@@ -1408,6 +1408,7 @@ brix.component.navigation.link.LinkBase.__interfaces__ = [brix.component.group.I
 brix.component.navigation.link.LinkBase.__super__ = brix.component.ui.DisplayObject;
 brix.component.navigation.link.LinkBase.prototype = $extend(brix.component.ui.DisplayObject.prototype,{
 	onClick: function(e) {
+		e.preventDefault();
 		this.transitionDataShow = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,brix.component.navigation.transition.TransitionType.show);
 		this.transitionDataHide = brix.component.navigation.transition.TransitionTools.getTransitionData(this.rootElement,brix.component.navigation.transition.TransitionType.hide);
 	}
@@ -1697,6 +1698,22 @@ brix.core.Application.prototype = {
 		}
 		return classTag;
 	}
+	,getComponents: function(typeFilter) {
+		var l = new List();
+		var $it0 = this.nodeToCmpInstances.iterator();
+		while( $it0.hasNext() ) {
+			var n = $it0.next();
+			var $it1 = n.iterator();
+			while( $it1.hasNext() ) {
+				var i = $it1.next();
+				if(js.Boot.__instanceof(i,typeFilter)) {
+					var inst = i;
+					l.add(inst);
+				}
+			}
+		}
+		return l;
+	}
 	,getAssociatedComponents: function(node,typeFilter) {
 		var nodeId = node.getAttribute("data-brix-id");
 		if(nodeId != null) {
@@ -1783,7 +1800,10 @@ brix.core.Application.prototype = {
 	}
 	,createUIComponents: function(node) {
 		if(node.nodeType != 1) return null;
-		if(node.getAttribute("data-brix-id") != null) return null;
+		var nodeId = node.getAttribute("data-brix-id");
+		if(nodeId != null) {
+			if(!this.nodeToCmpInstances.exists(nodeId)) node.removeAttribute("data-brix-id"); else return null;
+		}
 		var compsToInit = new List();
 		if(node.className != null) {
 			var _g = 0, _g1 = node.className.split(" ");
