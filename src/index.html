@@ -12,76 +12,49 @@
 	<script data-brix-use="brix.component.navigation.link.TouchLink"></script>
 	<script data-brix-use="brix.component.sound.SoundOn"></script>
 	<script data-brix-use="brix.component.sound.SoundOff"></script>
-	<!--<script data-brix-use="brix.component.layout.CenterBox"></script>-->
-	<!--<script data-brix-use="com.intermedia.components.ContextualResizer"></script>-->
-	<!--<script data-brix-use="com.intermedia.components.ResizeGallery"></script>-->
 </head>
 <body>
 	<div class="pages-container">
 		
 		<!-- NAV -->
-		<!--<a href="#home" class="LinkToPage">
-			<img class="accueil transition-opac" alt="accueil" src="assets/accueil.png" width="110" height="50"></img>
-		</a>-->
 		<a href="#thumbs" class="LinkToPage TouchLink" target="_top" data-touch-type="down"></a>
 		<a href="#thumbs" class="LinkClosePage TouchLink" target="_top" data-touch-type="up"></a>
 
 		<!-- THUMBS -->
 		<a class="Page" name="thumbs"></a>
 		<div class="Layer thumbs">
-			<!--<a href="#thumbs" class="LinkClosePage">
-				<img class="close transition-opac" src="assets/close.png"></img>
-			</a>-->
 			<audio autoplay="autoplay">
 				<source type="audio/mp3" src="assets/pop.mp3"></source>
 			</audio>
-			<div class="thumb-container" >
-				<div class="thumb-mask">
-					<a href="#page1 " class="LinkToPage" >
-						<img src="assets/image1-thumb.jpg" class="transition-opac"></img>
+			<div class="thumbs-container" >
+				<div class="thumbs-mask">
+					<a href="#page1 " class="LinkToPage">
+						<img src="assets/image1-thumb.jpg" class="thumb"></img>
 					</a>
 					<a href="#page2" class="LinkToPage">
-						<img src="assets/image2-thumb.jpg" class="transition-opac"></img>
+						<img src="assets/image2-thumb.jpg" class="thumb"></img>
 					</a>
 					<a href="#page3" class="LinkToPage">
-						<img src="assets/image3-thumb.jpg" class="transition-opac"></img>
+						<img src="assets/image3-thumb.jpg" class="thumb"></img>
 					</a>
 					<a href="#page4" class="LinkToPage">
-						<img src="assets/image4-thumb.jpg" class="transition-opac"></img>
+						<img src="assets/image4-thumb.jpg" class="thumb"></img>
 					</a>
-					<a href="#page5 " class="LinkToPage" >
-						<img src="assets/image5-thumb.jpg" class="transition-opac"></img>
+					<a href="#page5 " class="LinkToPage">
+						<img src="assets/image5-thumb.jpg" class="thumb"></img>
 					</a>
 					<a href="#page6" class="LinkToPage">
-						<img src="assets/image6-thumb.jpg" class="transition-opac"></img>
+						<img src="assets/image6-thumb.jpg" class="thumb"></img>
 					</a>
 					<a href="#page7" class="LinkToPage">
-						<img src="assets/image7-thumb.jpg" class="transition-opac"></img>
+						<img src="assets/image7-thumb.jpg" class="thumb"></img>
 					</a>
 					<a href="#page8" class="LinkToPage">
-						<img src="assets/image8-thumb.jpg" class="transition-opac"></img>
+						<img src="assets/image8-thumb.jpg" class="thumb"></img>
 					</a>
 				</div>
 			</div>
 		</div>
-		<!-- HOME PAGE -->
-		<!--<a class="Page" name="home"></a>
-		<div class="Layer home">
-			
-			<!-- IMAGE -->
-			<!--<img class="big-img" src="assets/ciel.jpg"></img>	
-		
-			<!-- AUDIO -->
-			<!--<audio autoplay="autoplay">
-				<source type="audio/mp3" src="assets/foto.mp3"></source>
-			</audio>
-
-			<!-- NAV -->
-			<!--<a href="#page1" class="LinkToPage">
-				<!--<img src="assets/button.png" class="ResizeGallery transition-opac"></img>-->
-				<!--<img src="assets/button.png" class="transition-opac gallery-display"></img>
-			</a>
-		</div>-->
 
 		<!-- PAGE 1 -->
 		<a class="Page" name="page1"></a>
@@ -106,13 +79,13 @@
 			
 			<!-- IMAGE -->
 			<img class="big-img" src="assets/image2.jpg"></img>	
-
+			
 			<!-- NAV -->
 			<a href="#page1" class="LinkToPage TouchLink previous-container"
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>
+				<img class="previous" src="assets/previous.png"></img>
 			</a>
 			<a href="#page3" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
@@ -134,7 +107,7 @@
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>	
+				<img class="previous" src="assets/previous.png"></img>	
 			</a>
 			<a href="#page4" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
@@ -156,7 +129,7 @@
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>	
+				<img class="previous" src="assets/previous.png"></img>	
 			</a>
 			<a href="#page5" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
@@ -178,7 +151,7 @@
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>	
+				<img class="previous" src="assets/previous.png"></img>	
 			</a>
 			<a href="#page6" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
@@ -200,7 +173,7 @@
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>	
+				<img class="previous" src="assets/previous.png"></img>	
 			</a>
 			<a href="#page7" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
@@ -222,7 +195,7 @@
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>	
+				<img class="previous" src="assets/previous.png"></img>	
 			</a>
 			<a href="#page8" class="LinkToPage TouchLink next-container"
 				data-touch-type="right"
@@ -244,7 +217,7 @@
 				data-touch-type="left"
 				data-show-start-style="page-left" data-show-end-style="page-center"
 				data-hide-start-style="page-center" data-hide-end-style="page-right">
-				<img class="previous transition-opac" src="assets/previous.png"></img>	
+				<img class="previous" src="assets/previous.png"></img>	
 			</a>
 			<a href="#thumbs" class="LinkToPage thumbs-open" target="_top"></a>
 		</div>
