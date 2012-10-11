@@ -15,7 +15,9 @@ body{
 	margin: auto;
 	position: relative;
 	z-index: 0;
+	overflow:hidden;
 }
+
 /*.transition-opac{
 	transition: opacity ease-in-out .2s;
 	-moz-transition: opacity ease-in-out .2s;
